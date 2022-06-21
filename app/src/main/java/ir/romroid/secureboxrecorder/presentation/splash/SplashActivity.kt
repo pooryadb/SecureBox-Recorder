@@ -1,10 +1,11 @@
-package ir.romroid.secureboxrecorder.presentation
+package ir.romroid.secureboxrecorder.presentation.splash
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import ir.romroid.secureboxrecorder.base.component.BaseActivity
-import ir.romroid.secureboxrecorder.base.ext.logD
 import ir.romroid.secureboxrecorder.databinding.ActivitySplashBinding
+import ir.romroid.secureboxrecorder.presentation.main.MainActivity
 
 class SplashActivity : BaseActivity<ActivitySplashBinding>() {
 
@@ -14,8 +15,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
     override fun viewHandler(savedInstanceState: Bundle?) {
         binding?.apply {
             root.postDelayed({
-                "finish".logD("pdb")
-//                startActivity(MainActivity.getIntent(this@SplashActivity))
+                startActivity(Intent(this@SplashActivity, MainActivity::class.java))
                 finish()
             }, 1000)
         }

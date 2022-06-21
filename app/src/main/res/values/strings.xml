@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">SecureBox Recorder</string>
+    <string name="exit_app">To exit, tap back again</string>
 </resources>
