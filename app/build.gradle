@@ -3,6 +3,7 @@ plugins {
     id 'kotlin-android'
     id 'kotlin-kapt'
     id 'kotlin-parcelize'
+    id 'dagger.hilt.android.plugin'
     id 'androidx.navigation.safeargs.kotlin'
 }
 
@@ -96,4 +97,13 @@ dependencies {
     api "androidx.navigation:navigation-fragment-ktx:$nav_version"
     api "androidx.navigation:navigation-ui-ktx:$nav_version"
     api "androidx.navigation:navigation-dynamic-features-fragment:$nav_version"
+
+    //hilt google
+    def hiltV = "2.42"
+    api "com.google.dagger:hilt-android:$hiltV"
+    kapt "com.google.dagger:hilt-compiler:$hiltV"
+    def hiltAndroidxV = "1.0.0"
+    kapt "androidx.hilt:hilt-compiler:$hiltAndroidxV"
+    api "androidx.hilt:hilt-navigation-fragment:$hiltAndroidxV"
+
 }

@@ -10,7 +10,6 @@ import android.view.LayoutInflater
 import android.view.WindowInsetsController
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.core.view.ViewCompat
 import androidx.viewbinding.ViewBinding
 import ir.romroid.common.utils.state.WindowInsetsHelper
 import ir.romroid.secureboxrecorder.R
@@ -42,10 +41,6 @@ abstract class BaseActivity<VB : ViewBinding> : AppCompatActivity() {
         resetTitle()
 
         _binding = bindingInflater.invoke(layoutInflater)
-        ViewCompat.setLayoutDirection(
-            requireNotNull(_binding).root,
-            ViewCompat.LAYOUT_DIRECTION_RTL
-        )
 
         setContentView(requireNotNull(_binding).root)
 

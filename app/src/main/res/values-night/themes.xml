@@ -12,7 +12,7 @@
         <item name="colorSurface">#303030</item>
         <item name="colorOnSurface">#FFFFFF</item>
 
-        <item name="colorError">#F44336</item>
+        <item name="colorError">#CA4436</item>
         <item name="colorOnError">#FFFFFF</item>
 
         <item name="android:colorBackground">@color/backgroundColorDark</item>
@@ -43,7 +43,7 @@
         <item name="fontFamily">@font/font_family</item>
         <item name="android:textAppearance">@style/txt.h1</item>
         <item name="android:fontFamily">@font/font_family</item>
-        <item name="android:gravity">right</item>
+        <!--        <item name="android:gravity">right</item>-->
         <!--settings -->
 
         <item name="bottomSheetDialogTheme">@style/app.theme.sheet</item>

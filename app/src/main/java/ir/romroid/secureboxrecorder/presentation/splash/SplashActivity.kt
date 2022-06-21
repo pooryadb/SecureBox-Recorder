@@ -3,10 +3,12 @@ package ir.romroid.secureboxrecorder.presentation.splash
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
+import dagger.hilt.android.AndroidEntryPoint
 import ir.romroid.secureboxrecorder.base.component.BaseActivity
 import ir.romroid.secureboxrecorder.databinding.ActivitySplashBinding
 import ir.romroid.secureboxrecorder.presentation.main.MainActivity
 
+@AndroidEntryPoint
 class SplashActivity : BaseActivity<ActivitySplashBinding>() {
 
     override val bindingInflater: (LayoutInflater) -> ActivitySplashBinding

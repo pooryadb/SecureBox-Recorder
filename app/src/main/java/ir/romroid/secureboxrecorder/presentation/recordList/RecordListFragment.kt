@@ -4,57 +4,56 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
-import ir.romroid.secureboxrecorder.R
+import androidx.core.net.toUri
+import dagger.hilt.android.AndroidEntryPoint
+import ir.romroid.secureboxrecorder.base.component.BaseFragment
+import ir.romroid.secureboxrecorder.base.ext.logD
+import ir.romroid.secureboxrecorder.databinding.FragmentRecordListBinding
+import ir.romroid.secureboxrecorder.domain.model.AudioModel
+import javax.inject.Inject
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+@AndroidEntryPoint
+class RecordListFragment : BaseFragment<FragmentRecordListBinding>() {
 
-/**
- * A simple [Fragment] subclass.
- * Use the [RecordListFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
-class RecordListFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentRecordListBinding
+        get() = FragmentRecordListBinding::inflate
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+    @Inject
+    lateinit var audioAdapter: AudioAdapter
+
+    override fun viewHandler(view: View, savedInstanceState: Bundle?) {
+        binding?.apply {
+
+            btnAdd.setOnClickListener {
+                logD("btnAdd")
+            }
+
+            rcAudio.apply {
+                audioAdapter.apply {
+                    onDeleteClick = {
+                        logD("onDeleteClick")
+                    }
+
+                    onItemClick = {
+                        logD("onItemClick")
+                    }
+
+                }
+
+                adapter = audioAdapter
+
+                audioAdapter.submitList(
+                    (0..10).map {
+                        AudioModel(
+                            "title $it",
+                            "".toUri(),
+                        ).apply {
+                            id = it.toLong()
+                        }
+                    }
+                )
+            }
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_record_list, container, false)
-    }
-
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment RecordListFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            RecordListFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
-    }
 }

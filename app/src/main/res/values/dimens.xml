@@ -7,4 +7,7 @@
     <dimen name="margin">16dp</dimen>
     <dimen name="padding">8dp</dimen>
 
+    <dimen name="icon_normal">24dp</dimen>
+    <dimen name="icon_big">48dp</dimen>
+
 </resources>
