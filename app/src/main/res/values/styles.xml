@@ -1,0 +1,275 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!--  text-->
+
+    <style name="txt.family" parent="">
+        <item name="android:fontFamily">@font/font_family</item>
+        <item name="fontFamily">@font/font_family</item>
+        <!--        <item name="typeface">@font/font_family</item>-->
+    </style>
+
+    <!-- normal -->
+
+    <style name="txt.h00" parent="txt.family">
+        <item name="android:textSize">11sp</item>
+        <item name="fontWeight">200</item>
+        <item name="android:textFontWeight" tools:targetApi="p">200</item>
+    </style>
+
+    <style name="txt.h0" parent="txt.family">
+        <item name="android:textSize">12sp</item>
+        <item name="fontWeight">200</item>
+        <item name="android:textFontWeight" tools:targetApi="p">200</item>
+    </style>
+
+    <style name="txt.h1" parent="txt.family">
+        <item name="android:textSize">14sp</item>
+        <item name="fontWeight">200</item>
+        <item name="android:textFontWeight" tools:targetApi="p">200</item>
+    </style>
+
+    <style name="txt.h2" parent="txt.family">
+        <item name="android:textSize">16sp</item>
+        <item name="fontWeight">200</item>
+        <item name="android:textFontWeight" tools:targetApi="p">200</item>
+    </style>
+
+    <style name="txt.h3" parent="txt.family">
+        <item name="android:textSize">18sp</item>
+        <item name="fontWeight">200</item>
+        <item name="android:textFontWeight" tools:targetApi="p">200</item>
+    </style>
+
+    <style name="txt.h4" parent="txt.family">
+        <item name="android:textSize">22sp</item>
+        <item name="fontWeight">200</item>
+        <item name="android:textFontWeight" tools:targetApi="p">200</item>
+    </style>
+
+    <!-- light -->
+
+    <style name="txt.h00.light" parent="txt.h00">
+        <item name="android:textFontWeight" tools:targetApi="p">100</item>
+    </style>
+
+    <style name="txt.h0.light" parent="txt.h0">
+        <item name="android:textFontWeight" tools:targetApi="p">100</item>
+    </style>
+
+    <style name="txt.h1.light" parent="txt.h1">
+        <item name="android:textFontWeight" tools:targetApi="p">100</item>
+    </style>
+
+    <!-- medium / bold-->
+
+    <style name="txt.h00.medium" parent="txt.h00">
+        <item name="fontWeight">400</item>
+        <item name="android:textFontWeight" tools:targetApi="p">400</item>
+    </style>
+
+    <style name="txt.h0.medium" parent="txt.h0">
+        <item name="fontWeight">400</item>
+        <item name="android:textFontWeight" tools:targetApi="p">400</item>
+    </style>
+
+    <style name="txt.h1.medium" parent="txt.h1">
+        <item name="fontWeight">400</item>
+        <item name="android:textFontWeight" tools:targetApi="p">400</item>
+    </style>
+
+    <style name="txt.h00.bold" parent="txt.h00">
+        <item name="fontWeight">700</item>
+        <item name="android:textFontWeight" tools:targetApi="p">700</item>
+    </style>
+
+    <style name="txt.h0.bold" parent="txt.h0">
+        <item name="fontWeight">700</item>
+        <item name="android:textFontWeight" tools:targetApi="p">700</item>
+    </style>
+
+    <style name="txt.h1.bold" parent="txt.h1">
+        <item name="fontWeight">700</item>
+        <item name="android:textFontWeight" tools:targetApi="p">700</item>
+    </style>
+
+    <style name="txt.h2.medium" parent="txt.h2">
+        <item name="fontWeight">400</item>
+        <item name="android:textFontWeight" tools:targetApi="p">400</item>
+    </style>
+
+    <style name="txt.h2.bold" parent="txt.h2">
+        <item name="fontWeight">700</item>
+        <item name="android:textFontWeight" tools:targetApi="p">700</item>
+    </style>
+
+    <style name="txt.h3.medium" parent="txt.h3">
+        <item name="fontWeight">400</item>
+        <item name="android:textFontWeight" tools:targetApi="p">400</item>
+    </style>
+
+    <style name="txt.h3.bold" parent="txt.h3">
+        <item name="fontWeight">700</item>
+        <item name="android:textFontWeight" tools:targetApi="p">700</item>
+    </style>
+
+    <style name="txt.h4.medium" parent="txt.h4">
+        <item name="fontWeight">400</item>
+        <item name="android:textFontWeight" tools:targetApi="p">400</item>
+    </style>
+
+    <style name="txt.h4.bold" parent="txt.h4">
+        <item name="fontWeight">700</item>
+        <item name="android:textFontWeight" tools:targetApi="p">700</item>
+    </style>
+
+    <style name="txt.title" parent="txt.h1">
+        <item name="android:textColor">?colorOnPrimary</item>
+    </style>
+
+    <style name="txt.desc" parent="txt.h0">
+        <item name="android:textColor">?colorOnPrimary</item>
+    </style>
+
+    <!--button-->
+
+    <style name="btn.colored" parent="Widget.MaterialComponents.Button">
+        <item name="fontWeight">700</item>
+        <item name="android:layout_height">55dp</item>
+        <item name="shapeAppearance">@style/appearance.round.35</item>
+        <item name="android:textAppearance">@style/txt.h2.bold</item>
+    </style>
+
+    <style name="btn.colored.big" parent="Widget.MaterialComponents.Button">
+        <item name="fontWeight">700</item>
+        <item name="shapeAppearance">@style/appearance.round.35</item>
+        <item name="android:layout_height">62dp</item>
+        <item name="android:textAppearance">@style/txt.h4.bold</item>
+    </style>
+
+    <style name="btn.outlined" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="fontWeight">700</item>
+        <item name="android:layout_height">62dp</item>
+        <item name="shapeAppearance">@style/appearance.round.35</item>
+        <item name="android:textAppearance">@style/txt.h2.bold</item>
+    </style>
+
+    <style name="btn.colorless" parent="btn.colored">
+        <item name="android:textColor">?colorOnBackground</item>
+        <item name="backgroundTint">@drawable/selector_btn_colorless</item>
+    </style>
+
+    <style name="btn.text" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="fontWeight">700</item>
+        <item name="shapeAppearance">@style/appearance.round.35</item>
+        <item name="android:textAppearance">@style/txt.h1.bold</item>
+    </style>
+
+    <style name="btn.circle" parent="Widget.MaterialComponents.Button">
+        <item name="shapeAppearance">@style/appearance.round.50</item>
+        <item name="android:textAppearance">@style/txt.h4.medium</item>
+        <item name="fontWeight">700</item>
+        <item name="backgroundTint">?attr/colorSurface</item>
+        <item name="android:textColor">?colorPrimary</item>
+        <item name="android:layout_margin">8dp</item>
+        <!--        <item name="textColor">?colorOnBackground</item>-->
+        <item name="android:insetLeft">0dp</item>
+        <item name="android:insetRight">0dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+    </style>
+
+    <!--button-->
+
+    <style name="titleToolbar" parent="Widget.MaterialComponents.TextView">
+        <item name="android:padding">@dimen/padding_toolbar_images</item>
+        <item name="maxLines">1</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:textAppearance">@style/txt.h3.bold</item>
+        <item name="android:lines">1</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>
+
+    <style name="ivToolbar">
+        <item name="shapeAppearance">@style/appearance.round.30</item>
+        <item name="strokeColor">?android:textColorHint</item>
+        <item name="android:padding">5dp</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="android:background">?selectableItemBackground</item>
+        <item name="android:elevation">0dp</item>
+    </style>
+
+    <style name="ivToolbarMenu">
+        <item name="contentPadding">10dp</item>
+        <item name="android:background">?selectableItemBackground</item>
+        <item name="android:elevation">0dp</item>
+    </style>
+
+
+    <!--	text input-->
+    <style name="input.outline" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="hintTextAppearance">@style/txt.h1.bold</item>
+        <item name="shapeAppearance">@style/appearance.round.25</item>
+        <item name="passwordToggleDrawable">@drawable/selector_password_toggle</item>
+        <!--        <item name="hintAnimationEnabled">false</item>-->
+        <!--        <item name="expandedHintEnabled">false</item>-->
+        <item name="errorIconDrawable">@null</item>
+    </style>
+
+    <style name="input.outline.menu" parent="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+        <item name="hintTextAppearance">@style/txt.h4</item>
+    </style>
+
+    <!--    card view-->
+    <style name="card.round" parent="Widget.MaterialComponents.CardView">
+        <item name="cardCornerRadius">12dp</item>
+    </style>
+
+    <!--edit text-->
+    <style name="edt" parent="">
+        <item name="android:textColor">?android:textColor</item>
+        <item name="android:textDirection">anyRtl</item>
+    </style>
+
+    <style name="edt.latin.digits" parent="edt">
+        <item name="fontFamily">@font/font_normal_latin_digits</item>
+    </style>
+
+    <!--    animation-->
+    <style name="animation.slide.up_down" parent="">
+        <item name="android:windowEnterAnimation">@anim/slide_up</item>
+        <item name="android:windowExitAnimation">@anim/slide_down</item>
+    </style>
+
+    <style name="animation.fade" parent="">
+        <item name="android:windowEnterAnimation">@android:anim/fade_in</item>
+        <item name="android:windowExitAnimation">@android:anim/fade_out</item>
+    </style>
+
+    <style name="animation.popup_window" parent="">
+        <item name="android:windowEnterAnimation">@anim/popup_in</item>
+        <item name="android:windowExitAnimation">@anim/popup_out</item>
+    </style>
+
+    <!--    bottom sheet-->
+    <style name="bottom.sheet.style" parent="Widget.MaterialComponents.BottomSheet.Modal">
+        <item name="shapeAppearanceOverlay">@style/appearance.top.round.card</item>
+        <item name="behavior_skipCollapsed">true</item>
+        <item name="behavior_fitToContents">true</item>
+        <item name="behavior_peekHeight">1000dp</item>
+        <item name="behavior_hideable">true</item>
+        <item name="backgroundTint">?android:colorBackground</item>
+    </style>
+
+    <style name="MyDialogTheme" parent="Theme.AppCompat.Light.Dialog">
+        <!-- Fill the screen -->
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+
+        <!-- No backgrounds, titles or window float -->
+        <item name="android:windowBackground">@color/transparent</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">false</item>
+
+    </style>
+
+</resources>

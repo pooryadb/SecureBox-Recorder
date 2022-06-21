@@ -1,16 +1,77 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.SecureBoxRecorder" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
-        <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/purple_200</item>
-        <item name="colorPrimaryVariant">@color/purple_700</item>
-        <item name="colorOnPrimary">@color/black</item>
-        <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/teal_200</item>
-        <item name="colorSecondaryVariant">@color/teal_200</item>
-        <item name="colorOnSecondary">@color/black</item>
-        <!-- Status bar color. -->
-        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+    <style name="app.theme" parent="Theme.MaterialComponents.NoActionBar">
+        <item name="colorPrimary">#4a17ff</item>
+        <item name="colorPrimaryVariant">#6886f4</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
+
+        <item name="colorSecondary">#01a8dd</item>
+        <item name="colorSecondaryVariant">#01a8dd</item>
+        <item name="colorOnSecondary">#FFFFFF</item>
+
+        <item name="colorSurface">#303030</item>
+        <item name="colorOnSurface">#FFFFFF</item>
+
+        <item name="colorError">#F44336</item>
+        <item name="colorOnError">#FFFFFF</item>
+
+        <item name="android:colorBackground">@color/backgroundColorDark</item>
+        <item name="colorOnBackground">#FFFFFF</item>
+
+        <item name="android:textColor">#e0e0e0</item>
+        <item name="android:textColorHint">#a0a0a0</item>
+
+        <item name="colorControlNormal">#e0e0e0</item>
+        <item name="colorControlActivated">?colorPrimary</item>
+        <item name="colorControlHighlight">#101010</item>
+
+        <!-- custom color-->
+        <item name="colorGlass">#29FFFFFF</item>
+
+        <!-- Status bar & navigation color. -->
+        <item name="android:statusBarColor">?android:colorBackground</item>
+        <item name="android:navigationBarColor">?android:colorBackground</item>
         <!-- Customize your theme here. -->
+
+        <!-- settings -->
+        <item name="android:scrollbarStyle">outsideOverlay</item>
+        <item name="android:scrollbars">none</item>
+        <item name="android:colorEdgeEffect">?android:colorError</item>
+        <item name="android:windowAnimationStyle">@style/animation.fade</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">false</item>
+        <item name="fontFamily">@font/font_family</item>
+        <item name="android:textAppearance">@style/txt.h1</item>
+        <item name="android:fontFamily">@font/font_family</item>
+        <item name="android:gravity">right</item>
+        <!--settings -->
+
+        <item name="bottomSheetDialogTheme">@style/app.theme.sheet</item>
+    </style>
+
+
+    <style name="app.theme.dialog" parent="app.theme">
+        <item name="android:background">@color/transparent</item>
+        <item name="android:windowBackground">@color/transparent</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowMinWidthMinor">90%</item>
+        <item name="android:windowTitleStyle">@null</item>
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowAnimationStyle">@null</item>
+    </style>
+
+
+    <style name="app.theme.sheet" parent="app.theme">
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:backgroundDimAmount">0.3</item>
+        <item name="android:windowBackground">@color/transparent</item>
+        <item name="android:windowAnimationStyle">
+            @style/Animation.MaterialComponents.BottomSheetDialog
+        </item>
+
+        <item name="bottomSheetStyle">@style/bottom.sheet.style</item>
     </style>
 </resources>

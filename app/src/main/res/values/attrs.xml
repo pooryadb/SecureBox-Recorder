@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <attr name="colorGlass" format="color" />
+
+    <integer name="transition_anim_duration">200</integer>
+
+    <declare-styleable name="CustomToolbar">
+        <attr name="title" format="string" />
+        <attr name="elevation" format="dimension" />
+        <attr name="btnBackShow" format="boolean" />
+        <!--        <attr name="menus" format="reference" />-->
+    </declare-styleable>
+
+</resources>
