@@ -4,12 +4,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.net.toUri
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import ir.romroid.secureboxrecorder.base.component.BaseFragment
 import ir.romroid.secureboxrecorder.databinding.FragmentRecordListBinding
-import ir.romroid.secureboxrecorder.domain.model.AudioModel
 import ir.romroid.secureboxrecorder.ext.getBackStackLiveData
 import ir.romroid.secureboxrecorder.ext.logD
 import ir.romroid.secureboxrecorder.utils.BACK_FROM_RECORDER
@@ -23,6 +22,8 @@ class RecordListFragment : BaseFragment<FragmentRecordListBinding>() {
 
     @Inject
     lateinit var audioAdapter: AudioAdapter
+
+    private val recorderListViewModel by viewModels<RecorderListViewModel>()
 
     override fun viewHandler(view: View, savedInstanceState: Bundle?) {
         binding?.apply {
@@ -47,17 +48,18 @@ class RecordListFragment : BaseFragment<FragmentRecordListBinding>() {
 
                 adapter = audioAdapter
 
-                audioAdapter.submitList(
-                    (0..10).map {
-                        AudioModel(
-                            "title $it",
-                            "".toUri(),
-                        ).apply {
-                            id = it.toLong()
-                        }
-                    }
-                )
             }
+
+            if (isRestoredFromBackStack.not())
+                recorderListViewModel.fetchRecordedList(requireContext())
+        }
+    }
+
+    override fun initObservers() {
+        super.initObservers()
+
+        recorderListViewModel.liveRecordedList.observe(this) {
+            audioAdapter.submitList(it)
         }
     }
 
@@ -69,7 +71,7 @@ class RecordListFragment : BaseFragment<FragmentRecordListBinding>() {
                 if (it) {
                     // TODO: goto file manager page
                 } else {
-                    // TODO: refresh list
+                    recorderListViewModel.fetchRecordedList(requireContext())
                 }
             }
     }
