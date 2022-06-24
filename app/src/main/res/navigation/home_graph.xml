@@ -17,7 +17,7 @@
 
     <dialog
         android:id="@+id/dialogRecordList"
-        android:name="ir.romroid.secureboxrecorder.presentation.recordList.DialogRecorder"
+        android:name="ir.romroid.secureboxrecorder.presentation.recordList.RecorderDialog"
         tools:layout="@layout/dialog_recorder" />
 
 </navigation>

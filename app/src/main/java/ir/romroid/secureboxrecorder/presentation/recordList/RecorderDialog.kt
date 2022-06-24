@@ -19,7 +19,7 @@ import java.io.File
 import java.io.IOException
 
 @AndroidEntryPoint
-class DialogRecorder : BaseBottomSheetDialogFragment<DialogRecorderBinding>() {
+class RecorderDialog : BaseBottomSheetDialogFragment<DialogRecorderBinding>() {
 
     override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> DialogRecorderBinding
         get() = DialogRecorderBinding::inflate
