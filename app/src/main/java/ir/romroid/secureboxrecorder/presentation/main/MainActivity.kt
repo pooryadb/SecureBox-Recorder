@@ -28,7 +28,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
 
     private fun listenNavController(navController: NavController) {
         navController.addOnDestinationChangedListener { controller, destination, _ ->
-            isHome = destination.id == controller.graph.startDestination
+            isHome = destination.id == controller.graph.startDestinationId
         }
     }
 

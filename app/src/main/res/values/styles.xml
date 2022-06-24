@@ -134,8 +134,11 @@
     <style name="btn.colored" parent="Widget.MaterialComponents.Button">
         <item name="fontWeight">700</item>
         <item name="android:layout_height">55dp</item>
-        <item name="shapeAppearance">@style/appearance.round.35</item>
+        <item name="shapeAppearance">@style/appearance.round.constant</item>
         <item name="android:textAppearance">@style/txt.h2.bold</item>
+
+        <item name="iconSize">@dimen/icon_normal</item>
+        <item name="iconGravity">end</item>
     </style>
 
     <style name="btn.colored.big" parent="Widget.MaterialComponents.Button">

@@ -1,13 +1,13 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="app.theme" parent="Theme.MaterialComponents.Light.NoActionBar">
-        <item name="colorPrimary">#01a8dd</item>
-        <item name="colorPrimaryVariant">#14C6FF</item>
+        <item name="colorPrimary">#FF6200EE</item>
+        <item name="colorPrimaryVariant">#FF3700B3</item>
         <item name="colorOnPrimary">#FFFFFF</item>
 
-        <item name="colorSecondary">#01a8dd</item>
-        <item name="colorSecondaryVariant">#01a8dd</item>
-        <item name="colorOnSecondary">#FFFFFF</item>
+        <item name="colorSecondary">#FF03DAC5</item>
+        <item name="colorSecondaryVariant">#FF018786</item>
+        <item name="colorOnSecondary">#000000</item>
 
         <item name="colorSurface">#FFFFFF</item>
         <item name="colorOnSurface">#101010</item>
@@ -19,7 +19,7 @@
         <item name="colorOnBackground">#101010</item>
 
         <item name="android:textColor">#101010</item>
-        <item name="android:textColorHint">#808080</item>
+        <item name="android:textColorHint">#858585</item>
 
         <item name="colorControlNormal">#505050</item>
         <item name="colorControlActivated">?colorPrimary</item>
@@ -29,7 +29,7 @@
         <item name="colorGlass">#29000000</item>
 
         <!-- Status bar & navigation color. -->
-        <item name="android:statusBarColor">?android:colorBackground</item>
+        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <item name="android:navigationBarColor">?android:colorBackground</item>
         <!-- Customize your theme here. -->
 

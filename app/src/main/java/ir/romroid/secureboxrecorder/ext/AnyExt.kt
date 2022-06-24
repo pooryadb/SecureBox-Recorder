@@ -1,10 +1,16 @@
-package ir.romroid.secureboxrecorder.base.ext
+package ir.romroid.secureboxrecorder.ext
 
 import android.annotation.SuppressLint
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import ir.romroid.secureboxrecorder.BuildConfig
+
+@SuppressLint("LogNotTimber")
+fun Any.logI(tag: String = "", throwable: Throwable? = null) {
+    if (BuildConfig.DEBUG)
+        Log.i(tag, "$this\n", throwable)
+}
 
 @SuppressLint("LogNotTimber")
 fun Any.logE(tag: String = "", throwable: Throwable? = null) {

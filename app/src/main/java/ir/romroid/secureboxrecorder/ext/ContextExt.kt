@@ -1,4 +1,4 @@
-package ir.romroid.secureboxrecorder.base.ext
+package ir.romroid.secureboxrecorder.ext
 
 import android.content.*
 import android.content.pm.ApplicationInfo

@@ -5,11 +5,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.net.toUri
+import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import ir.romroid.secureboxrecorder.base.component.BaseFragment
-import ir.romroid.secureboxrecorder.base.ext.logD
 import ir.romroid.secureboxrecorder.databinding.FragmentRecordListBinding
 import ir.romroid.secureboxrecorder.domain.model.AudioModel
+import ir.romroid.secureboxrecorder.ext.getBackStackLiveData
+import ir.romroid.secureboxrecorder.ext.logD
+import ir.romroid.secureboxrecorder.utils.BACK_FROM_RECORDER
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -25,7 +28,9 @@ class RecordListFragment : BaseFragment<FragmentRecordListBinding>() {
         binding?.apply {
 
             btnAdd.setOnClickListener {
-                logD("btnAdd")
+                findNavController().navigate(
+                    RecordListFragmentDirections.actionRecordListFragmentToDialogRecordList()
+                )
             }
 
             rcAudio.apply {
@@ -54,6 +59,19 @@ class RecordListFragment : BaseFragment<FragmentRecordListBinding>() {
                 )
             }
         }
+    }
+
+    override fun initBackStackObservers() {
+        super.initBackStackObservers()
+
+        findNavController().getBackStackLiveData<Boolean>(BACK_FROM_RECORDER)
+            ?.observe(this) {
+                if (it) {
+                    // TODO: goto file manager page
+                } else {
+                    // TODO: refresh list
+                }
+            }
     }
 
 }

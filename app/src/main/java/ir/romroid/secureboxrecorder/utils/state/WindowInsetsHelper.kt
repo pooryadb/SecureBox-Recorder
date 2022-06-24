@@ -8,7 +8,7 @@ import androidx.core.graphics.Insets
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
-import ir.romroid.secureboxrecorder.base.ext.setMargins
+import ir.romroid.secureboxrecorder.ext.setMargins
 import kotlin.math.abs
 
 /**

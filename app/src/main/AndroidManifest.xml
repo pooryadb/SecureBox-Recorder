@@ -3,6 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="ir.romroid.secureboxrecorder">
 
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
     <application
         android:name=".utils.AppCore"
         android:allowBackup="true"

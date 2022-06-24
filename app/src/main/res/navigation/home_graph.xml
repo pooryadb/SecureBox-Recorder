@@ -9,6 +9,15 @@
     <fragment
         android:id="@+id/recordListFragment"
         android:name="ir.romroid.secureboxrecorder.presentation.recordList.RecordListFragment"
-        tools:layout="@layout/fragment_record_list" />
+        tools:layout="@layout/fragment_record_list">
+        <action
+            android:id="@+id/action_recordListFragment_to_dialogRecordList"
+            app:destination="@id/dialogRecordList" />
+    </fragment>
+
+    <dialog
+        android:id="@+id/dialogRecordList"
+        android:name="ir.romroid.secureboxrecorder.presentation.recordList.DialogRecorder"
+        tools:layout="@layout/dialog_recorder" />
 
 </navigation>

@@ -13,8 +13,8 @@ import androidx.core.content.ContextCompat
 import androidx.viewbinding.ViewBinding
 import ir.romroid.common.utils.state.WindowInsetsHelper
 import ir.romroid.secureboxrecorder.R
-import ir.romroid.secureboxrecorder.base.ext.isDarkTheme
-import ir.romroid.secureboxrecorder.base.ext.logE
+import ir.romroid.secureboxrecorder.ext.isDarkTheme
+import ir.romroid.secureboxrecorder.ext.logE
 import ir.romroid.secureboxrecorder.utils.language.LocaleUtils
 
 

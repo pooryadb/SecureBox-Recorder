@@ -1,4 +1,11 @@
 <resources>
     <string name="app_name">SecureBox Recorder</string>
     <string name="exit_app">To exit, tap back again</string>
+
+    <string name="voice_recording">Voice Recording</string>
+    <string name="file_title">file title</string>
+    <string name="save">save</string>
+    <string name="please_enter_name">please enter a name</string>
+    <string name="cant_pause_stopped">can\'t pause! stopped!</string>
+    <string name="cant_record_without_permission">cant_record_without_permission</string>
 </resources>
