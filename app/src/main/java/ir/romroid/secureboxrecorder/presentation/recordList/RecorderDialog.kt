@@ -33,11 +33,12 @@ class RecorderDialog : BaseBottomSheetDialogFragment<DialogRecorderBinding>() {
     private var pendingPrepareRecord: (() -> Unit)? = null
     private var isRecording = false
         set(value) {
-            field = value
             if (value)
                 binding?.fab?.setImageResource(R.drawable.ic_pause)
-            else
-                binding?.fab?.setImageResource(R.drawable.ic_play)
+            else if (field)
+                binding?.fab?.toHide()
+
+            field = value
         }
 
     override fun viewHandler(view: View, savedInstanceState: Bundle?) {

@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:animateLayoutChanges="true"
     android:clipToPadding="false"
     android:padding="@dimen/margin">
 
@@ -17,17 +18,6 @@
         android:src="@drawable/ic_close"
         app:layout_constraintBaseline_toBaselineOf="@id/tv"
         app:layout_constraintStart_toStartOf="parent" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnSave"
-        style="@style/btn.colored"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/save"
-        android:visibility="invisible"
-        app:layout_constraintBaseline_toBaselineOf="@id/tv"
-        app:layout_constraintEnd_toEndOf="parent"
-        tools:visibility="visible" />
 
     <View
         android:id="@+id/vHandler"
@@ -91,5 +81,18 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:tint="?attr/colorOnError" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnSave"
+        style="@style/btn.colored"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/margin"
+        android:text="@string/save"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:visibility="visible" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
