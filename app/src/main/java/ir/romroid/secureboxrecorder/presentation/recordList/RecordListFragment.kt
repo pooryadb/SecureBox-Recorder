@@ -7,10 +7,13 @@ import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
+import ir.romroid.secureboxrecorder.R
 import ir.romroid.secureboxrecorder.base.component.BaseFragment
 import ir.romroid.secureboxrecorder.databinding.FragmentRecordListBinding
 import ir.romroid.secureboxrecorder.ext.getBackStackLiveData
 import ir.romroid.secureboxrecorder.ext.logD
+import ir.romroid.secureboxrecorder.ext.toast
+import ir.romroid.secureboxrecorder.utils.BACK_FROM_DELETE_RECORD
 import ir.romroid.secureboxrecorder.utils.BACK_FROM_RECORDER
 import javax.inject.Inject
 
@@ -38,6 +41,10 @@ class RecordListFragment : BaseFragment<FragmentRecordListBinding>() {
                 audioAdapter.apply {
                     onDeleteClick = {
                         logD("onDeleteClick")
+                        findNavController().navigate(
+                            RecordListFragmentDirections
+                                .actionRecordListFragmentToDialogDeleteRecord(it.id)
+                        )
                     }
 
                     onItemClick = {
@@ -73,6 +80,20 @@ class RecordListFragment : BaseFragment<FragmentRecordListBinding>() {
                 } else {
                     recorderListViewModel.fetchRecordedList(requireContext())
                 }
+            }
+
+        findNavController().getBackStackLiveData<Long?>(BACK_FROM_DELETE_RECORD)
+            ?.observe(this) { recordId ->
+                if (recordId != null) {
+                    recorderListViewModel.deleteRecord(recordId).let {
+                        if (it) {
+                            recorderListViewModel.fetchRecordedList(requireContext())
+                            return@observe
+                        }
+                    }
+                }
+
+                requireContext().toast(getString(R.string.cant_find_file))
             }
     }
 

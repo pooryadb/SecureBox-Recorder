@@ -3,7 +3,6 @@ package ir.romroid.secureboxrecorder.presentation.recordList
 import android.Manifest
 import android.content.Context
 import android.media.MediaRecorder
-import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -25,11 +24,13 @@ class RecorderDialog : BaseBottomSheetDialogFragment<DialogRecorderBinding>() {
         get() = DialogRecorderBinding::inflate
 
     companion object {
+        private const val TAG = "RecorderDialog"
         private const val AUDIO_PERMISSION = Manifest.permission.RECORD_AUDIO
     }
 
     private var path = ""
     private var recorder: MediaRecorder? = null
+    private var pendingPrepareRecord: (() -> Unit)? = null
     private var isRecording = false
         set(value) {
             field = value
@@ -41,14 +42,7 @@ class RecorderDialog : BaseBottomSheetDialogFragment<DialogRecorderBinding>() {
 
     override fun viewHandler(view: View, savedInstanceState: Bundle?) {
         binding?.apply {
-            path = requireContext().cacheDir.path + "/" + VOICE_TEMP_FOLDER_NAME
-            val f = File(path)
-            if (f.exists().not()) {
-                f.mkdirs()
-            }
-            path += "/tempRecord$VOICE_FORMAT"
-
-            path.logD("recorderPdb path")
+            setupPath()
 
             fab.setOnClickListener {
                 toggleRecord()
@@ -59,18 +53,30 @@ class RecorderDialog : BaseBottomSheetDialogFragment<DialogRecorderBinding>() {
             }
 
             btnSave.setOnClickListener {
-                if (etName.text.toString().isEmpty())
+                if (etName.text.toString().isEmpty()) {
                     etName.error = getString(R.string.please_enter_name)
-                else
+                    return@setOnClickListener
+                } else {
                     etName.error = null
-
-                saveVoice(etName.text.toString())
+                    saveVoice(etName.text.toString())
+                }
             }
         }
     }
 
+    private fun setupPath() {
+        path = requireContext().cacheDir.path + "/" + VOICE_TEMP_FOLDER_NAME
+        val f = File(path)
+        if (f.exists().not()) {
+            f.mkdirs()
+        }
+        path += "/tempRecord$VOICE_FORMAT"
+
+        path.logD("$TAG path")
+    }
+
     private fun saveVoice(name: String) {
-        stopRecord()
+        stopRecord()// to ensure
 
         val fTemp = File(path)
 
@@ -102,66 +108,71 @@ class RecorderDialog : BaseBottomSheetDialogFragment<DialogRecorderBinding>() {
 
     private fun toggleRecord() {
         recorder?.let {
-            this.isRecording = if (this.isRecording.not()) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    it.resume()
-                } else {
-                    //it.start()
+            this.isRecording =
+                if (isRecording.not()) {
                     startRecord()
-                }
-                true
-            } else {
-                binding?.btnSave?.toShow()
-
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    it.pause()
                 } else {
-                    requireContext().toast(getString(R.string.cant_pause_stopped))
-
-                    stopRecord()
-                    /*it.stop()
-                    it.release()*/
+                    binding?.btnSave?.toShow()
+                    stopRecord().not()
                 }
-                false
-            }
         } ?: run {
-            startRecord()
+            pendingPrepareRecord = {
+                this.isRecording = startRecord()
+            }
+            prepareRecorder()
         }
     }
 
-    private fun startRecord() {
-//        stopRecord()// to ensure
+    private fun startRecord(): Boolean =
+        try {
+            recorder?.let {
+                it.start()
+                "startRecord".logD(TAG)
+                true
+            } ?: false
+        } catch (e: Exception) {
+            e.logE("$TAG startRecord")
+            false
+        }
+
+
+    private fun prepareRecorder() {
+        stopRecord()// to ensure
 //        setupFolder()
 
         if (recordPermission()) {
-            recorder = MediaRecorder(requireContext()).apply {
+            recorder = MediaRecorder().apply {
                 setAudioSource(MediaRecorder.AudioSource.MIC)
-                setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)//mp4
+                setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)//should equal to [Constants.VOICE_FORMAT]
                 setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
                 setOutputFile(path)
                 try {
                     prepare()
                 } catch (e: IOException) {
-                    "prepare mediaRecorder error: ${e.message}".logE("recorderPdb")
+                    e.logE("$TAG prepareRecorder")
                     return
                 }
-
-                start()
-                "prepare mediaRecorder success and start record".logD("recorderPdb")
-
-                isRecording = true
             }
+
+            "success".logD("$TAG prepareRecorder")
+            pendingPrepareRecord?.invoke()
+            pendingPrepareRecord = null
+
         }
 
     }
 
-    private fun stopRecord() {
-        recorder?.stop()
-        recorder?.release()
-        recorder = null
-        isRecording = false
-        "mediaRecorder stop".logD("recorderPdb")
-    }
+    private fun stopRecord(): Boolean =
+        try {
+            recorder?.stop()
+            recorder?.release()
+
+            "stopRecord".logD(TAG)
+            true
+        } catch (e: Exception) {
+            e.logE("$TAG stopRecord")
+            false
+        }
 
     private fun recordPermission(): Boolean = when {
         (PermissionUtils.isGranted(requireContext(), AUDIO_PERMISSION).not()) -> {
@@ -197,7 +208,7 @@ class RecorderDialog : BaseBottomSheetDialogFragment<DialogRecorderBinding>() {
                         when (it.key) {
                             AUDIO_PERMISSION -> {
                                 if (it.value) {
-                                    startRecord()
+                                    prepareRecorder()
                                 } else
                                     requireContext().toast(
                                         getString(R.string.cant_record_without_permission)

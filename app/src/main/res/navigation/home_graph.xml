@@ -13,11 +13,23 @@
         <action
             android:id="@+id/action_recordListFragment_to_dialogRecordList"
             app:destination="@id/dialogRecordList" />
+        <action
+            android:id="@+id/action_recordListFragment_to_dialogDeleteRecord"
+            app:destination="@id/dialogDeleteRecord" />
     </fragment>
 
     <dialog
         android:id="@+id/dialogRecordList"
         android:name="ir.romroid.secureboxrecorder.presentation.recordList.RecorderDialog"
         tools:layout="@layout/dialog_recorder" />
+
+    <dialog
+        android:id="@+id/dialogDeleteRecord"
+        android:name="ir.romroid.secureboxrecorder.presentation.recordList.DeleteRecordDialog"
+        tools:layout="@layout/dialog_delete_record">
+        <argument
+            android:name="id"
+            app:argType="long" />
+    </dialog>
 
 </navigation>

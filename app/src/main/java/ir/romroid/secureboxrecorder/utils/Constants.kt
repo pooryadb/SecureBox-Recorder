@@ -13,3 +13,4 @@ const val WEB_VIEW_EXTRA_FILE_PATH_NAME = "filePath"
 
 //BackStackLiveData keys
 const val BACK_FROM_RECORDER = "BACK_FROM_RECORDER"
+const val BACK_FROM_DELETE_RECORD = "BACK_FROM_DELETE_RECORD"
