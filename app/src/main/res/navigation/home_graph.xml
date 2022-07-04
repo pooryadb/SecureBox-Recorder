@@ -8,7 +8,7 @@
 
     <fragment
         android:id="@+id/recordListFragment"
-        android:name="ir.romroid.secureboxrecorder.presentation.recordList.RecordListFragment"
+        android:name="ir.romroid.secureboxrecorder.presentation.recorder.list.RecordListFragment"
         tools:layout="@layout/fragment_record_list">
         <action
             android:id="@+id/action_recordListFragment_to_dialogRecordList"
@@ -23,12 +23,12 @@
 
     <dialog
         android:id="@+id/dialogRecordList"
-        android:name="ir.romroid.secureboxrecorder.presentation.recordList.RecorderDialog"
+        android:name="ir.romroid.secureboxrecorder.presentation.recorder.dialog.RecorderDialog"
         tools:layout="@layout/dialog_recorder" />
 
     <dialog
         android:id="@+id/dialogDeleteRecord"
-        android:name="ir.romroid.secureboxrecorder.presentation.recordList.DeleteRecordDialog"
+        android:name="ir.romroid.secureboxrecorder.presentation.recorder.dialog.DeleteRecordDialog"
         tools:layout="@layout/dialog_delete_record">
         <argument
             android:name="id"
@@ -37,7 +37,7 @@
 
     <dialog
         android:id="@+id/dialogAudioPlayer"
-        android:name="ir.romroid.secureboxrecorder.presentation.recordList.AudioPlayerDialog"
+        android:name="ir.romroid.secureboxrecorder.presentation.recorder.dialog.AudioPlayerDialog"
         tools:layout="@layout/dialog_audio_player">
 
         <argument

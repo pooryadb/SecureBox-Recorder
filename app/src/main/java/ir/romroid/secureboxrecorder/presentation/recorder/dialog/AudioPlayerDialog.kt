@@ -1,4 +1,4 @@
-package ir.romroid.secureboxrecorder.presentation.recordList
+package ir.romroid.secureboxrecorder.presentation.recorder.dialog
 
 import android.media.MediaPlayer
 import android.os.Bundle

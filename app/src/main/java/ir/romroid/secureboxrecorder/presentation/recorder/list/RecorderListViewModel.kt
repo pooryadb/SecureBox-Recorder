@@ -1,4 +1,4 @@
-package ir.romroid.secureboxrecorder.presentation.recordList
+package ir.romroid.secureboxrecorder.presentation.recorder.list
 
 import android.content.Context
 import androidx.core.net.toUri
