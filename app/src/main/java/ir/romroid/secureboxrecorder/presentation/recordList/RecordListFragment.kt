@@ -11,7 +11,6 @@ import ir.romroid.secureboxrecorder.R
 import ir.romroid.secureboxrecorder.base.component.BaseFragment
 import ir.romroid.secureboxrecorder.databinding.FragmentRecordListBinding
 import ir.romroid.secureboxrecorder.ext.getBackStackLiveData
-import ir.romroid.secureboxrecorder.ext.logD
 import ir.romroid.secureboxrecorder.ext.toast
 import ir.romroid.secureboxrecorder.utils.BACK_FROM_DELETE_RECORD
 import ir.romroid.secureboxrecorder.utils.BACK_FROM_RECORDER
@@ -40,7 +39,6 @@ class RecordListFragment : BaseFragment<FragmentRecordListBinding>() {
             rcAudio.apply {
                 audioAdapter.apply {
                     onDeleteClick = {
-                        logD("onDeleteClick")
                         findNavController().navigate(
                             RecordListFragmentDirections
                                 .actionRecordListFragmentToDialogDeleteRecord(it.id)
@@ -48,7 +46,10 @@ class RecordListFragment : BaseFragment<FragmentRecordListBinding>() {
                     }
 
                     onItemClick = {
-                        logD("onItemClick")
+                        findNavController().navigate(
+                            RecordListFragmentDirections
+                                .actionRecordListFragmentToDialogAudioPlayer(it)
+                        )
                     }
 
                 }

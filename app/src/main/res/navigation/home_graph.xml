@@ -16,6 +16,9 @@
         <action
             android:id="@+id/action_recordListFragment_to_dialogDeleteRecord"
             app:destination="@id/dialogDeleteRecord" />
+        <action
+            android:id="@+id/action_recordListFragment_to_dialogAudioPlayer"
+            app:destination="@id/dialogAudioPlayer" />
     </fragment>
 
     <dialog
@@ -30,6 +33,16 @@
         <argument
             android:name="id"
             app:argType="long" />
+    </dialog>
+
+    <dialog
+        android:id="@+id/dialogAudioPlayer"
+        android:name="ir.romroid.secureboxrecorder.presentation.recordList.AudioPlayerDialog"
+        tools:layout="@layout/dialog_audio_player">
+
+        <argument
+            android:name="audioModel"
+            app:argType="ir.romroid.secureboxrecorder.domain.model.AudioModel" />
     </dialog>
 
 </navigation>
