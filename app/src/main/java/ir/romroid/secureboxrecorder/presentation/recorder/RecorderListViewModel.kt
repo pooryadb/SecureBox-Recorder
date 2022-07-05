@@ -1,4 +1,4 @@
-package ir.romroid.secureboxrecorder.presentation.recorder.list
+package ir.romroid.secureboxrecorder.presentation.recorder
 
 import android.content.Context
 import androidx.core.net.toUri
@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import ir.romroid.secureboxrecorder.base.architecture.BaseViewModel
 import ir.romroid.secureboxrecorder.domain.model.AudioModel
+import ir.romroid.secureboxrecorder.domain.repository.AppRepository
 import ir.romroid.secureboxrecorder.ext.logD
 import ir.romroid.secureboxrecorder.utils.VOICE_SAVED_FOLDER_NAME
 import ir.romroid.secureboxrecorder.utils.liveData.SingleLiveData
@@ -14,6 +15,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RecorderListViewModel @Inject constructor(
+    private val appRepository: AppRepository
 ) : BaseViewModel() {
 
     private val _liveRecordedList = SingleLiveData<List<AudioModel>>()

@@ -12,4 +12,23 @@
     <string name="are_you_sure_you_want_to_delete_this_record">Are you sure you want to delete this record?</string>
     <string name="cant_find_file">Can\'t find file!</string>
     <string name="cancel">cancel</string>
+
+    <string name="set_security_key_warning">Uppercase and lowercase letters are important</string>
+    <string name="set_security_key_note1">Note1: by save audio name same as security key, you can access to file manager.</string>
+    <string name="set_security_key_note2">Note2: if you click on the title “My Records” three times, you will navigate to the recovery page.</string>
+    <string name="security_hint_example">example: Amir!%98M</string>
+    <string name="security_key">Security Key</string>
+    <string name="recovery_key">Recovery Key</string>
+    <string name="restore_note">To restore old data, first enter the \"Security Key\" and \"Recovery Key\", then tap on \"Restore Backup\" and locate backup file.</string>
+    <string name="restore_backup">Restore Backup</string>
+    <string name="restore_data">Restore Data</string>
+    <string name="next">Next</string>
+    <string name="input_is_empty">Text input is empty please fill text field</string>
+    <string name="file_name">File name</string>
+
+    <string name="invalid_pass_special_letter">one of signs ~ ! @ $ ^ _ |</string>
+    <string name="invalid_pass_string">at least one lower-case and one upper-case letter</string>
+    <string name="invalid_pass_numbers">at least one number</string>
+    <string name="invalid_pass_long">at least 6 character</string>
+
 </resources>

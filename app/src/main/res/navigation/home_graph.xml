@@ -19,6 +19,11 @@
         <action
             android:id="@+id/action_recordListFragment_to_dialogAudioPlayer"
             app:destination="@id/dialogAudioPlayer" />
+        <action
+            android:id="@+id/action_recordListFragment_to_getKeysFragment"
+            app:destination="@id/getKeysFragment"
+            app:popUpTo="@id/recordListFragment"
+            app:popUpToInclusive="true" />
     </fragment>
 
     <dialog
@@ -44,5 +49,15 @@
             android:name="audioModel"
             app:argType="ir.romroid.secureboxrecorder.domain.model.AudioModel" />
     </dialog>
+
+    <fragment
+        android:id="@+id/getKeysFragment"
+        android:name="ir.romroid.secureboxrecorder.presentation.safe.keys.GetKeysFragment"
+        android:label="GetKeysFragment"
+        tools:layout="@layout/fragment_get_keys">
+        <action
+            android:id="@+id/action_getKeysFragment_to_recordListFragment"
+            app:destination="@id/recordListFragment" />
+    </fragment>
 
 </navigation>

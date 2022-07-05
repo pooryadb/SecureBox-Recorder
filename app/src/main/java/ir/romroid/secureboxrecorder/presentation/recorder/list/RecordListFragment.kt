@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
@@ -12,6 +13,8 @@ import ir.romroid.secureboxrecorder.base.component.BaseFragment
 import ir.romroid.secureboxrecorder.databinding.FragmentRecordListBinding
 import ir.romroid.secureboxrecorder.ext.getBackStackLiveData
 import ir.romroid.secureboxrecorder.ext.toast
+import ir.romroid.secureboxrecorder.presentation.recorder.RecorderListViewModel
+import ir.romroid.secureboxrecorder.presentation.safe.SafeViewModel
 import ir.romroid.secureboxrecorder.utils.BACK_FROM_DELETE_RECORD
 import ir.romroid.secureboxrecorder.utils.BACK_FROM_RECORDER
 import javax.inject.Inject
@@ -25,9 +28,17 @@ class RecordListFragment : BaseFragment<FragmentRecordListBinding>() {
     @Inject
     lateinit var audioAdapter: AudioAdapter
 
-    private val recorderListViewModel by viewModels<RecorderListViewModel>()
+    private val recorderVM by viewModels<RecorderListViewModel>()
+    private val safeVM by activityViewModels<SafeViewModel>()
 
     override fun viewHandler(view: View, savedInstanceState: Bundle?) {
+        if (safeVM.shouldSetUserKey()) {
+            findNavController().navigate(
+                RecordListFragmentDirections.actionRecordListFragmentToGetKeysFragment()
+            )
+            return
+        }
+
         binding?.apply {
 
             btnAdd.setOnClickListener {
@@ -59,14 +70,14 @@ class RecordListFragment : BaseFragment<FragmentRecordListBinding>() {
             }
 
             if (isRestoredFromBackStack.not())
-                recorderListViewModel.fetchRecordedList(requireContext())
+                recorderVM.fetchRecordedList(requireContext())
         }
     }
 
     override fun initObservers() {
         super.initObservers()
 
-        recorderListViewModel.liveRecordedList.observe(this) {
+        recorderVM.liveRecordedList.observe(this) {
             audioAdapter.submitList(it)
         }
     }
@@ -79,16 +90,16 @@ class RecordListFragment : BaseFragment<FragmentRecordListBinding>() {
                 if (it) {
                     // TODO: goto file manager page
                 } else {
-                    recorderListViewModel.fetchRecordedList(requireContext())
+                    recorderVM.fetchRecordedList(requireContext())
                 }
             }
 
         findNavController().getBackStackLiveData<Long?>(BACK_FROM_DELETE_RECORD)
             ?.observe(this) { recordId ->
                 if (recordId != null) {
-                    recorderListViewModel.deleteRecord(recordId).let {
+                    recorderVM.deleteRecord(recordId).let {
                         if (it) {
-                            recorderListViewModel.fetchRecordedList(requireContext())
+                            recorderVM.fetchRecordedList(requireContext())
                             return@observe
                         }
                     }
