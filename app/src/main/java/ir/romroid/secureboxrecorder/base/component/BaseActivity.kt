@@ -11,11 +11,11 @@ import android.view.WindowInsetsController
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.viewbinding.ViewBinding
-import ir.romroid.common.utils.state.WindowInsetsHelper
 import ir.romroid.secureboxrecorder.R
 import ir.romroid.secureboxrecorder.ext.isDarkTheme
 import ir.romroid.secureboxrecorder.ext.logE
 import ir.romroid.secureboxrecorder.utils.language.LocaleUtils
+import ir.romroid.secureboxrecorder.utils.state.WindowInsetsHelper
 
 
 abstract class BaseActivity<VB : ViewBinding> : AppCompatActivity() {

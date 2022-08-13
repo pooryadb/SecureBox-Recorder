@@ -21,6 +21,8 @@
     <string name="recovery_key">Recovery Key</string>
     <string name="restore_note">To restore old data, first enter the \"Security Key\" and \"Recovery Key\", then tap on \"Restore Backup\" and locate backup file.</string>
     <string name="restore_backup">Restore Backup</string>
+    <string name="restore_backup_success">Restore Backup success</string>
+    <string name="restore_backup_error">Restore Backup error</string>
     <string name="restore_data">Restore Data</string>
     <string name="next">Next</string>
     <string name="input_is_empty">Text input is empty please fill text field</string>

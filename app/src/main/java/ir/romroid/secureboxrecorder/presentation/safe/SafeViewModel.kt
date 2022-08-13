@@ -1,26 +1,31 @@
 package ir.romroid.secureboxrecorder.presentation.safe
 
-import android.content.Context
-import android.database.Cursor
 import android.net.Uri
-import android.provider.OpenableColumns
 import dagger.hilt.android.lifecycle.HiltViewModel
+import ir.nahad.common.ext.viewModelIO
 import ir.romroid.secureboxrecorder.base.architecture.BaseViewModel
+import ir.romroid.secureboxrecorder.domain.provider.FileProviderListener
 import ir.romroid.secureboxrecorder.domain.repository.AppRepository
+import ir.romroid.secureboxrecorder.utils.liveData.SingleLiveData
 import javax.inject.Inject
 import kotlin.math.abs
 
 @HiltViewModel
 class SafeViewModel @Inject constructor(
-    private val appRepository: AppRepository
+    private val appRepo: AppRepository
 ) : BaseViewModel() {
 
+    private val _unzip = SingleLiveData<UnzipResult>()
+    val unzip: SingleLiveData<UnzipResult>
+        get() = _unzip
+
+
     fun shouldSetUserKey(): Boolean {
-        return appRepository.userKey().isEmpty()
+        return appRepo.userKey().isEmpty()
     }
 
     fun shouldChangeUserKey(): Boolean {
-        val lastTime = appRepository.userKeyTime()
+        val lastTime = appRepo.userKeyTime()
         val maxDiffTime = 604800000 // 1 week
 
         val diff = abs(System.currentTimeMillis() - lastTime)
@@ -29,25 +34,51 @@ class SafeViewModel @Inject constructor(
     }
 
     fun saveUserKey(key: String) {
-        appRepository.appCache.userKey = key
-        appRepository.appCache.userKeyTime = System.currentTimeMillis()
+        appRepo.appCache.userKey = key
+        appRepo.appCache.userKeyTime = System.currentTimeMillis()
     }
 
     fun saveRecoveryKey(key: String) {
-        appRepository.appCache.recoveryKey = key
+        appRepo.appCache.recoveryKey = key
     }
 
-    fun getFileNameFromCursor(context: Context, uri: Uri): String? {
-        val fileCursor: Cursor? = context.contentResolver
-            .query(uri, arrayOf(OpenableColumns.DISPLAY_NAME), null, null, null)
-        var fileName: String? = null
-        if (fileCursor != null && fileCursor.moveToFirst()) {
-            val cIndex: Int = fileCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
-            if (cIndex != -1) {
-                fileName = fileCursor.getString(cIndex)
-            }
+    fun getFileName(uri: Uri): String {
+        return appRepo.fileProvider.getFileNameFromCursor(uri) ?: ""
+    }
+
+    fun unzipFile(file: Uri) = viewModelIO {
+
+        val fileTemp = appRepo.fileProvider.copyToTemp(file)
+
+        if (fileTemp != null) {
+            appRepo.fileProvider.unzipToSave(
+                fileTemp,
+                object : FileProviderListener {
+                    override fun onProgress() {
+                        _unzip.postValue(UnzipResult.Progress)
+                    }
+
+                    override fun onSuccess(file: Uri) {
+                        _unzip.postValue(UnzipResult.Success(file))
+                    }
+
+                    override fun onError(e: Exception) {
+                        _unzip.postValue(UnzipResult.Error(e.message ?: ""))
+                    }
+
+                })
+
+//            fileTemp.deleteOnExit()
+        } else {
+            _unzip.value = UnzipResult.Error("File not saved")
         }
-        return fileName
+
+    }
+
+    sealed class UnzipResult {
+        object Progress : UnzipResult()
+        class Success(val file: Uri) : UnzipResult()
+        class Error(val message: String) : UnzipResult()
     }
 
 }

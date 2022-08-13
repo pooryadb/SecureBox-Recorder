@@ -13,6 +13,7 @@ import ir.romroid.secureboxrecorder.R
 import ir.romroid.secureboxrecorder.base.component.BaseFragment
 import ir.romroid.secureboxrecorder.databinding.FragmentGetKeysBinding
 import ir.romroid.secureboxrecorder.ext.logD
+import ir.romroid.secureboxrecorder.ext.toast
 import ir.romroid.secureboxrecorder.presentation.safe.SafeViewModel
 import ir.romroid.secureboxrecorder.utils.MyValidator
 
@@ -31,20 +32,40 @@ class GetKeysFragment : BaseFragment<FragmentGetKeysBinding>() {
     override fun viewHandler(view: View, savedInstanceState: Bundle?) {
         binding?.apply {
             btnNext.setOnClickListener {
-
                 if (trySaveKeys()) {
-                    if (uriTemp != null) {
-                        // TODO: unpack restore file}
-                    }
-
-                    findNavController().navigate(
-                        GetKeysFragmentDirections.actionGetKeysFragmentToRecordListFragment()
-                    )
+                    if (uriTemp != null)
+                        safeVM.unzipFile(uriTemp!!)
+                    else
+                        findNavController().navigate(
+                            GetKeysFragmentDirections.actionGetKeysFragmentToRecordListFragment()
+                        )
                 }
             }
 
             btnRestore.setOnClickListener {
                 getContent.launch("application/zip")
+            }
+        }
+    }
+
+    override fun initObservers() {
+        super.initObservers()
+
+        safeVM.unzip.observe(this) {
+            when (it) {
+                is SafeViewModel.UnzipResult.Progress -> {
+                    loadingDialog(true)
+                }
+                is SafeViewModel.UnzipResult.Success -> {
+                    loadingDialog(false)
+                    requireContext().toast(getString(R.string.restore_backup_success))
+                    uriTemp = null
+                    binding?.btnNext?.performClick()
+                }
+                is SafeViewModel.UnzipResult.Error -> {
+                    loadingDialog(false)
+                    requireContext().toast(getString(R.string.restore_backup_error))
+                }
             }
         }
     }
@@ -76,7 +97,7 @@ class GetKeysFragment : BaseFragment<FragmentGetKeysBinding>() {
             binding?.tvRestoreFileName?.text =
                 "%s:\n%s".format(
                     getString(R.string.file_name),
-                    safeVM.getFileNameFromCursor(requireContext(), it)
+                    safeVM.getFileName(it)
                 )
         }
         "showFileChooser uri: $it".logD(TAG)
