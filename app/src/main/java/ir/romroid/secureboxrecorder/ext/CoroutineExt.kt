@@ -1,4 +1,4 @@
-package ir.nahad.common.ext
+package ir.romroid.secureboxrecorder.ext
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
