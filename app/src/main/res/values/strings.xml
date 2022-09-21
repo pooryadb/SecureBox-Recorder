@@ -3,7 +3,7 @@
     <string name="exit_app">To exit, tap back again</string>
 
     <string name="voice_recording">Voice Recording</string>
-    <string name="file_title">file title</string>
+    <string name="title">title</string>
     <string name="save">save</string>
     <string name="please_enter_name">please enter a name</string>
     <string name="cant_pause_stopped">can\'t pause! stopped!</string>
@@ -32,5 +32,6 @@
     <string name="invalid_pass_string">at least one lower-case and one upper-case letter</string>
     <string name="invalid_pass_numbers">at least one number</string>
     <string name="invalid_pass_long">at least 6 character</string>
+    <string name="start_record">start Record</string>
 
 </resources>

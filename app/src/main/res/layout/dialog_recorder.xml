@@ -45,7 +45,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:gravity="center"
-        android:hint="@string/file_title"
+        android:hint="@string/title"
         android:inputType="textShortMessage"
         android:maxLines="1"
         android:singleLine="true"
@@ -69,12 +69,22 @@
         app:srcCompat="@drawable/ic_sound_wave"
         app:tint="?android:attr/textColorHint" />
 
+    <Chronometer
+        android:id="@+id/chronometer"
+        style="@style/txt.h2.medium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@id/imgWave"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/imgWave" />
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/margin"
         android:backgroundTint="?attr/colorError"
+        android:contentDescription="@string/start_record"
         android:src="@drawable/circle"
         app:fabSize="normal"
         app:layout_constraintBottom_toBottomOf="parent"

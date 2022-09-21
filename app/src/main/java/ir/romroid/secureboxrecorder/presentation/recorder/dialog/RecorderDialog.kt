@@ -1,18 +1,25 @@
 package ir.romroid.secureboxrecorder.presentation.recorder.dialog
 
 import android.Manifest
+import android.animation.ArgbEvaluator
+import android.animation.ValueAnimator
 import android.content.Context
+import android.content.res.ColorStateList
 import android.media.MediaRecorder
 import android.os.Bundle
+import android.os.SystemClock
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.animation.doOnCancel
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import ir.romroid.secureboxrecorder.R
 import ir.romroid.secureboxrecorder.base.component.BaseBottomSheetDialogFragment
 import ir.romroid.secureboxrecorder.databinding.DialogRecorderBinding
 import ir.romroid.secureboxrecorder.ext.*
+import ir.romroid.secureboxrecorder.presentation.safe.SafeViewModel
 import ir.romroid.secureboxrecorder.utils.*
 import java.io.File
 import java.io.IOException
@@ -22,6 +29,8 @@ class RecorderDialog : BaseBottomSheetDialogFragment<DialogRecorderBinding>() {
 
     override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> DialogRecorderBinding
         get() = DialogRecorderBinding::inflate
+
+    private val safeVM by activityViewModels<SafeViewModel>()
 
     companion object {
         private const val TAG = "RecorderDialog"
@@ -33,10 +42,16 @@ class RecorderDialog : BaseBottomSheetDialogFragment<DialogRecorderBinding>() {
     private var pendingPrepareRecord: (() -> Unit)? = null
     private var isRecording = false
         set(value) {
-            if (value)
+            if (value) {
                 binding?.fab?.setImageResource(R.drawable.ic_pause)
-            else if (field)
+                binding?.chronometer?.base = SystemClock.elapsedRealtime()
+                binding?.chronometer?.start()
+                animateWave.start()
+            } else if (field) {
                 binding?.fab?.toHide()
+                binding?.chronometer?.stop()
+                animateWave.cancel()
+            }
 
             field = value
         }
@@ -62,6 +77,20 @@ class RecorderDialog : BaseBottomSheetDialogFragment<DialogRecorderBinding>() {
                     saveVoice(etName.text.toString())
                 }
             }
+
+
+            val key = safeVM.getUserKey()
+            val keyLength = key.length
+            etName.afterTextChange {
+                it.logE(TAG)
+                if (it.length == keyLength) {
+                    if (it == key) {
+                        val fTemp = File(path)
+                        fTemp.delete()
+                        dismiss(true)
+                    }
+                }
+            }
         }
     }
 
@@ -80,12 +109,6 @@ class RecorderDialog : BaseBottomSheetDialogFragment<DialogRecorderBinding>() {
         stopRecord()// to ensure
 
         val fTemp = File(path)
-
-        if (name == DbHelper.getUserKey(requireContext())) {
-            fTemp.delete()
-            dismiss(true)
-            return
-        }
 
         val newPath = requireContext().cacheDir.path + "/" + VOICE_SAVED_FOLDER_NAME
 
@@ -223,6 +246,29 @@ class RecorderDialog : BaseBottomSheetDialogFragment<DialogRecorderBinding>() {
 
     private fun dismiss(gotoFileManager: Boolean) {
         findNavController().setBackStackLiveData(BACK_FROM_RECORDER, gotoFileManager)
+    }
+
+
+    private val animateWave: ValueAnimator by lazy {
+        ValueAnimator().apply {
+            setIntValues(
+                requireContext().getAttrColor(android.R.attr.colorError),
+                requireContext().getAttrColor(android.R.attr.colorControlNormal)
+            )
+            setEvaluator(ArgbEvaluator())
+            addUpdateListener { valueAnimator ->
+                binding?.imgWave?.imageTintList = ColorStateList.valueOf(
+                    valueAnimator.animatedValue as Int
+                )
+            }
+            doOnCancel {
+                binding?.imgWave?.imageTintList = null
+            }
+
+            duration = 1000
+            repeatCount = ValueAnimator.INFINITE
+            repeatMode = ValueAnimator.REVERSE
+        }
     }
 
 }
