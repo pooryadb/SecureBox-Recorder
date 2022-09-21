@@ -52,9 +52,9 @@
 
     <fragment
         android:id="@+id/getKeysFragment"
-        android:name="ir.romroid.secureboxrecorder.presentation.safe.keys.GetKeysFragment"
+        android:name="ir.romroid.secureboxrecorder.presentation.safe.keys.KeysFragment"
         android:label="GetKeysFragment"
-        tools:layout="@layout/fragment_get_keys">
+        tools:layout="@layout/fragment_keys">
         <action
             android:id="@+id/action_getKeysFragment_to_recordListFragment"
             app:destination="@id/recordListFragment" />

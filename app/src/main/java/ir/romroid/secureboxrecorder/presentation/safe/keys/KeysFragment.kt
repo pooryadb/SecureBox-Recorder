@@ -11,17 +11,17 @@ import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import ir.romroid.secureboxrecorder.R
 import ir.romroid.secureboxrecorder.base.component.BaseFragment
-import ir.romroid.secureboxrecorder.databinding.FragmentGetKeysBinding
+import ir.romroid.secureboxrecorder.databinding.FragmentKeysBinding
 import ir.romroid.secureboxrecorder.ext.logD
 import ir.romroid.secureboxrecorder.ext.toast
 import ir.romroid.secureboxrecorder.presentation.safe.SafeViewModel
 import ir.romroid.secureboxrecorder.utils.MyValidator
 
 @AndroidEntryPoint
-class GetKeysFragment : BaseFragment<FragmentGetKeysBinding>() {
+class KeysFragment : BaseFragment<FragmentKeysBinding>() {
 
-    override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentGetKeysBinding
-        get() = FragmentGetKeysBinding::inflate
+    override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentKeysBinding
+        get() = FragmentKeysBinding::inflate
 
     private val safeVM by activityViewModels<SafeViewModel>()
 
@@ -37,7 +37,7 @@ class GetKeysFragment : BaseFragment<FragmentGetKeysBinding>() {
                         safeVM.unzipFile(uriTemp!!)
                     else
                         findNavController().navigate(
-                            GetKeysFragmentDirections.actionGetKeysFragmentToRecordListFragment()
+                            KeysFragmentDirections.actionGetKeysFragmentToRecordListFragment()
                         )
                 }
             }
@@ -51,7 +51,7 @@ class GetKeysFragment : BaseFragment<FragmentGetKeysBinding>() {
     override fun initObservers() {
         super.initObservers()
 
-        safeVM.unzip.observe(this) {
+        safeVM.unzipLive.observe(this) {
             when (it) {
                 is SafeViewModel.UnzipResult.Progress -> {
                     loadingDialog(true)

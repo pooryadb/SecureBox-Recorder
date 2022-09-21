@@ -107,7 +107,7 @@ class FileProvider @Inject constructor(val context: Context) {
     }
 
 
-    fun unzipToSave(
+    fun unzipToSaveFolder(
         file: File,
         listener: FileProviderListener? = null
     ): Boolean = unzip(file, folderSave.path, listener)
@@ -125,13 +125,16 @@ class FileProvider @Inject constructor(val context: Context) {
             val inputStream = FileInputStream(file.path)
             val zipStream = ZipInputStream(inputStream)
             var zEntry: ZipEntry? = null
-            val zipName = file.name.substringBefore(".")
+            val zipName = file.name.substringBeforeLast(".")
 
             val destination = destinationPath
-                ?: file.parent?.also { it + zipName }
+                ?: file.parent?.also { "$it/$zipName" }
                 ?: throw Exception("can't create destination")
+
+            createFolder(destination) ?: throw Exception("can't create destination")
+
             while (zipStream.nextEntry.also { zEntry = it } != null) {
-                val extractFileName = zEntry!!.name.substringAfter(".")
+                val extractFileName = zEntry!!.name
 
                 "Unzipping $extractFileName at $destination".logD(TAG)
 
@@ -153,7 +156,6 @@ class FileProvider @Inject constructor(val context: Context) {
             zipStream.close()
             "Unzipping complete. path :  $destination".logD(TAG)
 
-            file.delete()
             listener?.onSuccess(destination.toUri())
 
             true
