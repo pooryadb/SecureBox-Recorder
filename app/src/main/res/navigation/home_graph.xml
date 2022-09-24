@@ -67,6 +67,20 @@
         android:id="@+id/fileManagerFragment"
         android:name="ir.romroid.secureboxrecorder.presentation.fileManager.FileManagerFragment"
         android:label="FileManagerFragment"
-        tools:layout="@layout/fragment_file_manager" />
+        tools:layout="@layout/fragment_file_manager">
+        <action
+            android:id="@+id/action_fileManagerFragment_to_deleteFileDialog"
+            app:destination="@id/deleteFileDialog" />
+    </fragment>
+
+    <dialog
+        android:id="@+id/deleteFileDialog"
+        android:name="ir.romroid.secureboxrecorder.presentation.fileManager.dialog.DeleteFileDialog"
+        android:label="DeleteFileDialog"
+        tools:layout="@layout/dialog_delete_file">
+        <argument
+            android:name="id"
+            app:argType="long" />
+    </dialog>
 
 </navigation>

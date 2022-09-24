@@ -1,5 +1,7 @@
 package ir.romroid.secureboxrecorder.utils
 
+import android.net.Uri
+import androidx.core.net.toFile
 import java.io.*
 
 object FileUtils {
@@ -17,8 +19,8 @@ object FileUtils {
     }
 
     @Throws(Exception::class)
-    fun readFile(filePath: String): ByteArray {
-        val file = File(filePath)
+    fun readFile(fileUri: Uri): ByteArray {
+        val file = fileUri.toFile()
         val fileContents = file.readBytes()
         val inputBuffer = BufferedInputStream(
             FileInputStream(file)

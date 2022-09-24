@@ -10,6 +10,7 @@ import ir.romroid.secureboxrecorder.domain.model.FileType
 import ir.romroid.secureboxrecorder.domain.repository.AppRepository
 import ir.romroid.secureboxrecorder.ext.viewModelIO
 import ir.romroid.secureboxrecorder.utils.liveData.SingleLiveData
+import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
@@ -33,6 +34,10 @@ class FileManagerViewModel @Inject constructor(
     val liveDeleteFile: LiveData<Boolean>
         get() = _liveDeleteFile
 
+    private val _liveShareFile = SingleLiveData<File?>()
+    val liveShareFile: LiveData<File?>
+        get() = _liveShareFile
+
 
     fun fetchFileList() = viewModelIO {
         _liveFileList.postValue(
@@ -54,8 +59,8 @@ class FileManagerViewModel @Inject constructor(
         } ?: _liveDeleteFile.postValue(false)
     }
 
-    fun shareFile(id: Long) {
-
+    fun shareFile(uri: Uri) = viewModelIO {
+        _liveShareFile.postValue(appRepository.copyToShare(uri))
     }
 
     fun addFile(uri: Uri) = viewModelIO {
@@ -65,5 +70,7 @@ class FileManagerViewModel @Inject constructor(
     fun exportData() {
 
     }
+
+    fun clearTemp() = appRepository.clearTemp()
 
 }

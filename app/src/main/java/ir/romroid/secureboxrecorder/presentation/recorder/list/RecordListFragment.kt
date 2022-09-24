@@ -105,12 +105,12 @@ class RecordListFragment : BaseFragment<FragmentRecordListBinding>() {
                     recorderVM.deleteRecord(recordId).let {
                         if (it) {
                             recorderVM.fetchRecordedList(requireContext())
-                            return@observe
-                        }
+                        } else
+                            requireContext().toast(getString(R.string.cant_find_file))
+
                     }
                 }
 
-                requireContext().toast(getString(R.string.cant_find_file))
             }
     }
 

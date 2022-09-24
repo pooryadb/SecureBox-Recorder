@@ -19,8 +19,12 @@ class AppRepository @Inject constructor(
 
     suspend fun getSavedFiles() = fileProvider.getFiles(encryptKey())
 
-    suspend fun saveAndEncrypt(uri: Uri) = fileProvider.saveToRepo(encryptKey(), uri)
+    suspend fun saveAndEncrypt(uri: Uri) = fileProvider.saveToBox(encryptKey(), uri)
 
     fun deleteFile(uri: Uri) = fileProvider.delete(uri)
+
+    suspend fun copyToShare(uri: Uri) = fileProvider.restoreFromBox(encryptKey(), uri)
+
+    fun clearTemp() = fileProvider.clearTemp()
 
 }

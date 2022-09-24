@@ -49,7 +49,7 @@
             android:layout_gravity="bottom|end"
             android:layout_margin="@dimen/margin"
             android:src="@drawable/ic_circle_plus"
-            app:backgroundTint="?attr/colorError"
+            app:backgroundTint="?attr/colorPrimaryVariant"
             app:fabSize="normal"
             app:layout_behavior="com.google.android.material.behavior.HideBottomViewOnScrollBehavior"
             app:tint="#fff" />

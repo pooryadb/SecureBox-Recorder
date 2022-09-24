@@ -5,13 +5,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ShareCompat
+import androidx.core.content.FileProvider
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
+import ir.romroid.secureboxrecorder.BuildConfig
 import ir.romroid.secureboxrecorder.R
 import ir.romroid.secureboxrecorder.base.component.BaseFragment
 import ir.romroid.secureboxrecorder.databinding.FragmentFileManagerBinding
+import ir.romroid.secureboxrecorder.ext.getBackStackLiveData
 import ir.romroid.secureboxrecorder.ext.logD
 import ir.romroid.secureboxrecorder.ext.toast
+import ir.romroid.secureboxrecorder.utils.BACK_FROM_DELETE_FILE
+import java.net.URLConnection
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -44,12 +51,15 @@ class FileManagerFragment : BaseFragment<FragmentFileManagerBinding>() {
             rcFileManager.apply {
                 audioAdapter.apply {
                     onDeleteListener = {
-                        loadingDialog(true)
-                        fileManagerVM.deleteFile(it.id)
+                        findNavController().navigate(
+                            FileManagerFragmentDirections
+                                .actionFileManagerFragmentToDeleteFileDialog(it.id)
+                        )
                     }
 
                     onShareListener = {
-
+                        loadingDialog(true)
+                        fileManagerVM.shareFile(it.uri)
                     }
 
                     onClickListener = {
@@ -92,6 +102,36 @@ class FileManagerFragment : BaseFragment<FragmentFileManagerBinding>() {
                 requireContext().toast(getString(R.string.error_delete_file))
         }
 
+        fileManagerVM.liveShareFile.observe(this) {
+            loadingDialog(false)
+            if (it != null) {
+                val uriProvider = FileProvider.getUriForFile(
+                    requireContext(),
+                    BuildConfig.APPLICATION_ID + "." + requireActivity().localClassName + ".provider",
+                    it
+                )
+
+
+                ShareCompat.IntentBuilder(requireContext())
+                    .setStream(uriProvider)
+                    .setType(URLConnection.guessContentTypeFromName(it.name))
+                    .startChooser()
+            } else
+                requireContext().toast(getString(R.string.error_share_file))
+        }
+
+    }
+
+    override fun initBackStackObservers() {
+        super.initBackStackObservers()
+
+        findNavController().getBackStackLiveData<Long?>(BACK_FROM_DELETE_FILE)
+            ?.observe(this) { fileId ->
+                if (fileId != null) {
+                    loadingDialog(true)
+                    fileManagerVM.deleteFile(fileId)
+                }
+            }
     }
 
     private val getContent = registerForActivityResult(
@@ -107,6 +147,12 @@ class FileManagerFragment : BaseFragment<FragmentFileManagerBinding>() {
 
     }
 
-    private val TAG = "FileManagerFrag"
+    override fun onDestroy() {
+        "onDestroy".logD(TAG)
+        // FIXME: onDestroy not work properly
+        fileManagerVM.clearTemp()
+        super.onDestroy()
+    }
 
+    private val TAG = "FileManagerFrag"
 }

@@ -43,10 +43,10 @@ class FileProvider @Inject constructor(val context: Context) {
         f
     }
 
-    fun copyToTemp(contentUri: Uri) =
+    suspend fun copyToTemp(contentUri: Uri) =
         copyTo(contentUri, folderTemp.path)
 
-    private fun copyTo(contentUri: Uri, destinationFolderPath: String): File? {
+    private suspend fun copyTo(contentUri: Uri, destinationFolderPath: String): File? {
         Log.e(TAG, "saveToPath: contentUri= ${contentUri}, dest= $destinationFolderPath")
 
         val parentFolder = File(destinationFolderPath)
@@ -182,8 +182,8 @@ class FileProvider @Inject constructor(val context: Context) {
         null
     }
 
-    private fun createFile(name: String): File {
-        val tempFile = File(name)
+    private fun createFile(path: String): File {
+        val tempFile = File(path)
         tempFile.parentFile?.mkdirs()
         tempFile.logE("$TAG createFile")
         tempFile.createNewFile()
@@ -210,8 +210,8 @@ class FileProvider @Inject constructor(val context: Context) {
         )
     }
 
-    suspend fun saveToRepo(key: String, contentUri: Uri): Boolean {
-        "saveToRepo: contentUri= ${contentUri}".logD(TAG)
+    suspend fun saveToBox(key: String, contentUri: Uri): Boolean {
+        "saveToBox: contentUri= $contentUri".logD(TAG)
 
         val fileName = getFileNameWithExtension(context, contentUri)
 
@@ -248,6 +248,25 @@ class FileProvider @Inject constructor(val context: Context) {
         }
     }
 
+    suspend fun restoreFromBox(key: String, uri: Uri): File? = try {
+        "restoreFromBox: uri= $uri".logD(TAG)
+
+        val sk = CryptoUtils.convertToKey(key)
+        val decryptedFileData = CryptoUtils.decrypt(sk, FileUtils.readFile(uri))
+        val fName = decryptFileName(sk, uri.toFile().name)
+        val resultFile = File(folderTemp, fName)
+        createFile(resultFile.path)
+
+        FileUtils.saveFile(decryptedFileData, resultFile.path)
+
+        resultFile
+    } catch (e: Exception) {
+        e.printStackTrace()
+        folderTemp.delete()
+
+        null
+    }
+
     private fun addRandomToName(name: String): String {
         var result = name.substringBeforeLast('.', name)
         result += Random.nextInt()
@@ -259,6 +278,8 @@ class FileProvider @Inject constructor(val context: Context) {
 
     fun delete(uri: Uri) =
         uri.toFile().delete()
+
+    fun clearTemp() = folderTemp.delete()
 
 }
 
