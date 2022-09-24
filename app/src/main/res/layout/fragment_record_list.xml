@@ -20,31 +20,40 @@
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/tvName"
-                style="@style/txt.h4.bold"
+                style="@style/txt.h3.bold"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/padding"
                 android:layout_weight="1"
                 android:text="@string/app_name" />
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/btnAdd"
-                android:layout_width="@dimen/icon_big"
-                android:layout_height="@dimen/icon_big"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:padding="5dp"
-                android:src="@drawable/ic_circle_plus"
-                android:tint="?attr/colorError" />
-
         </androidx.appcompat.widget.LinearLayoutCompat>
     </com.google.android.material.appbar.MaterialToolbar>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rcAudio"
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tools:listitem="@layout/item_audio" />
+        android:layout_weight="1">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rcAudio"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/item_audio" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/btnAdd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="@dimen/margin"
+            android:src="@drawable/ic_circle_plus"
+            app:backgroundTint="?attr/colorError"
+            app:fabSize="normal"
+            app:layout_behavior="com.google.android.material.behavior.HideBottomViewOnScrollBehavior"
+            app:tint="#fff" />
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 </androidx.appcompat.widget.LinearLayoutCompat>

@@ -248,7 +248,6 @@ class RecorderDialog : BaseBottomSheetDialogFragment<DialogRecorderBinding>() {
         findNavController().setBackStackLiveData(BACK_FROM_RECORDER, gotoFileManager)
     }
 
-
     private val animateWave: ValueAnimator by lazy {
         ValueAnimator().apply {
             setIntValues(
