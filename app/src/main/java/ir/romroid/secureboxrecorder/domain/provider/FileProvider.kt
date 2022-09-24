@@ -6,19 +6,22 @@ import android.net.Uri
 import android.provider.OpenableColumns
 import android.util.Log
 import android.webkit.MimeTypeMap
+import androidx.core.net.toFile
 import androidx.core.net.toUri
 import ir.romroid.secureboxrecorder.ext.logD
 import ir.romroid.secureboxrecorder.ext.logE
-import ir.romroid.secureboxrecorder.utils.FILES_SAVED_FOLDER_NAME
-import ir.romroid.secureboxrecorder.utils.FILES_TEMP_SHARE_FOLDER_NAME
-import ir.romroid.secureboxrecorder.utils.FileUtils
+import ir.romroid.secureboxrecorder.utils.*
+import ir.romroid.secureboxrecorder.utils.CryptoUtils.encodeBase64Replaced
+import ir.romroid.secureboxrecorder.utils.CryptoUtils.fromBase64Replaced
 import java.io.BufferedOutputStream
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
+import javax.crypto.SecretKey
 import javax.inject.Inject
+import kotlin.random.Random
 
 class FileProvider @Inject constructor(val context: Context) {
 
@@ -186,6 +189,76 @@ class FileProvider @Inject constructor(val context: Context) {
         tempFile.createNewFile()
         return tempFile
     }
+
+    private fun encryptFileName(sKey: SecretKey, name: String): String =
+        CryptoUtils.encrypt(sKey, name).encodeBase64Replaced()
+
+    private fun decryptFileName(sKey: SecretKey, encryptedName: String): String =
+        CryptoUtils.decryptToString(sKey, encryptedName.fromBase64Replaced())
+
+    fun getEncryptedFiles(): List<File> = folderSave.listFiles()?.toList() ?: emptyList()
+
+    /**
+     * @return
+     * [Pair.first] decrypted file name
+     * [Pair.second] encrypted file
+     */
+    suspend fun getFiles(key: String): List<Pair<String, File>> = getEncryptedFiles().map {
+        Pair(
+            decryptFileName(CryptoUtils.convertToKey(key), it.name),
+            it
+        )
+    }
+
+    suspend fun saveToRepo(key: String, contentUri: Uri): Boolean {
+        "saveToRepo: contentUri= ${contentUri}".logD(TAG)
+
+        val fileName = getFileNameWithExtension(context, contentUri)
+
+        val sKey = CryptoUtils.convertToKey(key)
+        var nameEncrypted = encryptFileName(sKey, fileName)
+
+        getEncryptedFiles().firstOrNull { it.name == nameEncrypted }?.let {
+            nameEncrypted = encryptFileName(sKey, addRandomToName(fileName))
+        }
+
+        val filePath = folderSave.path + "/" + nameEncrypted
+        val tempFile = createFile(filePath)
+
+        "fileFromContentUri: path= ${tempFile.path}".logD(TAG)
+
+        return try {
+            val oStream = FileOutputStream(tempFile)
+            val inputStream = context.contentResolver.openInputStream(contentUri)
+
+            if (inputStream!!.available() > MAX_FILE_SIZE) {
+                return false
+            }
+
+            val fileData = FileUtils.readFile(inputStream)
+            val encryptedFileData = CryptoUtils.encrypt(sKey, fileData)
+            FileUtils.saveFile(encryptedFileData, oStream)
+
+            true
+        } catch (e: Exception) {
+            e.printStackTrace()
+            tempFile.delete()
+
+            false
+        }
+    }
+
+    private fun addRandomToName(name: String): String {
+        var result = name.substringBeforeLast('.', name)
+        result += Random.nextInt()
+        if (name.contains('.'))
+            result += "." + name.substringAfterLast(".")
+
+        return result
+    }
+
+    fun delete(uri: Uri) =
+        uri.toFile().delete()
 
 }
 

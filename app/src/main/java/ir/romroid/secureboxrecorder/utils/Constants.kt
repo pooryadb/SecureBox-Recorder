@@ -1,5 +1,6 @@
 package ir.romroid.secureboxrecorder.utils
 
+const val MAX_FILE_SIZE = 10240000
 const val VOICE_FORMAT = ".3gp"
 
 const val VOICE_TEMP_FOLDER_NAME = "voiceTemp"

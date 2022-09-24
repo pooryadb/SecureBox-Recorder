@@ -11,12 +11,18 @@ import javax.crypto.spec.SecretKeySpec
 object CryptoUtils {
 
     private const val TAG = "Crypto"
+    private const val ALGORITHM = "AES"
+    private const val ALGORITHM_PROVIDER = "BC"
+    private const val PATH_SPECIAL = "/"
+    private const val PATH_SPECIAL_REPLACEMENT = "_"
 
-    fun convertToKey(encodedKey: String): SecretKey {
+    fun convertToKey(key: String, isBase64: Boolean = false): SecretKey {
+        val encodedKey = if (isBase64) key else key.encodeBase64()
+
         val decodedKey: ByteArray = Base64.decode(encodedKey, Base64.NO_WRAP)
         val str = String(decodedKey, Charsets.US_ASCII)
         str.logD("$TAG convertToKey decodedKey")
-        return SecretKeySpec(decodedKey, 0, decodedKey.size, "AES")
+        return SecretKeySpec(decodedKey, 0, decodedKey.size, ALGORITHM)
     }
 
     @Throws(NoSuchAlgorithmException::class)
@@ -27,7 +33,7 @@ object CryptoUtils {
 
 
     fun ByteArray.encodeBase64Replaced(): String =
-        Base64.encodeToString(this, Base64.NO_WRAP).replace("/", "_")
+        Base64.encodeToString(this, Base64.NO_WRAP).replace(PATH_SPECIAL, PATH_SPECIAL_REPLACEMENT)
 
     fun String.encodeBase64(): String =
         Base64.encodeToString(this.toByteArray(), Base64.NO_WRAP)
@@ -35,27 +41,39 @@ object CryptoUtils {
     fun ByteArray.toStringASCII(): String =
         String(this, Charsets.US_ASCII)
 
-    fun String.fromBase64(): ByteArray =
-        Base64.decode(this.replace("_", "/"), Base64.NO_WRAP)
+    fun String.fromBase64Replaced(): ByteArray =
+        Base64.decode(this.replace(PATH_SPECIAL_REPLACEMENT, PATH_SPECIAL), Base64.NO_WRAP)
 
 
     @Throws(Exception::class)
-    fun encrypt(yourKey: SecretKey, fileData: ByteArray): ByteArray {
-        val data = yourKey.encoded
-        val sKeySpec = SecretKeySpec(data, 0, data.size, "AES")
-        val cipher = Cipher.getInstance("AES", "BC")
+    fun encrypt(yourKey: SecretKey, data: ByteArray): ByteArray {
+        val keyEncoded = yourKey.encoded
+        val sKeySpec = SecretKeySpec(keyEncoded, 0, keyEncoded.size, ALGORITHM)
+        val cipher = Cipher.getInstance(ALGORITHM, ALGORITHM_PROVIDER)
         cipher.init(Cipher.ENCRYPT_MODE, sKeySpec, IvParameterSpec(ByteArray(cipher.blockSize)))
-        return cipher.doFinal(fileData)
+        return cipher.doFinal(data)
     }
 
+    fun encrypt(yourKey: SecretKey, data: String): ByteArray =
+        encrypt(yourKey, data.toByteArray())
+
     @Throws(Exception::class)
-    fun decrypt(yourKey: SecretKey, fileData: ByteArray): ByteArray {
+    fun decrypt(yourKey: SecretKey, data: ByteArray): ByteArray {
         val decrypted: ByteArray
-        val cipher = Cipher.getInstance("AES", "BC")
+        val cipher = Cipher.getInstance(ALGORITHM, ALGORITHM_PROVIDER)
         cipher.init(Cipher.DECRYPT_MODE, yourKey, IvParameterSpec(ByteArray(cipher.blockSize)))
-        decrypted = cipher.doFinal(fileData)
+        decrypted = cipher.doFinal(data)
         return decrypted
     }
+
+    fun decryptToString(yourKey: SecretKey, data: ByteArray): String =
+        decrypt(yourKey, data).toStringASCII()
+
+    fun decrypt(yourKey: SecretKey, data: String): ByteArray =
+        decrypt(yourKey, data.fromBase64Replaced())
+
+    fun decryptToString(yourKey: SecretKey, data: String): String =
+        decrypt(yourKey, data.fromBase64Replaced()).toStringASCII()
 
     /*fun decryptFile(
         key: String,

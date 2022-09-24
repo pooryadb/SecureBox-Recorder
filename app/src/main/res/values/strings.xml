@@ -33,5 +33,11 @@
     <string name="invalid_pass_numbers">at least one number</string>
     <string name="invalid_pass_long">at least 6 character</string>
     <string name="start_record">start Record</string>
+    <string name="file_manager">File Manager</string>
+    <string name="exit">Exit</string>
+    <string name="export">Export</string>
+    <string name="share">Share</string>
+    <string name="error_add_file">Error! can\'t add file</string>
+    <string name="error_delete_file">Error! can\'t delete file</string>
 
 </resources>

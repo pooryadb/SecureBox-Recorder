@@ -12,6 +12,7 @@ import ir.romroid.secureboxrecorder.R
 import ir.romroid.secureboxrecorder.base.component.BaseFragment
 import ir.romroid.secureboxrecorder.databinding.FragmentRecordListBinding
 import ir.romroid.secureboxrecorder.ext.getBackStackLiveData
+import ir.romroid.secureboxrecorder.ext.runAfter
 import ir.romroid.secureboxrecorder.ext.toast
 import ir.romroid.secureboxrecorder.presentation.recorder.RecorderListViewModel
 import ir.romroid.secureboxrecorder.presentation.safe.SafeViewModel
@@ -88,7 +89,11 @@ class RecordListFragment : BaseFragment<FragmentRecordListBinding>() {
         findNavController().getBackStackLiveData<Boolean>(BACK_FROM_RECORDER)
             ?.observe(this) {
                 if (it) {
-                    // TODO: goto file manager page
+                    runAfter(1000L, {
+                        findNavController().navigate(
+                            RecordListFragmentDirections.actionRecordListFragmentToFileManagerFragment()
+                        )
+                    })
                 } else {
                     recorderVM.fetchRecordedList(requireContext())
                 }

@@ -24,6 +24,9 @@
             app:destination="@id/getKeysFragment"
             app:popUpTo="@id/recordListFragment"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_recordListFragment_to_fileManagerFragment"
+            app:destination="@id/fileManagerFragment" />
     </fragment>
 
     <dialog
@@ -59,5 +62,11 @@
             android:id="@+id/action_getKeysFragment_to_recordListFragment"
             app:destination="@id/recordListFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/fileManagerFragment"
+        android:name="ir.romroid.secureboxrecorder.presentation.fileManager.FileManagerFragment"
+        android:label="FileManagerFragment"
+        tools:layout="@layout/fragment_file_manager" />
 
 </navigation>
