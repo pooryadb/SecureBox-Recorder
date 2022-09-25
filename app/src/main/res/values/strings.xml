@@ -44,6 +44,8 @@
     <string name="export_message">Your files is Exported ,Encrypted with your Key.</string>
     <string name="ok">OK</string>
     <string name="error_open_file">Error! can\'t open file</string>
-    <string name="open_other_files_msg">Can\'t open file, you can  share it and open with other applications.</string>
+    <string name="open_with_other_app">Can\'t open file, you can open it with other applications.</string>
+    <string name="open">Open</string>
+    <string name="dismiss">Dismiss</string>
 
 </resources>

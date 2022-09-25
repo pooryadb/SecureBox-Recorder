@@ -95,7 +95,7 @@
         android:label="ShareFileDialog"
         tools:layout="@layout/dialog_share_file">
         <argument
-            android:name="address"
+            android:name="path"
             app:argType="string" />
     </dialog>
 
@@ -107,6 +107,18 @@
         <argument
             android:name="fileModel"
             app:argType="ir.romroid.secureboxrecorder.domain.model.FileModel" />
+        <action
+            android:id="@+id/action_webViewFragment_to_openFileDialog"
+            app:destination="@id/openFileDialog" />
     </fragment>
+    <dialog
+        android:id="@+id/openFileDialog"
+        android:name="ir.romroid.secureboxrecorder.presentation.fileManager.dialog.OpenFileDialog"
+        android:label="OpenFileDialog"
+        tools:layout="@layout/dialog_open_file">
+        <argument
+            android:name="fileModel"
+            app:argType="ir.romroid.secureboxrecorder.domain.model.FileModel" />
+    </dialog>
 
 </navigation>

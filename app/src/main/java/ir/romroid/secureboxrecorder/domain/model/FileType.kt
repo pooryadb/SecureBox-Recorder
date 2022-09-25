@@ -25,7 +25,7 @@ enum class FileType(
             "avi",
         )
     ),
-    Text(
+    Document(
         imageRes = R.drawable.ic_play,
         suffixes = listOf(
             "txt",

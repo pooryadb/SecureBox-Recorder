@@ -9,14 +9,19 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.core.net.toFile
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import dagger.hilt.android.AndroidEntryPoint
+import ir.romroid.secureboxrecorder.R
 import ir.romroid.secureboxrecorder.base.component.BaseFragment
 import ir.romroid.secureboxrecorder.databinding.FragmentWebViewBinding
 import ir.romroid.secureboxrecorder.domain.model.FileModel
 import ir.romroid.secureboxrecorder.domain.model.FileType
+import ir.romroid.secureboxrecorder.ext.getBackStackLiveData
 import ir.romroid.secureboxrecorder.ext.logD
 import ir.romroid.secureboxrecorder.ext.logE
+import ir.romroid.secureboxrecorder.ext.toast
+import ir.romroid.secureboxrecorder.utils.BACK_FROM_OPEN_FILE
 
 @AndroidEntryPoint
 class WebViewFragment : BaseFragment<FragmentWebViewBinding>() {
@@ -45,9 +50,10 @@ class WebViewFragment : BaseFragment<FragmentWebViewBinding>() {
                     loadWithOverviewMode = true
                     useWideViewPort = true
                 }
-
-                openFile(args.fileModel)
             }
+
+            if (isRestoredFromBackStack.not())
+                fileManagerVM.tempFile(args.fileModel.uri)
         }
     }
 
@@ -69,15 +75,39 @@ class WebViewFragment : BaseFragment<FragmentWebViewBinding>() {
         }
     }
 
+    override fun initObservers() {
+        super.initObservers()
+
+        fileManagerVM.liveTempFile.observe(this) {
+            if (it != null) {
+                openFile(it)
+            } else
+                requireContext().toast(getString(R.string.error_open_file))
+        }
+    }
+
+    override fun initBackStackObservers() {
+        super.initBackStackObservers()
+
+        findNavController().getBackStackLiveData<Unit?>(BACK_FROM_OPEN_FILE)
+            ?.observe(this) {
+                "backFrom OpenFileDialog".logD(TAG)
+                findNavController().navigateUp()
+            }
+    }
+
     private fun openFile(fileModel: FileModel) {
         fileModel.logE("$TAG openFile")
 
-        when (fileModel.type) {
-            FileType.Text -> {
-                if (fileModel.uri.toFile().extension == "pdf") {
-                    binding?.webView?.loadUrl("http://docs.google.com/gview?embedded=true&url=" + fileModel.uri)
-                }
-            }
+        when {
+            (fileModel.type == FileType.Document && fileModel.uri.toFile().extension == "pdf")
+                    || fileModel.type == FileType.Other ->
+                findNavController().navigate(
+                    WebViewFragmentDirections.actionWebViewFragmentToOpenFileDialog(
+                        fileModel
+                    )
+                )
+
             else -> binding?.webView?.loadUrl(fileModel.uri.path!!)
         }
     }

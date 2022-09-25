@@ -6,18 +6,24 @@ import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.content.res.TypedArray
 import android.net.Uri
+import android.os.Build
 import android.provider.Settings
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
+import android.webkit.MimeTypeMap
 import android.widget.Toast
 import androidx.annotation.*
 import androidx.appcompat.app.AppCompatDialog
+import androidx.core.app.ShareCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
+import ir.romroid.secureboxrecorder.BuildConfig
 import java.io.File
+import java.net.URLConnection
 
 
 fun Context.isDarkTheme(): Boolean {
@@ -180,4 +186,45 @@ fun Context.copyToClipboard(text: String) {
 
     val myClip = ClipData.newPlainText("copied:", text)
     myClipboard!!.setPrimaryClip(myClip)
+}
+
+fun Context.openAnyFile(file: File, errorText: String, activityProviderName: String) {
+
+    val myMime: MimeTypeMap = MimeTypeMap.getSingleton()
+    val newIntent = Intent(Intent.ACTION_VIEW)
+
+    val mimeType: String =
+        myMime.getMimeTypeFromExtension(file.extension).toString()
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+        newIntent.setDataAndType(
+            FileProvider.getUriForFile(
+                this,
+                BuildConfig.APPLICATION_ID + "." + activityProviderName + ".provider",
+                file
+            ), mimeType
+        )
+    } else {
+        newIntent.setDataAndType(Uri.fromFile(file), mimeType)
+    }
+    newIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+    newIntent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+    try {
+        this.startActivity(newIntent)
+    } catch (e: ActivityNotFoundException) {
+        toast(errorText)
+    }
+}
+
+fun Context.shareAnyFile(file: File, activityProviderName: String) {
+
+    val uriProvider = FileProvider.getUriForFile(
+        this,
+        BuildConfig.APPLICATION_ID + "." + activityProviderName + ".provider",
+        file
+    )
+
+    ShareCompat.IntentBuilder(this)
+        .setStream(uriProvider)
+        .setType(URLConnection.guessContentTypeFromName(file.extension))
+        .startChooser()
 }
