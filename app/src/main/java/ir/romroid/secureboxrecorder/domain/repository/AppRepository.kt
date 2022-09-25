@@ -15,7 +15,6 @@ class AppRepository @Inject constructor(
 
     fun userKey() = appCache.userKey
     fun encryptKey() = appCache.getEncryptKey() ?: ""
-    fun userKeyTime() = appCache.userKeyTime
 
     suspend fun getSavedFiles() = fileProvider.getFiles(encryptKey())
 

@@ -8,7 +8,6 @@ import ir.romroid.secureboxrecorder.domain.repository.AppRepository
 import ir.romroid.secureboxrecorder.ext.viewModelIO
 import ir.romroid.secureboxrecorder.utils.liveData.SingleLiveData
 import javax.inject.Inject
-import kotlin.math.abs
 
 @HiltViewModel
 class SafeViewModel @Inject constructor(
@@ -24,18 +23,8 @@ class SafeViewModel @Inject constructor(
         return appRepo.userKey().isEmpty()
     }
 
-    fun shouldChangeUserKey(): Boolean {
-        val lastTime = appRepo.userKeyTime()
-        val maxDiffTime = 604800000 // 1 week
-
-        val diff = abs(System.currentTimeMillis() - lastTime)
-
-        return diff > maxDiffTime
-    }
-
     fun saveUserKey(key: String) {
         appRepo.appCache.userKey = key
-        appRepo.appCache.userKeyTime = System.currentTimeMillis()
     }
 
     fun getUserKey() = appRepo.appCache.userKey
