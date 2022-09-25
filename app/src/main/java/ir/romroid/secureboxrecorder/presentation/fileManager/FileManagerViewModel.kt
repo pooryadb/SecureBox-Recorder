@@ -39,9 +39,14 @@ class FileManagerViewModel @Inject constructor(
     val liveShareFile: LiveData<File?>
         get() = _liveShareFile
 
+
     private val _liveExport = SingleLiveData<ExportResult>()
     val liveExport: SingleLiveData<ExportResult>
         get() = _liveExport
+
+    private val _liveTempFile = SingleLiveData<FileModel?>()
+    val liveTempFile: LiveData<FileModel?>
+        get() = _liveTempFile
 
 
     fun fetchFileList() = viewModelIO {
@@ -51,7 +56,7 @@ class FileManagerViewModel @Inject constructor(
 
                 FileModel(
                     name = it.first,
-                    type = FileType.getType(fileSuffix) ?: FileType.Text,
+                    type = FileType.getType(fileSuffix) ?: FileType.Other,
                     uri = it.second.toUri()
                 )
             }
@@ -90,6 +95,19 @@ class FileManagerViewModel @Inject constructor(
     }
 
     fun clearTemp() = appRepository.clearTemp()
+
+    fun tempFile(uri: Uri) = viewModelIO {
+
+        appRepository.copyToTemp(uri)?.let {
+            val model = FileModel(
+                name = it.name,
+                type = FileType.getType(it.extension) ?: FileType.Other,
+                uri = it.toUri()
+            )
+
+            _liveTempFile.postValue(model)
+        } ?: _liveTempFile.postValue(null)
+    }
 
     sealed class ExportResult {
         object Progress : ExportResult()

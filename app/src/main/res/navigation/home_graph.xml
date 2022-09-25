@@ -74,6 +74,9 @@
         <action
             android:id="@+id/action_fileManagerFragment_to_shareFileDialog"
             app:destination="@id/shareFileDialog" />
+        <action
+            android:id="@+id/action_fileManagerFragment_to_webViewFragment"
+            app:destination="@id/webViewFragment" />
     </fragment>
 
     <dialog
@@ -95,5 +98,15 @@
             android:name="address"
             app:argType="string" />
     </dialog>
+
+    <fragment
+        android:id="@+id/webViewFragment"
+        android:name="ir.romroid.secureboxrecorder.presentation.fileManager.WebViewFragment"
+        android:label="WebViewFragment"
+        tools:layout="@layout/fragment_web_view">
+        <argument
+            android:name="fileModel"
+            app:argType="ir.romroid.secureboxrecorder.domain.model.FileModel" />
+    </fragment>
 
 </navigation>

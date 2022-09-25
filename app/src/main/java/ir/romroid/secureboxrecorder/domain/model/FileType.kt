@@ -1,12 +1,15 @@
 package ir.romroid.secureboxrecorder.domain.model
 
+import android.os.Parcelable
 import androidx.annotation.DrawableRes
 import ir.romroid.secureboxrecorder.R
+import kotlinx.parcelize.Parcelize
 
+@Parcelize
 enum class FileType(
     @DrawableRes val imageRes: Int,
     val suffixes: List<String>
-) {
+) : Parcelable {
     Media(
         imageRes = R.drawable.ic_round_info,
         suffixes = listOf(
@@ -14,8 +17,12 @@ enum class FileType(
             "mp3",
             "aac",
             "3gp",
+            "opus",
+            "ogg",
             //video
             "mp4",
+            "mkv",
+            "avi",
         )
     ),
     Text(
@@ -36,6 +43,11 @@ enum class FileType(
             "svg",
             "gif",
         )
+    ),
+
+    Other(
+        imageRes = R.drawable.ic_close,
+        suffixes = emptyList()
     )
 
     ;

@@ -14,6 +14,7 @@ import ir.romroid.secureboxrecorder.BuildConfig
 import ir.romroid.secureboxrecorder.R
 import ir.romroid.secureboxrecorder.base.component.BaseFragment
 import ir.romroid.secureboxrecorder.databinding.FragmentFileManagerBinding
+import ir.romroid.secureboxrecorder.domain.model.FileType
 import ir.romroid.secureboxrecorder.ext.getBackStackLiveData
 import ir.romroid.secureboxrecorder.ext.logD
 import ir.romroid.secureboxrecorder.ext.toast
@@ -63,7 +64,10 @@ class FileManagerFragment : BaseFragment<FragmentFileManagerBinding>() {
                     }
 
                     onClickListener = {
-
+                        if (it.type == FileType.Other)
+                            requireContext().toast(requireContext().getString(R.string.open_other_files_msg))
+                        else
+                            fileManagerVM.tempFile(it.uri)
                     }
                 }
 
@@ -137,6 +141,17 @@ class FileManagerFragment : BaseFragment<FragmentFileManagerBinding>() {
 
                 }
             }
+        }
+
+        fileManagerVM.liveTempFile.observe(this) {
+            if (it != null) {
+                findNavController().navigate(
+                    FileManagerFragmentDirections.actionFileManagerFragmentToWebViewFragment(
+                        it
+                    )
+                )
+            } else
+                requireContext().toast(getString(R.string.error_open_file))
         }
 
     }

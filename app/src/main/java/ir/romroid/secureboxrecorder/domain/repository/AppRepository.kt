@@ -26,6 +26,8 @@ class AppRepository @Inject constructor(
 
     suspend fun copyToShare(uri: Uri) = fileProvider.restoreFromBox(encryptKey(), uri)
 
+    suspend fun copyToTemp(uri: Uri) = fileProvider.restoreFromBox(encryptKey(), uri)
+
     fun clearTemp() = fileProvider.clearTemp()
 
     suspend fun exportFiles(listener: FileProviderListener) =
