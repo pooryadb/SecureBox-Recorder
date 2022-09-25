@@ -14,12 +14,12 @@
     <string name="cancel">cancel</string>
 
     <string name="set_security_key_warning">Uppercase and lowercase letters are important</string>
-    <string name="set_security_key_note1">Note1: by save audio name same as security key, you can access to file manager.</string>
-    <string name="set_security_key_note2">Note2: if you click on the title “My Records” three times, you will navigate to the recovery page.</string>
+    <string name="set_security_key_note1">Note1: by save audio name same as \"Security Key\", you can access to file manager.</string>
+    <string name="set_security_key_note2">Note2: if you forget the \"Security Key\", you would can\'t access to data anymore!.</string>
     <string name="security_hint_example">example: Amir!%98M</string>
     <string name="security_key">Security Key</string>
     <string name="recovery_key">Recovery Key</string>
-    <string name="restore_note">To restore old data, first enter the \"Security Key\" and \"Recovery Key\", then tap on \"Restore Backup\" and locate backup file.</string>
+    <string name="restore_note">To restore old data, first enter the \"Last Security Key\", then tap on \"Restore Backup\" and locate backup file.</string>
     <string name="restore_backup">Restore Backup</string>
     <string name="restore_backup_success">Restore Backup success</string>
     <string name="restore_backup_error">Restore Backup error</string>

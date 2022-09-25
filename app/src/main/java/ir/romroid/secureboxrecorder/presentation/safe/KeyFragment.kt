@@ -1,4 +1,4 @@
-package ir.romroid.secureboxrecorder.presentation.safe.keys
+package ir.romroid.secureboxrecorder.presentation.safe
 
 import android.net.Uri
 import android.os.Bundle
@@ -14,11 +14,10 @@ import ir.romroid.secureboxrecorder.base.component.BaseFragment
 import ir.romroid.secureboxrecorder.databinding.FragmentKeysBinding
 import ir.romroid.secureboxrecorder.ext.logD
 import ir.romroid.secureboxrecorder.ext.toast
-import ir.romroid.secureboxrecorder.presentation.safe.SafeViewModel
 import ir.romroid.secureboxrecorder.utils.MyValidator
 
 @AndroidEntryPoint
-class KeysFragment : BaseFragment<FragmentKeysBinding>() {
+class KeyFragment : BaseFragment<FragmentKeysBinding>() {
 
     override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentKeysBinding
         get() = FragmentKeysBinding::inflate
@@ -37,7 +36,7 @@ class KeysFragment : BaseFragment<FragmentKeysBinding>() {
                         safeVM.unzipFile(uriTemp!!)
                     else
                         findNavController().navigate(
-                            KeysFragmentDirections.actionGetKeysFragmentToRecordListFragment()
+                            KeyFragmentDirections.actionGetKeysFragmentToRecordListFragment()
                         )
                 }
             }
@@ -72,18 +71,14 @@ class KeysFragment : BaseFragment<FragmentKeysBinding>() {
 
     private fun trySaveKeys(): Boolean = binding?.run {
         val securityKey = etSecurity.editText?.text.toString()
-        val recoveryKey = etRecovery.editText?.text.toString()
 
         val securityError = MyValidator.isPasswordValid(securityKey)?.let { getString(it) }
-        val recoveryError = MyValidator.isPasswordValid(recoveryKey)?.let { getString(it) }
 
         etSecurity.error = securityError
-        etRecovery.error = recoveryError
-        if (securityError != null || recoveryError != null)
+        if (securityError != null)
             return@run false
 
         safeVM.saveUserKey(securityKey)
-        safeVM.saveRecoveryKey(recoveryKey)
 
         return@run true
     } ?: false

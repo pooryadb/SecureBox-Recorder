@@ -55,7 +55,7 @@
 
     <fragment
         android:id="@+id/getKeysFragment"
-        android:name="ir.romroid.secureboxrecorder.presentation.safe.keys.KeysFragment"
+        android:name="ir.romroid.secureboxrecorder.presentation.safe.KeyFragment"
         android:label="GetKeysFragment"
         tools:layout="@layout/fragment_keys">
         <action

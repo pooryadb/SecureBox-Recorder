@@ -8,7 +8,6 @@ class AppCache @Inject constructor(
     private val reactorBase64: Reactor,
 ) {
     private val _userKey = "_userKey"
-    private val _recoveryKey = "_recoveryKey"
     private val _userKeyTime = "_userKeyTime"
 
     var userKey: String
@@ -28,12 +27,6 @@ class AppCache @Inject constructor(
             else -> key
         }
     }
-
-    var recoveryKey: String
-        get() = reactorAES.get(_recoveryKey, "")
-        set(value) {
-            reactorAES.put(_recoveryKey, value)
-        }
 
     var userKeyTime: Long
         get() = reactorAES.get(_userKeyTime, -1L)

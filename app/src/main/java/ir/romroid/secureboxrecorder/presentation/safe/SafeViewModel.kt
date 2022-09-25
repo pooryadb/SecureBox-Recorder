@@ -38,13 +38,7 @@ class SafeViewModel @Inject constructor(
         appRepo.appCache.userKeyTime = System.currentTimeMillis()
     }
 
-    fun saveRecoveryKey(key: String) {
-        appRepo.appCache.recoveryKey = key
-    }
-
     fun getUserKey() = appRepo.appCache.userKey
-
-    fun getRecoveryKey() = appRepo.appCache.recoveryKey
 
     fun getFileName(uri: Uri): String {
         return appRepo.fileProvider.getFileNameFromCursor(uri) ?: ""
