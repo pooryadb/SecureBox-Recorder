@@ -15,9 +15,9 @@ class SafeViewModel @Inject constructor(
     private val appRepo: AppRepository
 ) : BaseViewModel() {
 
-    private val _unzipLive = SingleLiveData<UnzipResult>()
-    val unzipLive: SingleLiveData<UnzipResult>
-        get() = _unzipLive
+    private val _liveUnzip = SingleLiveData<UnzipResult>()
+    val liveUnzip: SingleLiveData<UnzipResult>
+        get() = _liveUnzip
 
 
     fun shouldSetUserKey(): Boolean {
@@ -59,30 +59,30 @@ class SafeViewModel @Inject constructor(
                 fileTemp,
                 object : FileProviderListener {
                     override fun onProgress() {
-                        _unzipLive.postValue(UnzipResult.Progress)
+                        _liveUnzip.postValue(UnzipResult.Progress)
                     }
 
-                    override fun onSuccess(file: Uri) {
-                        _unzipLive.postValue(UnzipResult.Success(file))
+                    override fun onSuccess(filePath: String) {
+                        _liveUnzip.postValue(UnzipResult.Success(filePath))
                         fileTemp.delete()
                     }
 
                     override fun onError(e: Exception) {
-                        _unzipLive.postValue(UnzipResult.Error(e.message ?: ""))
+                        _liveUnzip.postValue(UnzipResult.Error(e.message ?: ""))
                         fileTemp.delete()
                     }
 
                 })
 
         } else {
-            _unzipLive.value = UnzipResult.Error("File not saved")
+            _liveUnzip.value = UnzipResult.Error("File not saved")
         }
 
     }
 
     sealed class UnzipResult {
         object Progress : UnzipResult()
-        class Success(val file: Uri) : UnzipResult()
+        class Success(val filePath: String) : UnzipResult()
         class Error(val message: String) : UnzipResult()
     }
 

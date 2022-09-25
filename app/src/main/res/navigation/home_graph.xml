@@ -71,6 +71,9 @@
         <action
             android:id="@+id/action_fileManagerFragment_to_deleteFileDialog"
             app:destination="@id/deleteFileDialog" />
+        <action
+            android:id="@+id/action_fileManagerFragment_to_shareFileDialog"
+            app:destination="@id/shareFileDialog" />
     </fragment>
 
     <dialog
@@ -81,6 +84,16 @@
         <argument
             android:name="id"
             app:argType="long" />
+    </dialog>
+
+    <dialog
+        android:id="@+id/shareFileDialog"
+        android:name="ir.romroid.secureboxrecorder.presentation.fileManager.dialog.ShareFileDialog"
+        android:label="ShareFileDialog"
+        tools:layout="@layout/dialog_share_file">
+        <argument
+            android:name="address"
+            app:argType="string" />
     </dialog>
 
 </navigation>

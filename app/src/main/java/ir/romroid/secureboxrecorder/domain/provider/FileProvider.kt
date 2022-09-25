@@ -10,15 +10,16 @@ import androidx.core.net.toFile
 import androidx.core.net.toUri
 import ir.romroid.secureboxrecorder.ext.logD
 import ir.romroid.secureboxrecorder.ext.logE
+import ir.romroid.secureboxrecorder.ext.logI
 import ir.romroid.secureboxrecorder.utils.*
 import ir.romroid.secureboxrecorder.utils.CryptoUtils.encodeBase64Replaced
 import ir.romroid.secureboxrecorder.utils.CryptoUtils.fromBase64Replaced
-import java.io.BufferedOutputStream
-import java.io.File
-import java.io.FileInputStream
-import java.io.FileOutputStream
+import java.io.*
+import java.text.SimpleDateFormat
+import java.util.*
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
+import java.util.zip.ZipOutputStream
 import javax.crypto.SecretKey
 import javax.inject.Inject
 import kotlin.random.Random
@@ -39,6 +40,14 @@ class FileProvider @Inject constructor(val context: Context) {
     private val folderTemp by lazy {
         val f = File(context.cacheDir, FILES_TEMP_SHARE_FOLDER_NAME)
         f.mkdirs()
+
+        f
+    }
+
+    private val folderExport by lazy {
+        val f = File(context.cacheDir, FILES_EXPORT_FOLDER_NAME)
+        f.mkdirs()
+        f.path.logD("$TAG folderExport")
 
         f
     }
@@ -159,11 +168,87 @@ class FileProvider @Inject constructor(val context: Context) {
             zipStream.close()
             "Unzipping complete. path :  $destination".logD(TAG)
 
-            listener?.onSuccess(destination.toUri())
+            listener?.onSuccess(destination)
 
             true
         } catch (e: Exception) {
             "Unzipping failed : $e".logD(TAG)
+            listener?.onError(e)
+            false
+        }
+    }
+
+    suspend fun zipFilesToExportFolder(
+        listener: FileProviderListener
+    ): Boolean =
+        zip(
+            file = folderSave,
+            destinationPath = File(
+                folderExport,
+                FILE_EXPORT_NAME_date.format(
+                    SimpleDateFormat(
+                        "yyyy-MM-dd_HH:mm",
+                        Locale.getDefault()
+                    ).format(Date())
+                )
+            ).path,
+            listener = listener
+        )
+
+    /**
+     * @param file must be a directory with at least 1 file
+     * @param destinationPath should be a *.zip file
+     */
+    private suspend fun zip(
+        file: File,
+        destinationPath: String,
+        listener: FileProviderListener? = null
+    ): Boolean {
+        (listener ?: "null").logE("$TAG zip listener")
+        if (file.isDirectory.not() || file.listFiles().isNullOrEmpty()) {
+            listener?.onError(Exception("path is empty!"))
+            return false
+        }
+
+        val destFile = File(destinationPath)
+        if (destFile.extension != "zip") {
+            listener?.onError(Exception("should be a *.zip file!"))
+            return false
+        }
+        if (destFile.exists())
+            destFile.delete()
+        createFile(destinationPath)
+
+        listener?.onProgress()
+
+        val BUFFER = 1024
+
+        return try {
+            var origin: BufferedInputStream? = null
+            val dest = FileOutputStream(destinationPath)
+            val out = ZipOutputStream(BufferedOutputStream(dest))
+            val data = ByteArray(BUFFER)
+            file.listFiles()?.forEach {
+                "zip Adding: ${it.path}".logI(TAG)
+                val fileInputStream = FileInputStream(it)
+                origin = BufferedInputStream(fileInputStream, BUFFER)
+                val entry = ZipEntry(it.name)
+                out.putNextEntry(entry)
+
+                var count: Int
+                while (origin!!.read(data, 0, BUFFER).also { count = it } != -1) {
+                    out.write(data, 0, count)
+                }
+                origin!!.close()
+            }
+
+            listener?.onSuccess(destinationPath)
+
+            out.close()
+            true
+        } catch (e: Exception) {
+            delete(destinationPath.toUri())
+            "zip error: ${e.message}".logI(TAG)
             listener?.onError(e)
             false
         }
@@ -285,6 +370,6 @@ class FileProvider @Inject constructor(val context: Context) {
 
 interface FileProviderListener {
     fun onProgress()
-    fun onSuccess(file: Uri)
+    fun onSuccess(filePath: String)
     fun onError(e: Exception)
 }

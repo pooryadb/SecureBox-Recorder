@@ -7,6 +7,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import ir.romroid.secureboxrecorder.base.architecture.BaseViewModel
 import ir.romroid.secureboxrecorder.domain.model.FileModel
 import ir.romroid.secureboxrecorder.domain.model.FileType
+import ir.romroid.secureboxrecorder.domain.provider.FileProviderListener
 import ir.romroid.secureboxrecorder.domain.repository.AppRepository
 import ir.romroid.secureboxrecorder.ext.viewModelIO
 import ir.romroid.secureboxrecorder.utils.liveData.SingleLiveData
@@ -38,6 +39,10 @@ class FileManagerViewModel @Inject constructor(
     val liveShareFile: LiveData<File?>
         get() = _liveShareFile
 
+    private val _liveExport = SingleLiveData<ExportResult>()
+    val liveExport: SingleLiveData<ExportResult>
+        get() = _liveExport
+
 
     fun fetchFileList() = viewModelIO {
         _liveFileList.postValue(
@@ -67,10 +72,29 @@ class FileManagerViewModel @Inject constructor(
         _liveAddFile.postValue(appRepository.saveAndEncrypt(uri))
     }
 
-    fun exportData() {
+    fun exportData() = viewModelIO {
+        appRepository.exportFiles(object : FileProviderListener {
+            override fun onProgress() {
+                _liveExport.postValue(ExportResult.Progress)
+            }
 
+            override fun onSuccess(filePath: String) {
+                _liveExport.postValue(ExportResult.Success(filePath))
+            }
+
+            override fun onError(e: Exception) {
+                _liveExport.postValue(ExportResult.Error(e.message ?: ""))
+            }
+
+        })
     }
 
     fun clearTemp() = appRepository.clearTemp()
+
+    sealed class ExportResult {
+        object Progress : ExportResult()
+        class Success(val filePath: String) : ExportResult()
+        class Error(val message: String) : ExportResult()
+    }
 
 }

@@ -51,7 +51,7 @@ class KeysFragment : BaseFragment<FragmentKeysBinding>() {
     override fun initObservers() {
         super.initObservers()
 
-        safeVM.unzipLive.observe(this) {
+        safeVM.liveUnzip.observe(this) {
             when (it) {
                 is SafeViewModel.UnzipResult.Progress -> {
                     loadingDialog(true)

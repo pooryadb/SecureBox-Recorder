@@ -3,4 +3,9 @@
     <cache-path
         name="cache"
         path="tempShare/" />
+
+    <cache-path
+        name="cache"
+        path="Export/" />
+
 </paths>

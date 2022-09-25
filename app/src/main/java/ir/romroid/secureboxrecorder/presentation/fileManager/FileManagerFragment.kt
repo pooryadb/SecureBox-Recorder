@@ -37,7 +37,7 @@ class FileManagerFragment : BaseFragment<FragmentFileManagerBinding>() {
         binding?.apply {
 
             btnExport.setOnClickListener {
-
+                fileManagerVM.exportData()
             }
 
             btnExit.setOnClickListener {
@@ -118,6 +118,25 @@ class FileManagerFragment : BaseFragment<FragmentFileManagerBinding>() {
                     .startChooser()
             } else
                 requireContext().toast(getString(R.string.error_share_file))
+        }
+
+        fileManagerVM.liveExport.observe(this) {
+            when (it) {
+                is FileManagerViewModel.ExportResult.Progress -> loadingDialog(true)
+                is FileManagerViewModel.ExportResult.Error -> {
+                    loadingDialog(false)
+                    requireContext().toast(it.message)
+                }
+                is FileManagerViewModel.ExportResult.Success -> {
+                    findNavController().navigate(
+                        FileManagerFragmentDirections.actionFileManagerFragmentToShareFileDialog(
+                            it.filePath
+                        )
+                    )
+                    loadingDialog(false)
+
+                }
+            }
         }
 
     }
