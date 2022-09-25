@@ -17,8 +17,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     override val bindingInflater: (LayoutInflater) -> ActivityMainBinding
         get() = ActivityMainBinding::inflate
 
-    private var isHome: Boolean = true
-
     private lateinit var navHostFragment: NavHostFragment
 
     override fun viewHandler(savedInstanceState: Bundle?) {

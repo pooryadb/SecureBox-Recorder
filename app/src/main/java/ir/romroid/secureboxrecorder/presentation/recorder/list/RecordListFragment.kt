@@ -11,9 +11,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import ir.romroid.secureboxrecorder.R
 import ir.romroid.secureboxrecorder.base.component.BaseFragment
 import ir.romroid.secureboxrecorder.databinding.FragmentRecordListBinding
-import ir.romroid.secureboxrecorder.ext.getBackStackLiveData
-import ir.romroid.secureboxrecorder.ext.runAfter
-import ir.romroid.secureboxrecorder.ext.toast
+import ir.romroid.secureboxrecorder.ext.*
 import ir.romroid.secureboxrecorder.presentation.recorder.RecorderListViewModel
 import ir.romroid.secureboxrecorder.presentation.safe.SafeViewModel
 import ir.romroid.secureboxrecorder.utils.BACK_FROM_DELETE_RECORD
@@ -79,7 +77,12 @@ class RecordListFragment : BaseFragment<FragmentRecordListBinding>() {
         super.initObservers()
 
         recorderVM.liveRecordedList.observe(this) {
-            audioAdapter.submitList(it)
+            if (it.isEmpty())
+                binding?.layEmpty?.root?.toShow()
+            else {
+                binding?.layEmpty?.root?.toGone()
+                audioAdapter.submitList(it)
+            }
         }
     }
 

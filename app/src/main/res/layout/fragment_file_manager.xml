@@ -6,57 +6,59 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <com.google.android.material.appbar.MaterialToolbar
+    <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        app:contentInsetStart="0dp">
+        android:layout_height="wrap_content"
+        android:backgroundTint="?android:attr/colorBackground">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <com.google.android.material.appbar.MaterialToolbar
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingHorizontal="10dp">
+            android:layout_height="match_parent">
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/btnExport"
-                android:layout_width="?attr/actionBarSize"
-                android:layout_height="?attr/actionBarSize"
-                android:background="?android:attr/selectableItemBackground"
-                android:contentDescription="@string/export"
-                android:padding="@dimen/margin"
-                android:src="@drawable/ic_export_files"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="horizontal">
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/btnExit"
-                android:layout_width="?attr/actionBarSize"
-                android:layout_height="?attr/actionBarSize"
-                android:background="?android:attr/selectableItemBackground"
-                android:contentDescription="@string/exit"
-                android:padding="@dimen/margin"
-                android:src="@drawable/ic_logout"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/btnExport"
-                app:layout_constraintTop_toTopOf="parent" />
+                <com.google.android.material.textview.MaterialTextView
+                    style="@style/txt.h3.bold"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/file_manager" />
 
-            <com.google.android.material.textview.MaterialTextView
-                style="@style/txt.h3.bold"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/file_manager"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/btnExport"
+                    android:layout_width="?attr/actionBarSize"
+                    android:layout_height="?attr/actionBarSize"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:contentDescription="@string/export"
+                    android:padding="@dimen/margin"
+                    android:src="@drawable/ic_export_files" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/btnExit"
+                    android:layout_width="?attr/actionBarSize"
+                    android:layout_height="?attr/actionBarSize"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:contentDescription="@string/exit"
+                    android:padding="@dimen/margin"
+                    android:src="@drawable/ic_logout" />
 
-    </com.google.android.material.appbar.MaterialToolbar>
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+        </com.google.android.material.appbar.MaterialToolbar>
+    </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
+
+        <include
+            android:id="@+id/layEmpty"
+            layout="@layout/lay_empty_box" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rcFileManager"

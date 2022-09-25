@@ -5,18 +5,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.RecyclerView
 import dagger.hilt.android.AndroidEntryPoint
 import ir.romroid.secureboxrecorder.R
 import ir.romroid.secureboxrecorder.base.component.BaseFragment
 import ir.romroid.secureboxrecorder.databinding.FragmentFileManagerBinding
-import ir.romroid.secureboxrecorder.ext.getBackStackLiveData
-import ir.romroid.secureboxrecorder.ext.logD
-import ir.romroid.secureboxrecorder.ext.shareAnyFile
-import ir.romroid.secureboxrecorder.ext.toast
+import ir.romroid.secureboxrecorder.ext.*
 import ir.romroid.secureboxrecorder.utils.BACK_FROM_DELETE_FILE
 import javax.inject.Inject
+
 
 @AndroidEntryPoint
 class FileManagerFragment : BaseFragment<FragmentFileManagerBinding>() {
@@ -25,7 +26,7 @@ class FileManagerFragment : BaseFragment<FragmentFileManagerBinding>() {
         get() = FragmentFileManagerBinding::inflate
 
     @Inject
-    lateinit var audioAdapter: FileManagerAdapter
+    lateinit var fileManagerAdapter: FileManagerAdapter
 
     private val fileManagerVM by viewModels<FileManagerViewModel>()
 
@@ -46,7 +47,7 @@ class FileManagerFragment : BaseFragment<FragmentFileManagerBinding>() {
             }
 
             rcFileManager.apply {
-                audioAdapter.apply {
+                fileManagerAdapter.apply {
                     onDeleteListener = {
                         findNavController().navigate(
                             FileManagerFragmentDirections
@@ -68,7 +69,21 @@ class FileManagerFragment : BaseFragment<FragmentFileManagerBinding>() {
                     }
                 }
 
-                adapter = audioAdapter
+                val dividerItemDecoration = DividerItemDecoration(
+                    requireContext(),
+                    RecyclerView.VERTICAL
+                )
+
+                dividerItemDecoration.setDrawable(
+                    ContextCompat.getDrawable(
+                        requireContext(),
+                        R.drawable.shape_item_divider
+                    )!!
+                )
+
+                addItemDecoration(dividerItemDecoration)
+
+                adapter = fileManagerAdapter
 
             }
 
@@ -84,7 +99,14 @@ class FileManagerFragment : BaseFragment<FragmentFileManagerBinding>() {
 
         fileManagerVM.liveFileList.observe(this) {
             loadingDialog(false)
-            audioAdapter.submitList(it)
+
+            if (it.isEmpty())
+                binding?.layEmpty?.root?.toShow()
+            else {
+                binding?.layEmpty?.root?.toGone()
+                fileManagerAdapter.submitList(it)
+            }
+
         }
 
         fileManagerVM.liveAddFile.observe(this) {
@@ -119,12 +141,12 @@ class FileManagerFragment : BaseFragment<FragmentFileManagerBinding>() {
                     requireContext().toast(it.message)
                 }
                 is FileManagerViewModel.ExportResult.Success -> {
+                    loadingDialog(false)
                     findNavController().navigate(
                         FileManagerFragmentDirections.actionFileManagerFragmentToShareFileDialog(
                             it.filePath
                         )
                     )
-                    loadingDialog(false)
 
                 }
             }

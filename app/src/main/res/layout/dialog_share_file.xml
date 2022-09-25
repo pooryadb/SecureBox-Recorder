@@ -17,6 +17,13 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <androidx.appcompat.widget.AppCompatImageView
+        android:layout_width="@dimen/image_normal"
+        android:layout_height="@dimen/image_normal"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="@dimen/margin"
+        app:srcCompat="@drawable/ic_package_box" />
+
     <com.google.android.material.textview.MaterialTextView
         style="@style/txt.h2.medium"
         android:layout_width="match_parent"

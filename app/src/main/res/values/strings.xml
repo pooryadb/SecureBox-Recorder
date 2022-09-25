@@ -47,5 +47,8 @@
     <string name="open_with_other_app">Can\'t open file, you can open it with other applications.</string>
     <string name="open">Open</string>
     <string name="dismiss">Dismiss</string>
+    <string name="record_voice">Record voice</string>
+    <string name="no_record_yet_try_round_button_at_bottom">No Record yet!\nTry Round Button at bottom</string>
+    <string name="no_secured_files_yet_try_round_button_at_bottom">No secured files yet!\nTry Round Button at bottom</string>
 
 </resources>

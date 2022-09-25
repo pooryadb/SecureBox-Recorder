@@ -10,23 +10,26 @@ enum class FileType(
     @DrawableRes val imageRes: Int,
     val suffixes: List<String>
 ) : Parcelable {
-    Media(
-        imageRes = R.drawable.ic_round_info,
+    Music(
+        imageRes = R.drawable.ic_music,
         suffixes = listOf(
-            //music
             "mp3",
             "aac",
             "3gp",
             "opus",
             "ogg",
-            //video
+        )
+    ),
+    Video(
+        imageRes = R.drawable.ic_video,
+        suffixes = listOf(
             "mp4",
             "mkv",
             "avi",
         )
     ),
     Document(
-        imageRes = R.drawable.ic_play,
+        imageRes = R.drawable.ic_document,
         suffixes = listOf(
             "txt",
             "scv",
@@ -34,8 +37,8 @@ enum class FileType(
             "html",
         )
     ),
-    Image(
-        imageRes = R.drawable.ic_pause,
+    Picture(
+        imageRes = R.drawable.ic_picture,
         suffixes = listOf(
             "jpeg",
             "jpg",
@@ -46,7 +49,7 @@ enum class FileType(
     ),
 
     Other(
-        imageRes = R.drawable.ic_close,
+        imageRes = R.drawable.ic_more,
         suffixes = emptyList()
     )
 

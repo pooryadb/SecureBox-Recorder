@@ -11,16 +11,16 @@ import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import ir.romroid.secureboxrecorder.R
 import ir.romroid.secureboxrecorder.base.component.BaseFragment
-import ir.romroid.secureboxrecorder.databinding.FragmentKeysBinding
+import ir.romroid.secureboxrecorder.databinding.FragmentKeyBinding
 import ir.romroid.secureboxrecorder.ext.logD
 import ir.romroid.secureboxrecorder.ext.toast
 import ir.romroid.secureboxrecorder.utils.MyValidator
 
 @AndroidEntryPoint
-class KeyFragment : BaseFragment<FragmentKeysBinding>() {
+class KeyFragment : BaseFragment<FragmentKeyBinding>() {
 
-    override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentKeysBinding
-        get() = FragmentKeysBinding::inflate
+    override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentKeyBinding
+        get() = FragmentKeyBinding::inflate
 
     private val safeVM by activityViewModels<SafeViewModel>()
 

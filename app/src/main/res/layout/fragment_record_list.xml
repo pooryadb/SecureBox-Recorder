@@ -6,34 +6,44 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <com.google.android.material.appbar.MaterialToolbar
+    <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        app:contentInsetStart="0dp">
+        android:layout_height="wrap_content"
+        android:backgroundTint="?android:attr/colorBackground">
 
-        <androidx.appcompat.widget.LinearLayoutCompat
+        <com.google.android.material.appbar.MaterialToolbar
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:paddingHorizontal="@dimen/margin">
+            android:layout_height="match_parent">
 
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/tvName"
-                style="@style/txt.h3.bold"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/padding"
-                android:layout_weight="1"
-                android:text="@string/app_name" />
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="@dimen/margin">
 
-        </androidx.appcompat.widget.LinearLayoutCompat>
-    </com.google.android.material.appbar.MaterialToolbar>
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/tvName"
+                    style="@style/txt.h3.bold"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/padding"
+                    android:layout_weight="1"
+                    android:text="@string/app_name" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+        </com.google.android.material.appbar.MaterialToolbar>
+
+    </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
+
+        <include
+            android:id="@+id/layEmpty"
+            layout="@layout/lay_empty_record" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rcAudio"
@@ -48,6 +58,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
             android:layout_margin="@dimen/margin"
+            android:contentDescription="@string/record_voice"
             android:src="@drawable/ic_circle_plus"
             app:backgroundTint="?attr/colorPrimaryVariant"
             app:fabSize="normal"
