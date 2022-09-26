@@ -58,7 +58,9 @@
 
         <include
             android:id="@+id/layEmpty"
-            layout="@layout/lay_empty_box" />
+            layout="@layout/lay_empty_box"
+            android:visibility="gone"
+            tools:visibility="visible" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rcFileManager"

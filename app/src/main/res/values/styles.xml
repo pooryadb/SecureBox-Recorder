@@ -241,19 +241,20 @@
         <item name="android:textDirection">anyRtl</item>
     </style>
 
-    <style name="edt.latin.digits" parent="edt">
-        <item name="fontFamily">@font/font_normal_latin_digits</item>
-    </style>
-
     <!--    animation-->
     <style name="animation.slide.up_down" parent="">
         <item name="android:windowEnterAnimation">@anim/slide_up</item>
         <item name="android:windowExitAnimation">@anim/slide_down</item>
     </style>
 
-    <style name="animation.fade" parent="">
-        <item name="android:windowEnterAnimation">@android:anim/fade_in</item>
-        <item name="android:windowExitAnimation">@android:anim/fade_out</item>
+    <style name="animation.activity" parent="">
+        <item name="android:windowEnterAnimation">@anim/nav_default_enter_anim</item>
+        <item name="android:windowExitAnimation">@anim/nav_default_exit_anim</item>
+
+        <item name="android:activityOpenEnterAnimation">@anim/nav_default_enter_anim</item>
+        <item name="android:activityOpenExitAnimation">@anim/nav_default_exit_anim</item>
+        <item name="android:activityCloseEnterAnimation">@anim/nav_default_enter_anim</item>
+        <item name="android:activityCloseExitAnimation">@anim/nav_default_exit_anim</item>
     </style>
 
     <style name="animation.popup_window" parent="">

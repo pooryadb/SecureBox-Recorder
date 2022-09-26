@@ -37,8 +37,8 @@
         <item name="android:scrollbarStyle">outsideOverlay</item>
         <item name="android:scrollbars">none</item>
         <item name="android:overScrollMode">never</item>
-        <item name="android:colorEdgeEffect">?android:colorError</item>
-        <item name="android:windowAnimationStyle">@style/animation.fade</item>
+        <item name="android:colorEdgeEffect">?attr/colorPrimaryVariant</item>
+        <item name="android:windowAnimationStyle">@style/animation.activity</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
         <item name="fontFamily">@font/font_family</item>
