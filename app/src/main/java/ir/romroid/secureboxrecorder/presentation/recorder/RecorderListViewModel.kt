@@ -24,7 +24,7 @@ class RecorderListViewModel @Inject constructor(
 
 
     fun fetchRecordedList(context: Context) {
-        val folder = File(context.cacheDir.path + "/" + VOICE_SAVED_FOLDER_NAME)
+        val folder = File(context.getExternalFilesDir(null), VOICE_SAVED_FOLDER_NAME)
         _liveRecordedList.value = folder.listFiles()?.map {
             it.logD("audioModel fetchRecordedList")
             AudioModel(

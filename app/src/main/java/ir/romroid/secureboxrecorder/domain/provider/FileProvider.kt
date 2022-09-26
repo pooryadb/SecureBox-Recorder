@@ -31,7 +31,7 @@ class FileProvider @Inject constructor(val context: Context) {
     }
 
     private val folderSave by lazy {
-        val f = File(context.cacheDir, FILES_SAVED_FOLDER_NAME)
+        val f = File(context.getExternalFilesDir(null), FILES_SAVED_FOLDER_NAME)
         f.mkdirs()
 
         f
@@ -45,9 +45,8 @@ class FileProvider @Inject constructor(val context: Context) {
     }
 
     private val folderExport by lazy {
-        val f = File(context.cacheDir, FILES_EXPORT_FOLDER_NAME)
+        val f = File(context.getExternalFilesDir(null), FILES_EXPORT_FOLDER_NAME)
         f.mkdirs()
-        f.path.logD("$TAG folderExport")
 
         f
     }

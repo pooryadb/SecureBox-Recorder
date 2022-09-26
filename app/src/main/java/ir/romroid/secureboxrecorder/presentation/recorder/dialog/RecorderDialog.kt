@@ -110,7 +110,8 @@ class RecorderDialog : BaseBottomSheetDialogFragment<DialogRecorderBinding>() {
 
         val fTemp = File(path)
 
-        val newPath = requireContext().cacheDir.path + "/" + VOICE_SAVED_FOLDER_NAME
+        val newPath =
+            requireContext().getExternalFilesDir(null)?.path + "/" + VOICE_SAVED_FOLDER_NAME
 
         fTemp.copyTo(setupSaveFile(newPath, name + VOICE_FORMAT))
         fTemp.delete()
