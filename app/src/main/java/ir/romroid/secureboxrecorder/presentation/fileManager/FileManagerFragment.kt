@@ -40,6 +40,7 @@ class FileManagerFragment : BaseFragment<FragmentFileManagerBinding>() {
 
             btnExit.setOnClickListener {
                 requireActivity().finish()
+                fileManagerVM.clearTemp()
             }
 
             btnAdd.setOnClickListener {
