@@ -6,26 +6,41 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?android:attr/selectableItemBackground"
-    android:clipToPadding="false"
-    android:orientation="horizontal"
-    android:padding="@dimen/padding">
+    android:gravity="center"
+    android:orientation="vertical">
 
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/tvTitle"
-        style="@style/txt.h2.medium"
-        android:layout_width="0dp"
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/padding"
-        android:layout_weight="1"
-        tools:text="title" />
+        android:clipToPadding="false"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="@dimen/padding">
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/btnDelete"
-        android:layout_width="@dimen/icon_big"
-        android:layout_height="match_parent"
-        android:background="?android:attr/selectableItemBackgroundBorderless"
-        android:padding="3dp"
-        android:src="@drawable/ic_trash_can"
-        app:tint="?attr/colorError" />
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tvTitle"
+            style="@style/txt.h1.medium"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/padding"
+            android:layout_weight="1"
+            tools:text="title" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnDelete"
+            style="@style/btn.outlined.tin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/delete"
+            android:textColor="?attr/colorError"
+            app:icon="@drawable/ic_trash_can"
+            app:iconTint="?attr/colorError" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="?attr/colorGlass" />
 
 </androidx.appcompat.widget.LinearLayoutCompat>

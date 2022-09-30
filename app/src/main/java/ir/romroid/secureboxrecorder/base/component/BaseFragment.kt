@@ -21,6 +21,10 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment() {
 
     var isRestoredFromBackStack = false
 
+    private val dialogLoading: LoadingDialog by lazy {
+        LoadingDialog(requireContext())
+    }
+
     protected abstract fun viewHandler(view: View, savedInstanceState: Bundle?)
     protected open fun initObservers() {}
     protected open fun initBackStackObservers() {}
@@ -61,6 +65,10 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         viewHandler(view, savedInstanceState)
         initObservers()
+    }
+
+    fun loadingDialog(show: Boolean = true) {
+        if (show) dialogLoading.show() else dialogLoading.dismiss()
     }
 
     override fun onAttach(context: Context) {

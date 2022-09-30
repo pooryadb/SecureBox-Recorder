@@ -134,13 +134,16 @@
     <style name="btn.colored" parent="Widget.MaterialComponents.Button">
         <item name="fontWeight">700</item>
         <item name="android:layout_height">55dp</item>
-        <item name="shapeAppearance">@style/appearance.round.35</item>
+        <item name="shapeAppearance">@style/appearance.round.constant</item>
         <item name="android:textAppearance">@style/txt.h2.bold</item>
+
+        <item name="iconSize">@dimen/icon_normal</item>
+        <item name="iconGravity">end</item>
     </style>
 
     <style name="btn.colored.big" parent="Widget.MaterialComponents.Button">
         <item name="fontWeight">700</item>
-        <item name="shapeAppearance">@style/appearance.round.35</item>
+        <item name="shapeAppearance">@style/appearance.round.constant</item>
         <item name="android:layout_height">62dp</item>
         <item name="android:textAppearance">@style/txt.h4.bold</item>
     </style>
@@ -148,8 +151,16 @@
     <style name="btn.outlined" parent="Widget.MaterialComponents.Button.OutlinedButton">
         <item name="fontWeight">700</item>
         <item name="android:layout_height">62dp</item>
-        <item name="shapeAppearance">@style/appearance.round.35</item>
+        <item name="shapeAppearance">@style/appearance.round.constant</item>
         <item name="android:textAppearance">@style/txt.h2.bold</item>
+    </style>
+
+    <style name="btn.outlined.tin" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="fontWeight">400</item>
+        <item name="android:layout_height">36dp</item>
+        <item name="iconSize">@dimen/icon_normal</item>
+        <item name="shapeAppearance">@style/appearance.round.constant</item>
+        <item name="android:textAppearance">@style/txt.h1.medium</item>
     </style>
 
     <style name="btn.colorless" parent="btn.colored">
@@ -159,7 +170,7 @@
 
     <style name="btn.text" parent="Widget.MaterialComponents.Button.TextButton">
         <item name="fontWeight">700</item>
-        <item name="shapeAppearance">@style/appearance.round.35</item>
+        <item name="shapeAppearance">@style/appearance.round.constant</item>
         <item name="android:textAppearance">@style/txt.h1.bold</item>
     </style>
 
@@ -230,19 +241,20 @@
         <item name="android:textDirection">anyRtl</item>
     </style>
 
-    <style name="edt.latin.digits" parent="edt">
-        <item name="fontFamily">@font/font_normal_latin_digits</item>
-    </style>
-
     <!--    animation-->
     <style name="animation.slide.up_down" parent="">
         <item name="android:windowEnterAnimation">@anim/slide_up</item>
         <item name="android:windowExitAnimation">@anim/slide_down</item>
     </style>
 
-    <style name="animation.fade" parent="">
-        <item name="android:windowEnterAnimation">@android:anim/fade_in</item>
-        <item name="android:windowExitAnimation">@android:anim/fade_out</item>
+    <style name="animation.activity" parent="">
+        <item name="android:windowEnterAnimation">@anim/nav_default_enter_anim</item>
+        <item name="android:windowExitAnimation">@anim/nav_default_exit_anim</item>
+
+        <item name="android:activityOpenEnterAnimation">@anim/nav_default_enter_anim</item>
+        <item name="android:activityOpenExitAnimation">@anim/nav_default_exit_anim</item>
+        <item name="android:activityCloseEnterAnimation">@anim/nav_default_enter_anim</item>
+        <item name="android:activityCloseExitAnimation">@anim/nav_default_exit_anim</item>
     </style>
 
     <style name="animation.popup_window" parent="">
@@ -270,6 +282,25 @@
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowIsFloating">false</item>
 
+    </style>
+
+    <style name="loading">
+        <!-- Fill the screen -->
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowNoTitle">true</item>
+
+        <item name="android:windowIsTranslucent">true</item>
+
+        <item name="windowMinWidthMajor">0%</item>
+        <item name="windowMinWidthMinor">0%</item>
+    </style>
+
+    <style name="progress">
+        <item name="minWidth">36dip</item>
+        <item name="maxWidth">36dip</item>
+        <item name="minHeight">36dip</item>
+        <item name="maxHeight">36dip</item>
     </style>
 
 </resources>

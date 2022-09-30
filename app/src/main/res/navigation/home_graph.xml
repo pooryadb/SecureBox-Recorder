@@ -5,10 +5,159 @@
     android:id="@+id/home_graph"
     app:startDestination="@id/recordListFragment">
 
-
     <fragment
         android:id="@+id/recordListFragment"
-        android:name="ir.romroid.secureboxrecorder.presentation.recordList.RecordListFragment"
-        tools:layout="@layout/fragment_record_list" />
+        android:name="ir.romroid.secureboxrecorder.presentation.recorder.list.RecordListFragment"
+        tools:layout="@layout/fragment_record_list">
+        <action
+            android:id="@+id/action_recordListFragment_to_dialogRecordList"
+            app:destination="@id/dialogRecordList"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+        <action
+            android:id="@+id/action_recordListFragment_to_dialogDeleteRecord"
+            app:destination="@id/dialogDeleteRecord"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+        <action
+            android:id="@+id/action_recordListFragment_to_dialogAudioPlayer"
+            app:destination="@id/dialogAudioPlayer"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+        <action
+            android:id="@+id/action_recordListFragment_to_getKeysFragment"
+            app:destination="@id/getKeysFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"
+            app:popUpTo="@id/recordListFragment"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_recordListFragment_to_fileManagerFragment"
+            app:destination="@id/fileManagerFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+    </fragment>
+
+    <dialog
+        android:id="@+id/dialogRecordList"
+        android:name="ir.romroid.secureboxrecorder.presentation.recorder.dialog.RecorderDialog"
+        tools:layout="@layout/dialog_recorder" />
+
+    <dialog
+        android:id="@+id/dialogDeleteRecord"
+        android:name="ir.romroid.secureboxrecorder.presentation.recorder.dialog.DeleteRecordDialog"
+        tools:layout="@layout/dialog_delete_record">
+        <argument
+            android:name="id"
+            app:argType="long" />
+    </dialog>
+
+    <dialog
+        android:id="@+id/dialogAudioPlayer"
+        android:name="ir.romroid.secureboxrecorder.presentation.recorder.dialog.AudioPlayerDialog"
+        tools:layout="@layout/dialog_audio_player">
+
+        <argument
+            android:name="audioModel"
+            app:argType="ir.romroid.secureboxrecorder.domain.model.AudioModel" />
+    </dialog>
+
+    <fragment
+        android:id="@+id/getKeysFragment"
+        android:name="ir.romroid.secureboxrecorder.presentation.safe.KeyFragment"
+        android:label="GetKeysFragment"
+        tools:layout="@layout/fragment_key">
+        <action
+            android:id="@+id/action_getKeysFragment_to_recordListFragment"
+            app:destination="@id/recordListFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/fileManagerFragment"
+        android:name="ir.romroid.secureboxrecorder.presentation.fileManager.FileManagerFragment"
+        android:label="FileManagerFragment"
+        tools:layout="@layout/fragment_file_manager">
+        <action
+            android:id="@+id/action_fileManagerFragment_to_deleteFileDialog"
+            app:destination="@id/deleteFileDialog"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+        <action
+            android:id="@+id/action_fileManagerFragment_to_shareFileDialog"
+            app:destination="@id/shareFileDialog"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+        <action
+            android:id="@+id/action_fileManagerFragment_to_webViewFragment"
+            app:destination="@id/webViewFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+    </fragment>
+
+    <dialog
+        android:id="@+id/deleteFileDialog"
+        android:name="ir.romroid.secureboxrecorder.presentation.fileManager.dialog.DeleteFileDialog"
+        android:label="DeleteFileDialog"
+        tools:layout="@layout/dialog_delete_file">
+        <argument
+            android:name="id"
+            app:argType="long" />
+    </dialog>
+
+    <dialog
+        android:id="@+id/shareFileDialog"
+        android:name="ir.romroid.secureboxrecorder.presentation.fileManager.dialog.ShareFileDialog"
+        android:label="ShareFileDialog"
+        tools:layout="@layout/dialog_share_file">
+        <argument
+            android:name="path"
+            app:argType="string" />
+    </dialog>
+
+    <fragment
+        android:id="@+id/webViewFragment"
+        android:name="ir.romroid.secureboxrecorder.presentation.fileManager.WebViewFragment"
+        android:label="WebViewFragment"
+        tools:layout="@layout/fragment_web_view">
+        <argument
+            android:name="fileModel"
+            app:argType="ir.romroid.secureboxrecorder.domain.model.FileModel" />
+        <action
+            android:id="@+id/action_webViewFragment_to_openFileDialog"
+            app:destination="@id/openFileDialog"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+    </fragment>
+    <dialog
+        android:id="@+id/openFileDialog"
+        android:name="ir.romroid.secureboxrecorder.presentation.fileManager.dialog.OpenFileDialog"
+        android:label="OpenFileDialog"
+        tools:layout="@layout/dialog_open_file">
+        <argument
+            android:name="fileModel"
+            app:argType="ir.romroid.secureboxrecorder.domain.model.FileModel" />
+    </dialog>
 
 </navigation>

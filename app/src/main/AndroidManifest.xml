@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="ir.romroid.secureboxrecorder">
 
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
     <application
         android:name=".utils.AppCore"
         android:allowBackup="true"
@@ -30,6 +32,16 @@
             android:name=".presentation.main.MainActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustNothing" />
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="ir.romroid.secureboxrecorder.presentation.main.MainActivity.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_path" />
+        </provider>
 
     </application>
 

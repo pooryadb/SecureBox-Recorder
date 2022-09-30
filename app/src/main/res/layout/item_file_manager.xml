@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cl"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?android:attr/selectableItemBackground"
+    android:gravity="center"
+    android:orientation="horizontal"
+    android:paddingVertical="@dimen/padding">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/ivThumbnail"
+        android:layout_width="@dimen/icon_big"
+        android:layout_height="@dimen/icon_big"
+        android:layout_marginStart="@dimen/padding"
+        app:srcCompat="@drawable/ic_round_info" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/tvTitle"
+        style="@style/txt.h0"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin"
+        android:layout_weight="1"
+        android:ellipsize="middle"
+        android:maxLines="1"
+        android:singleLine="true"
+        tools:text="file name - file.mp3" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/btnShare"
+        android:layout_width="@dimen/icon_big"
+        android:layout_height="@dimen/icon_big"
+        android:background="?android:attr/selectableItemBackground"
+        android:contentDescription="@string/share"
+        android:padding="@dimen/padding"
+        android:src="@drawable/ic_send_file" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/btnDelete"
+        android:layout_width="@dimen/icon_big"
+        android:layout_height="@dimen/icon_big"
+        android:background="?attr/selectableItemBackground"
+        android:contentDescription="@string/delete"
+        android:padding="@dimen/padding"
+        android:src="@drawable/ic_remove_file"
+        app:tint="?attr/colorError" />
+
+</androidx.appcompat.widget.LinearLayoutCompat>

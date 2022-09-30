@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:layout_width="@dimen/image_big"
+        android:layout_height="@dimen/image_big"
+        android:layout_margin="@dimen/margin"
+        app:srcCompat="@drawable/ic_empty_record" />
+
+    <com.google.android.material.textview.MaterialTextView
+        style="@style/txt.h2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin"
+        android:gravity="center"
+        android:text="@string/no_record_yet_try_round_button_at_bottom" />
+
+</androidx.appcompat.widget.LinearLayoutCompat>

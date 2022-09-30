@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="?attr/colorGlass"
     android:gravity="center"
     android:orientation="vertical"
     tools:context=".presentation.splash.SplashActivity">
@@ -13,12 +14,13 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:adjustViewBounds="true"
+        android:elevation="@dimen/elevation"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintWidth_percent="0.6"
-        app:srcCompat="@drawable/ic_microphone" />
+        app:layout_constraintWidth_percent="0.4"
+        app:srcCompat="@drawable/ic_launcher_foreground" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/tvName"

@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import ir.romroid.secureboxrecorder.base.component.model.BaseResponseData
-import ir.romroid.secureboxrecorder.base.ext.cast
+import ir.romroid.secureboxrecorder.ext.cast
 
 abstract class BaseAdapter<VB : ViewBinding, VH : BaseAdapter.VHolder<VB, RECORD>, RECORD : BaseResponseData> :
     ListAdapter<RECORD, VH>(BaseDiffCallback()) {

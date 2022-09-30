@@ -1,13 +1,13 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="app.theme" parent="Theme.MaterialComponents.NoActionBar">
-        <item name="colorPrimary">#4a17ff</item>
-        <item name="colorPrimaryVariant">#6886f4</item>
+        <item name="colorPrimary">#FF6200EE</item>
+        <item name="colorPrimaryVariant">#FF3700B3</item>
         <item name="colorOnPrimary">#FFFFFF</item>
 
-        <item name="colorSecondary">#01a8dd</item>
-        <item name="colorSecondaryVariant">#01a8dd</item>
-        <item name="colorOnSecondary">#FFFFFF</item>
+        <item name="colorSecondary">#FF03DAC5</item>
+        <item name="colorSecondaryVariant">#FF018786</item>
+        <item name="colorOnSecondary">#000000</item>
 
         <item name="colorSurface">#303030</item>
         <item name="colorOnSurface">#FFFFFF</item>
@@ -36,8 +36,9 @@
         <!-- settings -->
         <item name="android:scrollbarStyle">outsideOverlay</item>
         <item name="android:scrollbars">none</item>
-        <item name="android:colorEdgeEffect">?android:colorError</item>
-        <item name="android:windowAnimationStyle">@style/animation.fade</item>
+        <item name="android:overScrollMode">never</item>
+        <item name="android:colorEdgeEffect">?attr/colorPrimaryVariant</item>
+        <item name="android:windowAnimationStyle">@style/animation.activity</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">false</item>
         <item name="fontFamily">@font/font_family</item>

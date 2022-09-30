@@ -8,6 +8,12 @@
     <dimen name="padding">8dp</dimen>
 
     <dimen name="icon_normal">24dp</dimen>
+    <dimen name="icon_large">36dp</dimen>
     <dimen name="icon_big">48dp</dimen>
+
+    <dimen name="image_normal">60dp</dimen>
+    <dimen name="image_big">150dp</dimen>
+
+    <dimen name="handle_width">50dp</dimen>
 
 </resources>
