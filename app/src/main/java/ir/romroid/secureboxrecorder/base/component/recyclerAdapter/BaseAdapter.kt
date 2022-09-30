@@ -10,14 +10,34 @@ import androidx.viewbinding.ViewBinding
 import ir.romroid.secureboxrecorder.base.component.model.BaseResponseData
 import ir.romroid.secureboxrecorder.ext.cast
 
-abstract class BaseAdapter<VB : ViewBinding, VH : BaseAdapter.VHolder<VB, RECORD>, RECORD : BaseResponseData> :
-    ListAdapter<RECORD, VH>(BaseDiffCallback()) {
+abstract class BaseAdapter<
+        VB : ViewBinding,
+        VH : BaseAdapter.VHolder<VB, RECORD>,
+        RECORD : BaseResponseData
+        > : ListAdapter<RECORD, VH>(BaseDiffCallback()) {
 
-    var binding: VB? = null
-    abstract val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> VB
+    var onClickListener: ((RECORD) -> Unit)? = null
+
+    protected abstract val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> VB
+    protected var binding: VB? = null
+        private set
 
     open class VHolder<VB : ViewBinding, RECORD : BaseResponseData>(binding: VB?) :
         BaseViewHolder<VB, RECORD>(binding)
+
+    override fun onBindViewHolder(holder: VH, position: Int) {
+        holder.adapter = this.cast<RecyclerView.Adapter<RecyclerView.ViewHolder>>()!!
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
+        binding = bindingInflater.invoke(LayoutInflater.from(parent.context), parent, false)
+        return VHolder<VB, RECORD>(binding) as VH
+    }
+
+    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
+        super.onDetachedFromRecyclerView(recyclerView)
+        binding = null
+    }
 
     class BaseDiffCallback<RECORD : BaseResponseData> : DiffUtil.ItemCallback<RECORD>() {
         override fun areItemsTheSame(
@@ -36,19 +56,4 @@ abstract class BaseAdapter<VB : ViewBinding, VH : BaseAdapter.VHolder<VB, RECORD
         }
     }
 
-    override fun onBindViewHolder(holder: VH, position: Int) {
-        holder.adapter = this.cast<RecyclerView.Adapter<RecyclerView.ViewHolder>>()!!
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
-        binding = bindingInflater.invoke(LayoutInflater.from(parent.context), parent, false)
-        return VHolder<VB, RECORD>(binding) as VH
-    }
-
-    var onClickListener: ((RECORD) -> Unit)? = null
-
-    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
-        super.onDetachedFromRecyclerView(recyclerView)
-        binding = null
-    }
 }
