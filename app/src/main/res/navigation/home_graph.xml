@@ -40,8 +40,8 @@
             app:popUpTo="@id/recordListFragment"
             app:popUpToInclusive="true" />
         <action
-            android:id="@+id/action_recordListFragment_to_fileManagerFragment"
-            app:destination="@id/fileManagerFragment"
+            android:id="@+id/action_recordListFragment_to_boxFragment"
+            app:destination="@id/boxFragment"
             app:enterAnim="@anim/nav_default_enter_anim"
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
@@ -87,26 +87,26 @@
     </fragment>
 
     <fragment
-        android:id="@+id/fileManagerFragment"
-        android:name="ir.romroid.secureboxrecorder.presentation.fileManager.FileManagerFragment"
-        android:label="FileManagerFragment"
-        tools:layout="@layout/fragment_file_manager">
+        android:id="@+id/boxFragment"
+        android:name="ir.romroid.secureboxrecorder.presentation.box.BoxFragment"
+        android:label="BoxFragment"
+        tools:layout="@layout/fragment_box">
         <action
-            android:id="@+id/action_fileManagerFragment_to_deleteFileDialog"
+            android:id="@+id/action_boxFragment_to_deleteFileDialog"
             app:destination="@id/deleteFileDialog"
             app:enterAnim="@anim/nav_default_enter_anim"
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
             app:popExitAnim="@anim/nav_default_pop_exit_anim" />
         <action
-            android:id="@+id/action_fileManagerFragment_to_shareFileDialog"
+            android:id="@+id/action_boxFragment_to_shareFileDialog"
             app:destination="@id/shareFileDialog"
             app:enterAnim="@anim/nav_default_enter_anim"
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
             app:popExitAnim="@anim/nav_default_pop_exit_anim" />
         <action
-            android:id="@+id/action_fileManagerFragment_to_webViewFragment"
+            android:id="@+id/action_boxFragment_to_webViewFragment"
             app:destination="@id/webViewFragment"
             app:enterAnim="@anim/nav_default_enter_anim"
             app:exitAnim="@anim/nav_default_exit_anim"
@@ -116,7 +116,7 @@
 
     <dialog
         android:id="@+id/deleteFileDialog"
-        android:name="ir.romroid.secureboxrecorder.presentation.fileManager.dialog.DeleteFileDialog"
+        android:name="ir.romroid.secureboxrecorder.presentation.box.dialog.DeleteFileDialog"
         android:label="DeleteFileDialog"
         tools:layout="@layout/dialog_delete_file">
         <argument
@@ -126,7 +126,7 @@
 
     <dialog
         android:id="@+id/shareFileDialog"
-        android:name="ir.romroid.secureboxrecorder.presentation.fileManager.dialog.ShareFileDialog"
+        android:name="ir.romroid.secureboxrecorder.presentation.box.dialog.ShareFileDialog"
         android:label="ShareFileDialog"
         tools:layout="@layout/dialog_share_file">
         <argument
@@ -136,7 +136,7 @@
 
     <fragment
         android:id="@+id/webViewFragment"
-        android:name="ir.romroid.secureboxrecorder.presentation.fileManager.WebViewFragment"
+        android:name="ir.romroid.secureboxrecorder.presentation.box.WebViewFragment"
         android:label="WebViewFragment"
         tools:layout="@layout/fragment_web_view">
         <argument
@@ -152,7 +152,7 @@
     </fragment>
     <dialog
         android:id="@+id/openFileDialog"
-        android:name="ir.romroid.secureboxrecorder.presentation.fileManager.dialog.OpenFileDialog"
+        android:name="ir.romroid.secureboxrecorder.presentation.box.dialog.OpenFileDialog"
         android:label="OpenFileDialog"
         tools:layout="@layout/dialog_open_file">
         <argument

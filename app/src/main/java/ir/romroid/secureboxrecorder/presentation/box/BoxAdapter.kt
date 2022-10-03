@@ -1,25 +1,25 @@
-package ir.romroid.secureboxrecorder.presentation.fileManager
+package ir.romroid.secureboxrecorder.presentation.box
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import ir.romroid.secureboxrecorder.base.component.recyclerAdapter.BaseAdapter
-import ir.romroid.secureboxrecorder.databinding.ItemFileManagerBinding
+import ir.romroid.secureboxrecorder.databinding.ItemBoxBinding
 import ir.romroid.secureboxrecorder.domain.model.FileModel
 
-class FileManagerAdapter : BaseAdapter<
-        ItemFileManagerBinding,
-        BaseAdapter.VHolder<ItemFileManagerBinding, FileModel>,
+class BoxAdapter : BaseAdapter<
+        ItemBoxBinding,
+        BaseAdapter.VHolder<ItemBoxBinding, FileModel>,
         FileModel
         >() {
 
-    override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> ItemFileManagerBinding
-        get() = ItemFileManagerBinding::inflate
+    override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> ItemBoxBinding
+        get() = ItemBoxBinding::inflate
 
     var onDeleteListener: ((item: FileModel) -> Unit)? = null
     var onShareListener: ((item: FileModel) -> Unit)? = null
 
     override fun onBindViewHolder(
-        holder: VHolder<ItemFileManagerBinding, FileModel>,
+        holder: VHolder<ItemBoxBinding, FileModel>,
         position: Int
     ) {
         super.onBindViewHolder(holder, position)

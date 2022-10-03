@@ -1,4 +1,4 @@
-package ir.romroid.secureboxrecorder.presentation.fileManager
+package ir.romroid.secureboxrecorder.presentation.box
 
 import android.net.Uri
 import androidx.core.net.toUri
@@ -15,7 +15,7 @@ import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
-class FileManagerViewModel @Inject constructor(
+class BoxViewModel @Inject constructor(
     private val appRepository: AppRepository
 ) : BaseViewModel() {
 

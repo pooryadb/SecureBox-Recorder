@@ -5,7 +5,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.FragmentComponent
 import dagger.hilt.android.scopes.FragmentScoped
-import ir.romroid.secureboxrecorder.presentation.fileManager.FileManagerAdapter
+import ir.romroid.secureboxrecorder.presentation.box.BoxAdapter
 import ir.romroid.secureboxrecorder.presentation.recorder.list.AudioAdapter
 
 @Module
@@ -18,6 +18,6 @@ object AdaptersModule {
 
     @FragmentScoped
     @Provides
-    fun provideFileManagerAdapter() = FileManagerAdapter()
+    fun provideFileManagerAdapter() = BoxAdapter()
 
 }

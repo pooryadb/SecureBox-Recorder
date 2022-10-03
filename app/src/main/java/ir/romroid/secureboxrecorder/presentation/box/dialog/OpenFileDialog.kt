@@ -1,4 +1,4 @@
-package ir.romroid.secureboxrecorder.presentation.fileManager.dialog
+package ir.romroid.secureboxrecorder.presentation.box.dialog
 
 import android.os.Bundle
 import android.view.LayoutInflater
