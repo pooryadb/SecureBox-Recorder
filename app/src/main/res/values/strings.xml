@@ -8,6 +8,9 @@
     <string name="please_enter_name">please enter a name</string>
     <string name="cant_pause_stopped">can\'t pause! stopped!</string>
     <string name="cant_record_without_permission">can\'t record without permission</string>
+    <string name="error_record_stop">can\'t stop recorder!</string>
+    <string name="error_record_start">can\'t start record!</string>
+    <string name="error_record_prepare">can\'t prepare recorder!</string>
     <string name="delete">delete</string>
     <string name="are_you_sure_you_want_to_delete_this_record">Are you sure you want to delete this record?</string>
     <string name="cant_find_file">Can\'t find file!</string>

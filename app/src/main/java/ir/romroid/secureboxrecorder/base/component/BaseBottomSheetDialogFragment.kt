@@ -20,11 +20,11 @@ abstract class BaseBottomSheetDialogFragment<VB : ViewBinding>() : BottomSheetDi
     protected var binding: VB? = null
         private set
 
-    protected var hasCancelable = true
+    protected open var hasCancelable = true
         set(value) {
             dialog?.apply {
-                setCancelable(hasCancelable)
-                setCanceledOnTouchOutside(hasCancelable)
+                setCancelable(value)
+                setCanceledOnTouchOutside(value)
             }
             field = value
         }

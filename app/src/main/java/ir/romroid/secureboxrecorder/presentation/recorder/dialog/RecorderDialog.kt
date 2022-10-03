@@ -30,31 +30,20 @@ class RecorderDialog : BaseBottomSheetDialogFragment<DialogRecorderBinding>() {
     override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> DialogRecorderBinding
         get() = DialogRecorderBinding::inflate
 
+    override var hasCancelable = false
+
     private val safeVM by activityViewModels<SafeViewModel>()
 
-    companion object {
-        private const val TAG = "RecorderDialog"
-        private const val AUDIO_PERMISSION = Manifest.permission.RECORD_AUDIO
+    private companion object {
+        const val TAG = "RecorderDialog"
+        const val AUDIO_PERMISSION = Manifest.permission.RECORD_AUDIO
     }
 
     private var path = ""
     private var recorder: MediaRecorder? = null
     private var pendingPrepareRecord: (() -> Unit)? = null
     private var isRecording = false
-        set(value) {
-            if (value) {
-                binding?.fab?.setImageResource(R.drawable.ic_pause)
-                binding?.chronometer?.base = SystemClock.elapsedRealtime()
-                binding?.chronometer?.start()
-                animateWave.start()
-            } else if (field) {
-                binding?.fab?.toHide()
-                binding?.chronometer?.stop()
-                animateWave.cancel()
-            }
-
-            field = value
-        }
+    private var isPrepared = false
 
     override fun viewHandler(view: View, savedInstanceState: Bundle?) {
         binding?.apply {
@@ -71,7 +60,6 @@ class RecorderDialog : BaseBottomSheetDialogFragment<DialogRecorderBinding>() {
             btnSave.setOnClickListener {
                 if (etName.text.toString().isEmpty()) {
                     etName.error = getString(R.string.please_enter_name)
-                    return@setOnClickListener
                 } else {
                     etName.error = null
                     saveVoice(etName.text.toString())
@@ -82,7 +70,6 @@ class RecorderDialog : BaseBottomSheetDialogFragment<DialogRecorderBinding>() {
             val key = safeVM.getUserKey()
             val keyLength = key.length
             etName.afterTextChange {
-                it.logE(TAG)
                 if (it.length == keyLength) {
                     if (it == key) {
                         val fTemp = File(path)
@@ -94,7 +81,7 @@ class RecorderDialog : BaseBottomSheetDialogFragment<DialogRecorderBinding>() {
         }
     }
 
-    private fun setupPath() {
+    private fun setupPath() {// FIXME: use provider
         path = requireContext().cacheDir.path + "/" + VOICE_TEMP_FOLDER_NAME
         val f = File(path)
         if (f.exists().not()) {
@@ -105,9 +92,7 @@ class RecorderDialog : BaseBottomSheetDialogFragment<DialogRecorderBinding>() {
         path.logD("$TAG path")
     }
 
-    private fun saveVoice(name: String) {
-        stopRecord()// to ensure
-
+    private fun saveVoice(name: String) {// FIXME: use provider
         val fTemp = File(path)
 
         val newPath =
@@ -118,7 +103,7 @@ class RecorderDialog : BaseBottomSheetDialogFragment<DialogRecorderBinding>() {
         dismiss(false)
     }
 
-    private fun setupSaveFile(path: String, fileName: String): File {
+    private fun setupSaveFile(path: String, fileName: String): File {// FIXME: use provider
         val folderSave = File(path)
         if (folderSave.exists().not())
             folderSave.mkdirs()
@@ -132,17 +117,19 @@ class RecorderDialog : BaseBottomSheetDialogFragment<DialogRecorderBinding>() {
     }
 
     private fun toggleRecord() {
-        recorder?.let {
-            this.isRecording =
-                if (isRecording.not()) {
-                    startRecord()
-                } else {
-                    binding?.btnSave?.toShow()
-                    stopRecord().not()
-                }
-        } ?: run {
+        if (isPrepared) {
+            if (isRecording) {
+                stopRecord()
+                setupPauseRecorder()
+            } else {
+                startRecord()
+                setupResumeRecorder()
+            }
+        } else {
             pendingPrepareRecord = {
-                this.isRecording = startRecord()
+                startRecord()
+                setupResumeRecorder()
+                pendingPrepareRecord = null
             }
             prepareRecorder()
         }
@@ -152,93 +139,112 @@ class RecorderDialog : BaseBottomSheetDialogFragment<DialogRecorderBinding>() {
         try {
             recorder?.let {
                 it.start()
+                isRecording = true
                 "startRecord".logD(TAG)
                 true
             } ?: false
         } catch (e: Exception) {
+            requireContext().toast(getString(R.string.error_record_stop))
             e.logE("$TAG startRecord")
             false
         }
 
-
-    private fun prepareRecorder() {
-        stopRecord()// to ensure
-//        setupFolder()
-
-        if (recordPermission()) {
-            recorder = MediaRecorder().apply {
-                setAudioSource(MediaRecorder.AudioSource.MIC)
-                setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)//should equal to [Constants.VOICE_FORMAT]
-                setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
-                setOutputFile(path)
-                try {
-                    prepare()
-                } catch (e: IOException) {
-                    e.logE("$TAG prepareRecorder")
-                    return
-                }
-            }
-
-            "success".logD("$TAG prepareRecorder")
-            pendingPrepareRecord?.invoke()
-            pendingPrepareRecord = null
-
-        }
-
+    private fun setupResumeRecorder() = binding?.apply {
+        fab.setImageResource(R.drawable.ic_pause)
+        chronometer.base = SystemClock.elapsedRealtime()
+        chronometer.start()
+        animateWave.start()
     }
 
     private fun stopRecord(): Boolean =
         try {
             recorder?.stop()
             recorder?.release()
-
+            isPrepared = false
+            isRecording = false
             "stopRecord".logD(TAG)
             true
         } catch (e: Exception) {
+            requireContext().toast(getString(R.string.error_record_stop))
             e.logE("$TAG stopRecord")
             false
         }
 
-    private fun recordPermission(): Boolean = when {
-        (PermissionUtils.isGranted(requireContext(), AUDIO_PERMISSION).not()) -> {
-
-            PermissionUtils.requestPermission(
-                requireContext(),
-                arrayOf(AUDIO_PERMISSION)
-            )
-
-            false
-        }
-        shouldShowRequestPermissionRationale(AUDIO_PERMISSION) -> {
-            requireContext().toast(getString(R.string.cant_record_without_permission))
-            false
-        }
-        else -> {
-            true
-        }
+    private fun setupPauseRecorder() = binding?.apply {
+        fab.toHide()
+        chronometer.stop()
+        animateWave.cancel()
+        btnSave.toShow()
     }
 
-    override fun onPause() {
-        stopRecord()
-        super.onPause()
+    private fun prepareRecorder() {
+        if (recordPermission()) {
+            recorder = MediaRecorder().apply {
+                try {
+                    setAudioSource(MediaRecorder.AudioSource.MIC)
+                    setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)//should equal to [Constants.VOICE_FORMAT]
+                    setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
+                    setOutputFile(path)
+                    prepare()
+
+                    isPrepared = true
+                } catch (e: IOException) {
+                    isPrepared = false
+                    requireContext().toast(getString(R.string.error_record_prepare))
+                    e.logE("$TAG prepareRecorder")
+                    return
+                }
+
+            }
+
+            "success".logD("$TAG prepareRecorder")
+            pendingPrepareRecord?.invoke()
+
+        }
+
+    }
+
+    private fun recordPermission(): Boolean =
+        when {
+            (PermissionUtils.isGranted(requireContext(), AUDIO_PERMISSION).not()) -> {
+
+                PermissionUtils.requestPermission(
+                    requireContext(),
+                    arrayOf(AUDIO_PERMISSION)
+                )
+
+                false
+            }
+            shouldShowRequestPermissionRationale(AUDIO_PERMISSION) -> {
+                requireContext().toast(getString(R.string.cant_record_without_permission))
+                false
+            }
+            else -> {
+                true
+            }
+        }
+
+    override fun onDestroy() {
+        if (isRecording)
+            stopRecord()
+        super.onDestroy()
     }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
 
-        PermissionUtils.register(this,
+        PermissionUtils.register(
+            this,
             object : PermissionUtils.PermissionListener {
                 override fun observe(permissions: Map<String, Boolean>) {
                     permissions.forEach {
-                        when (it.key) {
-                            AUDIO_PERMISSION -> {
-                                if (it.value) {
-                                    prepareRecorder()
-                                } else
-                                    requireContext().toast(
-                                        getString(R.string.cant_record_without_permission)
-                                    )
-                            }
+                        if (it.key == AUDIO_PERMISSION) {
+                            if (it.value) {
+                                prepareRecorder()
+                            } else
+                                requireContext().toast(
+                                    getString(R.string.cant_record_without_permission)
+                                )
                         }
                     }
                 }
