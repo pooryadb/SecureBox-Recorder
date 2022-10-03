@@ -18,7 +18,6 @@ import ir.romroid.secureboxrecorder.ext.*
 import ir.romroid.secureboxrecorder.utils.BACK_FROM_DELETE_FILE
 import javax.inject.Inject
 
-
 @AndroidEntryPoint
 class FileManagerFragment : BaseFragment<FragmentFileManagerBinding>() {
 
@@ -187,5 +186,7 @@ class FileManagerFragment : BaseFragment<FragmentFileManagerBinding>() {
         super.onDestroy()
     }
 
-    private val TAG = "FileManagerFrag"
+    private companion object {
+        const val TAG = "FileManagerFrag"
+    }
 }

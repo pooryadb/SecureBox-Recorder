@@ -20,10 +20,11 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment() {
 
     protected var isRestoredFromBackStack = false
 
+    protected open val fragmentEnum: AppFragment = AppFragmentEnum.DEFAULT
+
     protected abstract fun viewHandler(view: View, savedInstanceState: Bundle?)
     protected open fun initObservers() {}
     protected open fun initBackStackObservers() {}
-    protected open fun fragmentEnum(): AppFragment = AppFragmentEnum.DEFAULT
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,7 +50,7 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment() {
     override fun onResume() {
         super.onResume()
 
-        handleKeyboardSize()
+        handleFragEnum()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -70,9 +71,9 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment() {
     private val dialogLoading: LoadingDialog by lazy { LoadingDialog(requireContext()) }
 
 
-    private fun handleKeyboardSize() {
-        activityContext.windowInsetsHelper.isFullScreen = fragmentEnum().isFullScreen()
-        activityContext.windowInsetsHelper.isAutoResizeKeyboard = fragmentEnum().resizeInputMode()
+    private fun handleFragEnum() = activityContext.apply {
+        windowInsetsHelper.isFullScreen = fragmentEnum.isFullScreen()
+        windowInsetsHelper.isAutoResizeKeyboard = fragmentEnum.resizeInputMode()
     }
 
 }
