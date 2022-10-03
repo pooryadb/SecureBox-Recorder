@@ -74,22 +74,4 @@ object CryptoUtils {
 
     fun decryptToString(yourKey: SecretKey, data: String): String =
         decrypt(yourKey, data.fromBase64Replaced()).toStringASCII()
-
-    /*fun decryptFile(
-        key: String,
-        targetFilePath: String,
-        destinationFolderPath: String
-    ) {
-        val passBase64 = key.encodeBase64()
-        val sk = convertToKey(passBase64)
-        val decryptedFileData = decrypt(sk, readFile(targetFilePath))
-        val fName =
-            decrypt(sk, targetFilePath.toUri().pathSegments.last().fromBase64()).toStringASCII()
-        val f = File("$destinationFolderPath/$fName")
-        if (f.exists().not()) {
-            if (f.parentFile.exists().not())
-                f.parentFile.mkdirs()
-            saveFile(decryptedFileData, f.path)
-        }
-    }*/
 }

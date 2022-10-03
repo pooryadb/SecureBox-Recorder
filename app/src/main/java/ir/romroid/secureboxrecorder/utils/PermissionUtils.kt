@@ -33,7 +33,6 @@ object PermissionUtils {
         activity: AppCompatActivity,
         listener: PermissionListener,
     ) {
-
         resultContract = activity.registerForActivityResult(
             ActivityResultContracts.RequestMultiplePermissions()
         ) { permissions ->
@@ -48,7 +47,6 @@ object PermissionUtils {
         fragment: Fragment,
         listener: PermissionListener,
     ) {
-
         resultContract = fragment.registerForActivityResult(
             ActivityResultContracts.RequestMultiplePermissions()
         ) { permissions ->
