@@ -157,8 +157,8 @@ fun Context.hasPermissions(vararg permission: String): Boolean {
 }
 
 
-fun Context.toast(msg: String) {
-    Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
+fun Context.toast(msg: String, duration: Int = Toast.LENGTH_SHORT) {
+    Toast.makeText(this, msg, duration).show()
 }
 
 fun Context.getStatusBarHeightPixel(): Int = try {
