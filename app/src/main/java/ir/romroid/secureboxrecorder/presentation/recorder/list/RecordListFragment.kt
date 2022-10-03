@@ -11,7 +11,10 @@ import dagger.hilt.android.AndroidEntryPoint
 import ir.romroid.secureboxrecorder.R
 import ir.romroid.secureboxrecorder.base.component.BaseFragment
 import ir.romroid.secureboxrecorder.databinding.FragmentRecordListBinding
-import ir.romroid.secureboxrecorder.ext.*
+import ir.romroid.secureboxrecorder.ext.getBackStackLiveData
+import ir.romroid.secureboxrecorder.ext.toGone
+import ir.romroid.secureboxrecorder.ext.toShow
+import ir.romroid.secureboxrecorder.ext.toast
 import ir.romroid.secureboxrecorder.presentation.recorder.RecorderListViewModel
 import ir.romroid.secureboxrecorder.presentation.safe.SafeViewModel
 import ir.romroid.secureboxrecorder.utils.BACK_FROM_DELETE_RECORD
@@ -70,6 +73,11 @@ class RecordListFragment : BaseFragment<FragmentRecordListBinding>() {
 
             if (isRestoredFromBackStack.not())
                 recorderVM.fetchRecordedList(requireContext())
+            else {
+                recorderVM.liveRecordedList.value?.let {
+                    showEmptyLay(it.isEmpty())
+                }
+            }
         }
     }
 
@@ -77,12 +85,8 @@ class RecordListFragment : BaseFragment<FragmentRecordListBinding>() {
         super.initObservers()
 
         recorderVM.liveRecordedList.observe(this) {
-            if (it.isEmpty())
-                binding?.layEmpty?.root?.toShow()
-            else {
-                binding?.layEmpty?.root?.toGone()
-                audioAdapter.submitList(it)
-            }
+            showEmptyLay(it.isEmpty())
+            audioAdapter.submitList(it)
         }
     }
 
@@ -92,11 +96,11 @@ class RecordListFragment : BaseFragment<FragmentRecordListBinding>() {
         findNavController().getBackStackLiveData<Boolean>(BACK_FROM_RECORDER)
             ?.observe(this) {
                 if (it) {
-                    runAfter(1000L, {
+                    view?.postDelayed({// FIXME: use better solution!
                         findNavController().navigate(
                             RecordListFragmentDirections.actionRecordListFragmentToFileManagerFragment()
                         )
-                    })
+                    }, 100L)
                 } else {
                     recorderVM.fetchRecordedList(requireContext())
                 }
@@ -115,6 +119,14 @@ class RecordListFragment : BaseFragment<FragmentRecordListBinding>() {
                 }
 
             }
+    }
+
+    private fun showEmptyLay(show: Boolean) = binding?.apply {
+        if (show)
+            layEmpty.root.toShow()
+        else {
+            layEmpty.root.toGone()
+        }
     }
 
 }

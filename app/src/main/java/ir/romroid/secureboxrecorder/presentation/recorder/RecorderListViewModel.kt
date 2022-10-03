@@ -23,7 +23,7 @@ class RecorderListViewModel @Inject constructor(
         get() = _liveRecordedList
 
 
-    fun fetchRecordedList(context: Context) {
+    fun fetchRecordedList(context: Context) {// FIXME: use provider instead pass context
         val folder = File(context.getExternalFilesDir(null), VOICE_SAVED_FOLDER_NAME)
         _liveRecordedList.value = folder.listFiles()?.map {
             it.logD("audioModel fetchRecordedList")
