@@ -24,21 +24,13 @@ class KeyFragment : BaseFragment<FragmentKeyBinding>() {
 
     private val safeVM by activityViewModels<SafeViewModel>()
 
-    private val TAG = "GetKeys"
-
     private var uriTemp: Uri? = null
 
     override fun viewHandler(view: View, savedInstanceState: Bundle?) {
         binding?.apply {
             btnNext.setOnClickListener {
-                if (trySaveKeys()) {
-                    if (uriTemp != null)
-                        safeVM.unzipFile(uriTemp!!)
-                    else
-                        findNavController().navigate(
-                            KeyFragmentDirections.actionGetKeysFragmentToRecordListFragment()
-                        )
-                }
+                if (trySaveKeys())
+                    goNextPage()
             }
 
             btnRestore.setOnClickListener {
@@ -83,6 +75,16 @@ class KeyFragment : BaseFragment<FragmentKeyBinding>() {
         return@run true
     } ?: false
 
+    private fun goNextPage() {
+        uriTemp?.let {
+            safeVM.unzipFile(it)
+        } ?: run {
+            findNavController().navigate(
+                KeyFragmentDirections.actionGetKeysFragmentToRecordListFragment()
+            )
+        }
+    }
+
     private val getContent = registerForActivityResult(
         ActivityResultContracts.GetContent()
     ) {
@@ -97,6 +99,10 @@ class KeyFragment : BaseFragment<FragmentKeyBinding>() {
         }
         "showFileChooser uri: $it".logD(TAG)
 
+    }
+
+    private companion object {
+        const val TAG = "KeyFragment"
     }
 
 }
