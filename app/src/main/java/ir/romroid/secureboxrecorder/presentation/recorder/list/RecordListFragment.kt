@@ -98,7 +98,7 @@ class RecordListFragment : BaseFragment<FragmentRecordListBinding>() {
                 if (it) {
                     view?.postDelayed({// FIXME: use better solution!
                         findNavController().navigate(
-                            RecordListFragmentDirections.actionRecordListFragmentToFileManagerFragment()
+                            RecordListFragmentDirections.actionRecordListFragmentToBoxFragment()
                         )
                     }, 100L)
                 } else {
