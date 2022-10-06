@@ -41,9 +41,11 @@
         <item name="android:windowAnimationStyle">@style/animation.activity</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
-        <item name="fontFamily">@font/font_family</item>
         <item name="android:textAppearance">@style/txt.h1</item>
+        <!-- For Android sdk versions 26+. -->
         <item name="android:fontFamily">@font/font_family</item>
+        <!-- Target Android sdk versions < 26 and > 14. -->
+        <item name="fontFamily">@font/font_family</item>
         <!--        <item name="android:gravity">right</item>-->
         <!--settings -->
 
