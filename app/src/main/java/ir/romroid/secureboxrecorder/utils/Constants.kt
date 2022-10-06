@@ -6,9 +6,9 @@ const val VOICE_FORMAT = ".3gp"
 const val VOICE_TEMP_FOLDER_NAME = "voiceTemp"
 const val VOICE_SAVED_FOLDER_NAME = "voiceSaved"
 
-const val FILES_SAVED_FOLDER_NAME = "filesSaved"
+const val FILES_BOX_FOLDER_NAME = "box"
 const val FILES_TEMP_SHARE_FOLDER_NAME = "tempShare"
-const val FILES_EXPORT_FOLDER_NAME = "Export"
+const val FILES_EXPORT_FOLDER_NAME = "export"
 const val FILE_EXPORT_NAME_date = "SecureBox_Export_%s.zip"
 const val FILES_TEMP_ReCrypt_FOLDER_NAME = "tempReCrypt"
 

@@ -5,8 +5,10 @@ import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.content.res.TypedArray
+import android.database.Cursor
 import android.net.Uri
 import android.os.Build
+import android.provider.OpenableColumns
 import android.provider.Settings
 import android.util.TypedValue
 import android.view.Gravity
@@ -227,4 +229,23 @@ fun Context.shareAnyFile(file: File, activityProviderName: String) {
         .setStream(uriProvider)
         .setType(URLConnection.guessContentTypeFromName(file.extension))
         .startChooser()
+}
+
+fun Context.getFileNameFromCursor(uri: Uri): String? {
+    val fileCursor: Cursor? = this.contentResolver.query(
+        uri,
+        arrayOf(OpenableColumns.DISPLAY_NAME),
+        null,
+        null,
+        null
+    )
+    var fileName: String? = null
+    if (fileCursor != null && fileCursor.moveToFirst()) {
+        val cIndex: Int = fileCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+        if (cIndex != -1) {
+            fileName = fileCursor.getString(cIndex)
+        }
+    }
+    fileCursor?.close()
+    return fileName
 }

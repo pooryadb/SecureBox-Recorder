@@ -12,6 +12,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import ir.romroid.secureboxrecorder.R
 import ir.romroid.secureboxrecorder.base.component.BaseFragment
 import ir.romroid.secureboxrecorder.databinding.FragmentKeyBinding
+import ir.romroid.secureboxrecorder.ext.getFileNameFromCursor
 import ir.romroid.secureboxrecorder.ext.logD
 import ir.romroid.secureboxrecorder.ext.toast
 import ir.romroid.secureboxrecorder.utils.MyValidator
@@ -94,7 +95,7 @@ class KeyFragment : BaseFragment<FragmentKeyBinding>() {
             binding?.tvRestoreFileName?.text =
                 "%s:\n%s".format(
                     getString(R.string.file_name),
-                    safeVM.getFileName(it)
+                    requireContext().getFileNameFromCursor(it)
                 )
         }
         "showFileChooser uri: $it".logD(TAG)

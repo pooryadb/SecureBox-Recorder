@@ -7,7 +7,10 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import ir.romroid.secureboxrecorder.domain.provider.AppCache
+import ir.romroid.secureboxrecorder.domain.provider.local.AppCache
+import ir.romroid.secureboxrecorder.domain.provider.local.BoxProvider
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import javax.inject.Named
 import javax.inject.Singleton
 
@@ -20,6 +23,10 @@ object AppModule {
     fun provideContext(application: Application): Context {
         return application.applicationContext
     }
+
+    @Singleton
+    @Provides
+    fun provideIoDispatcher() = Dispatchers.IO
 
     @Singleton
     @Provides
@@ -37,5 +44,12 @@ object AppModule {
         @Named("AES") reactorAES: Reactor,
         @Named("Base64") reactorBase64: Reactor,
     ) = AppCache(reactorAES, reactorBase64)
+
+    @Singleton
+    @Provides
+    fun provideBoxProvider(
+        context: Context,
+        ioDispatcher: CoroutineDispatcher
+    ) = BoxProvider(context, ioDispatcher)
 
 }

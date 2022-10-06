@@ -3,32 +3,33 @@ package ir.romroid.secureboxrecorder.domain.repository
 
 import android.net.Uri
 import ir.romroid.secureboxrecorder.base.architecture.BaseRepository
-import ir.romroid.secureboxrecorder.domain.provider.AppCache
-import ir.romroid.secureboxrecorder.domain.provider.FileProvider
-import ir.romroid.secureboxrecorder.domain.provider.FileProviderListener
+import ir.romroid.secureboxrecorder.domain.model.Result
+import ir.romroid.secureboxrecorder.domain.provider.local.AppCache
+import ir.romroid.secureboxrecorder.domain.provider.local.BoxProvider
 import javax.inject.Inject
 
 class AppRepository @Inject constructor(
     val appCache: AppCache,
-    val fileProvider: FileProvider
+    val boxProvider: BoxProvider
 ) : BaseRepository() {
 
     fun userKey() = appCache.userKey
     fun encryptKey() = appCache.getEncryptKey() ?: ""
 
-    suspend fun getSavedFiles() = fileProvider.getFiles(encryptKey())
+    suspend fun getSavedFiles() = boxProvider.getFiles(encryptKey())
 
-    suspend fun saveAndEncrypt(uri: Uri) = fileProvider.saveToBox(encryptKey(), uri)
+    suspend fun saveAndEncrypt(uri: Uri) = boxProvider.saveToBox(encryptKey(), uri)
 
-    fun deleteFile(uri: Uri) = fileProvider.delete(uri)
+    fun deleteFile(uri: Uri) = boxProvider.delete(uri)
 
-    suspend fun copyToShare(uri: Uri) = fileProvider.restoreFromBox(encryptKey(), uri)
+    suspend fun copyToShare(uri: Uri) = boxProvider.restoreFromBox(encryptKey(), uri)
 
-    suspend fun copyToTemp(uri: Uri) = fileProvider.restoreFromBox(encryptKey(), uri)
+    suspend fun copyToTemp(uri: Uri) = boxProvider.restoreFromBox(encryptKey(), uri)
 
-    fun clearTemp() = fileProvider.clearTemp()
+    fun clearTemp() = boxProvider.clearTemp()
 
-    suspend fun exportFiles(listener: FileProviderListener) =
-        fileProvider.zipFilesToExportFolder(listener)
+    // TODO: use Flow
+    suspend fun exportFiles(listener: ((Result<String>) -> Unit)) =
+        boxProvider.zipFilesToExportFolder(listener)
 
 }

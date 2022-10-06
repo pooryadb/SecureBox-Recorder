@@ -7,7 +7,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import ir.romroid.secureboxrecorder.base.architecture.BaseViewModel
 import ir.romroid.secureboxrecorder.domain.model.FileModel
 import ir.romroid.secureboxrecorder.domain.model.FileType
-import ir.romroid.secureboxrecorder.domain.provider.FileProviderListener
+import ir.romroid.secureboxrecorder.domain.model.Result
 import ir.romroid.secureboxrecorder.domain.repository.AppRepository
 import ir.romroid.secureboxrecorder.ext.viewModelIO
 import ir.romroid.secureboxrecorder.utils.liveData.SingleLiveData
@@ -78,20 +78,17 @@ class BoxViewModel @Inject constructor(
     }
 
     fun exportData() = viewModelIO {
-        appRepository.exportFiles(object : FileProviderListener {
-            override fun onProgress() {
-                _liveExport.postValue(ExportResult.Progress)
+        appRepository.exportFiles {
+            when (it) {
+                is Result.Error -> _liveExport.postValue(
+                    ExportResult.Error(
+                        it.exception.message ?: ""
+                    )
+                )
+                Result.Loading -> _liveExport.postValue(ExportResult.Progress)
+                is Result.Success -> _liveExport.postValue(ExportResult.Success(it.data))
             }
-
-            override fun onSuccess(filePath: String) {
-                _liveExport.postValue(ExportResult.Success(filePath))
-            }
-
-            override fun onError(e: Exception) {
-                _liveExport.postValue(ExportResult.Error(e.message ?: ""))
-            }
-
-        })
+        }
     }
 
     fun clearTemp() = appRepository.clearTemp()
