@@ -3,7 +3,6 @@ package ir.romroid.secureboxrecorder.domain.provider.local
 import android.content.Context
 import android.net.Uri
 import androidx.core.net.toFile
-import ir.romroid.secureboxrecorder.domain.model.Result
 import ir.romroid.secureboxrecorder.ext.logD
 import ir.romroid.secureboxrecorder.utils.CryptoUtils
 import ir.romroid.secureboxrecorder.utils.CryptoUtils.encodeBase64Replaced
@@ -29,27 +28,20 @@ class BoxProvider @Inject constructor(
     suspend fun copyToTemp(contentUri: Uri) =
         copyTo(contentUri, folderTemp.path)
 
-    suspend fun unzipToSaveFolder(
-        file: File,
-        listener: ((Result<String>) -> Unit)? = null
-    ): Boolean = unzip(file, folderBox.path, listener)
+    suspend fun unzipToSaveFolder(file: File) = unzip(file, folderBox.path)
 
-    suspend fun zipFilesToExportFolder(
-        listener: ((Result<String>) -> Unit)
-    ): Boolean =
-        zip(
-            file = folderBox,
-            destinationPath = File(
-                folderExport,
-                FILE_EXPORT_NAME_date.format(
-                    SimpleDateFormat(
-                        "yyyy-MM-dd_HH:mm",
-                        Locale.getDefault()
-                    ).format(Date())
-                )
-            ).path,
-            listener = listener
-        )
+    suspend fun zipFilesToExportFolder() = zip(
+        file = folderBox,
+        destinationPath = File(
+            folderExport,
+            FILE_EXPORT_NAME_date.format(
+                SimpleDateFormat(
+                    "yyyy-MM-dd_HH:mm",
+                    Locale.getDefault()
+                ).format(Date())
+            )
+        ).path,
+    )
 
     private fun encryptFileName(sKey: SecretKey, name: String): String =
         CryptoUtils.encrypt(sKey, name).encodeBase64Replaced()

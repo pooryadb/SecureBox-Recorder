@@ -114,7 +114,7 @@ class WebViewFragment : BaseFragment<FragmentWebViewBinding>() {
 
     override fun onDestroy() {
         "onDestroy".logD(TAG)
-        // FIXME: onDestroy not work properly
+        // FIXME: onDestroy isn't best approach
         fileManagerVM.clearTemp()
         binding?.webView?.destroy()
         super.onDestroy()

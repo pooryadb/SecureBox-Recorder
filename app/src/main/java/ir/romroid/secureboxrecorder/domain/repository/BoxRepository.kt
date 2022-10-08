@@ -3,7 +3,6 @@ package ir.romroid.secureboxrecorder.domain.repository
 
 import android.net.Uri
 import ir.romroid.secureboxrecorder.base.architecture.BaseRepository
-import ir.romroid.secureboxrecorder.domain.model.Result
 import ir.romroid.secureboxrecorder.domain.provider.local.AppCache
 import ir.romroid.secureboxrecorder.domain.provider.local.BoxProvider
 import javax.inject.Inject
@@ -28,8 +27,6 @@ class BoxRepository @Inject constructor(
 
     fun clearTemp() = boxProvider.clearTemp()
 
-    // TODO: use Flow
-    suspend fun exportFiles(listener: ((Result<String>) -> Unit)) =
-        boxProvider.zipFilesToExportFolder(listener)
+    suspend fun exportFilesFlow() = boxProvider.zipFilesToExportFolder()
 
 }

@@ -173,7 +173,7 @@ class BoxFragment : BaseFragment<FragmentBoxBinding>() {
 
     override fun onDestroy() {
         "onDestroy".logD(TAG)
-        // FIXME: onDestroy not work properly
+        // FIXME: onDestroy isn't best approach
         fileManagerVM.clearTemp()
         super.onDestroy()
     }

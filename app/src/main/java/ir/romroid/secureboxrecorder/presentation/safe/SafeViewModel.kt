@@ -34,10 +34,7 @@ class SafeViewModel @Inject constructor(
         val fileTemp = appRepo.boxProvider.copyToTemp(file)
 
         if (fileTemp != null) {
-            // TODO: use Flow
-            appRepo.boxProvider.unzipToSaveFolder(
-                fileTemp
-            ) {
+            appRepo.boxProvider.unzipToSaveFolder(fileTemp).collect {
                 when (it) {
                     is Result.Error -> {
                         _liveUnzip.postValue(UnzipResult.Error(it.exception.message ?: ""))

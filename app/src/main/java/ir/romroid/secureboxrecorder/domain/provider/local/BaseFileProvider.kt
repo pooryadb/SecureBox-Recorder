@@ -13,6 +13,8 @@ import ir.romroid.secureboxrecorder.ext.logI
 import ir.romroid.secureboxrecorder.utils.*
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
 import java.io.*
 import java.util.zip.ZipEntry
@@ -23,8 +25,7 @@ import kotlin.random.Random
 internal const val TAG = "BaseFileProvider"
 
 open class BaseFileProvider constructor(
-    protected val context: Context,
-    protected val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
+    protected val context: Context, protected val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) {
 
     protected val folderBox by lazy {
@@ -74,49 +75,45 @@ open class BaseFileProvider constructor(
         return copyTo(contentUri.toFile(), destFolderPath)
     }
 
-    suspend fun copyTo(file: File, destFolderPath: String): File? =
-        withContext(ioDispatcher) {
-            "saveTo: file= ${file.path}, dest= $destFolderPath".logE(TAG)
+    suspend fun copyTo(file: File, destFolderPath: String): File? = withContext(ioDispatcher) {
+        "saveTo: file= ${file.path}, dest= $destFolderPath".logE(TAG)
 
-            val destFilePath = File(destFolderPath, file.name).path
-            val destFile = createFile(destFilePath)
+        val destFilePath = File(destFolderPath, file.name).path
+        val destFile = createFile(destFilePath)
 
-            "fileFromContentUri: path= ${destFile.path}".logE(TAG)
+        "fileFromContentUri: path= ${destFile.path}".logE(TAG)
 
-            return@withContext try {
-                val oStream = FileOutputStream(destFile)
-                val inputStream = file.inputStream()
+        return@withContext try {
+            val oStream = FileOutputStream(destFile)
+            val inputStream = file.inputStream()
 
-                val fileData = FileUtils.readFile(inputStream)
+            val fileData = FileUtils.readFile(inputStream)
 
-                FileUtils.saveFile(fileData, oStream)
+            FileUtils.saveFile(fileData, oStream)
 
-                destFile
-            } catch (e: Exception) {
-                e.printStackTrace()
+            destFile
+        } catch (e: Exception) {
+            e.printStackTrace()
 
-                null
-            }
+            null
         }
+    }
 
     /**
      * files set same name as zip file!
      */
     suspend fun unzip(
-        file: File,
-        destinationPath: String? = null,
-        listener: ((Result<String>) -> Unit)? = null
-    ): Boolean = withContext(ioDispatcher) {
-        return@withContext try {
-            listener?.invoke(Result.Loading)
+        file: File, destinationPath: String? = null
+    ) = flow<Result<String>> {
+        try {
+            emit(Result.Loading)
             val inputStream = FileInputStream(file.path)
             val zipStream = ZipInputStream(inputStream)
             var zEntry: ZipEntry? = null
             val zipName = file.name.substringBeforeLast(".")
 
-            val destination = destinationPath
-                ?: file.parent?.also { "$it/$zipName" }
-                ?: throw Exception("can't create destination")
+            val destination = destinationPath ?: file.parent?.also { "$it/$zipName" }
+            ?: throw Exception("can't create destination")
 
             createFolder(destination) ?: throw Exception("can't create destination")
 
@@ -143,45 +140,38 @@ open class BaseFileProvider constructor(
             zipStream.close()
             "Unzipping complete. path :  $destination".logD(TAG)
 
-            listener?.invoke(Result.Success(destination))
-
-            true
+            emit(Result.Success(destination))
         } catch (e: Exception) {
             "Unzipping failed : $e".logD(TAG)
-            listener?.invoke(Result.Error(e))
-            false
+            emit(Result.Error(e))
         }
-    }
+    }.flowOn(ioDispatcher)
 
     /**
      * @param file must be a directory with at least 1 file
      * @param destinationPath should be a *.zip file
      */
     suspend fun zip(
-        file: File,
-        destinationPath: String,
-        listener: ((Result<String>) -> Unit)? = null
-    ): Boolean = withContext(ioDispatcher) {
-        (listener ?: "null").logE("$TAG zip listener")
+        file: File, destinationPath: String
+    ) = flow<Result<String>> {
         if (file.isDirectory.not() || file.listFiles().isNullOrEmpty()) {
-            listener?.invoke(Result.Error(Exception("path is empty!")))
-            return@withContext false
+            emit(Result.Error(Exception("path is empty!")))
+            return@flow
         }
 
         val destFile = File(destinationPath)
         if (destFile.extension != "zip") {
-            listener?.invoke(Result.Error(Exception("should be *.zip file!")))
-            return@withContext false
+            emit(Result.Error(Exception("should be *.zip file!")))
+            return@flow
         }
-        if (destFile.exists())
-            destFile.delete()
+        if (destFile.exists()) destFile.delete()
         createFile(destinationPath)
 
-        listener?.invoke(Result.Loading)
+        emit(Result.Loading)
 
         val BUFFER = 1024
 
-        return@withContext try {
+        try {
             var origin: BufferedInputStream? = null
             val dest = FileOutputStream(destinationPath)
             val out = ZipOutputStream(BufferedOutputStream(dest))
@@ -200,23 +190,20 @@ open class BaseFileProvider constructor(
                 origin!!.close()
             }
 
-            listener?.invoke(Result.Success(destinationPath))
+            emit(Result.Success(destinationPath))
 
             out.close()
-            true
         } catch (e: Exception) {
             delete(destinationPath.toUri())
             "zip error: ${e.message}".logI(TAG)
-            listener?.invoke(Result.Error(e))
-            false
+            emit(Result.Error(e))
         }
-    }
+    }.flowOn(ioDispatcher)
 
     protected fun addRandomToName(name: String): String {
         var result = name.substringBeforeLast('.', name)
         result += Random.nextInt()
-        if (name.contains('.'))
-            result += "." + name.substringAfterLast(".")
+        if (name.contains('.')) result += "." + name.substringAfterLast(".")
 
         return result
     }

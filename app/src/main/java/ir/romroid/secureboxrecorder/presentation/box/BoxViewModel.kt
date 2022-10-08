@@ -78,12 +78,10 @@ class BoxViewModel @Inject constructor(
     }
 
     fun exportData() = viewModelIO {
-        boxRepo.exportFiles {
+        boxRepo.exportFilesFlow().collect {
             when (it) {
                 is Result.Error -> _liveExport.postValue(
-                    ExportResult.Error(
-                        it.exception.message ?: ""
-                    )
+                    ExportResult.Error(it.exception.message ?: "")
                 )
                 Result.Loading -> _liveExport.postValue(ExportResult.Progress)
                 is Result.Success -> _liveExport.postValue(ExportResult.Success(it.data))
