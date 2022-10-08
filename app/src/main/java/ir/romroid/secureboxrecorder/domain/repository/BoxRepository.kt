@@ -8,7 +8,7 @@ import ir.romroid.secureboxrecorder.domain.provider.local.AppCache
 import ir.romroid.secureboxrecorder.domain.provider.local.BoxProvider
 import javax.inject.Inject
 
-class AppRepository @Inject constructor(
+class BoxRepository @Inject constructor(
     val appCache: AppCache,
     val boxProvider: BoxProvider
 ) : BaseRepository() {

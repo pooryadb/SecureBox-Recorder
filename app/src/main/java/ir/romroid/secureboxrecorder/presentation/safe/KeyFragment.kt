@@ -81,7 +81,7 @@ class KeyFragment : BaseFragment<FragmentKeyBinding>() {
             safeVM.unzipFile(it)
         } ?: run {
             findNavController().navigate(
-                KeyFragmentDirections.actionGetKeysFragmentToRecordListFragment()
+                KeyFragmentDirections.actionGetKeysFragmentToRecordsFragment()
             )
         }
     }

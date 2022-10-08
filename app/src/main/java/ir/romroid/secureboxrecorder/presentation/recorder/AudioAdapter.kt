@@ -1,4 +1,4 @@
-package ir.romroid.secureboxrecorder.presentation.recorder.list
+package ir.romroid.secureboxrecorder.presentation.recorder
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

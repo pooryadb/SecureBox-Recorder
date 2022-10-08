@@ -6,7 +6,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.components.FragmentComponent
 import dagger.hilt.android.scopes.FragmentScoped
 import ir.romroid.secureboxrecorder.presentation.box.BoxAdapter
-import ir.romroid.secureboxrecorder.presentation.recorder.list.AudioAdapter
+import ir.romroid.secureboxrecorder.presentation.recorder.AudioAdapter
 
 @Module
 @InstallIn(FragmentComponent::class)

@@ -10,10 +10,7 @@ import ir.romroid.secureboxrecorder.ext.getFileNameFromCursor
 import ir.romroid.secureboxrecorder.ext.logD
 import ir.romroid.secureboxrecorder.ext.logE
 import ir.romroid.secureboxrecorder.ext.logI
-import ir.romroid.secureboxrecorder.utils.FILES_BOX_FOLDER_NAME
-import ir.romroid.secureboxrecorder.utils.FILES_EXPORT_FOLDER_NAME
-import ir.romroid.secureboxrecorder.utils.FILES_TEMP_SHARE_FOLDER_NAME
-import ir.romroid.secureboxrecorder.utils.FileUtils
+import ir.romroid.secureboxrecorder.utils.*
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -23,9 +20,9 @@ import java.util.zip.ZipInputStream
 import java.util.zip.ZipOutputStream
 import kotlin.random.Random
 
-internal const val TAG = "FileProvider"
+internal const val TAG = "BaseFileProvider"
 
-open class FileProvider constructor(
+open class BaseFileProvider constructor(
     protected val context: Context,
     protected val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) {
@@ -46,6 +43,13 @@ open class FileProvider constructor(
 
     protected val folderExport by lazy {
         val f = File(context.getExternalFilesDir(null), FILES_EXPORT_FOLDER_NAME)
+        f.mkdirs()
+
+        f
+    }
+
+    protected val folderRecords by lazy {
+        val f = File(context.getExternalFilesDir(null), VOICE_SAVED_FOLDER_NAME)
         f.mkdirs()
 
         f

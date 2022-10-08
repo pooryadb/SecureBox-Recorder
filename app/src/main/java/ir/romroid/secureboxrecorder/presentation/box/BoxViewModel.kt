@@ -8,7 +8,7 @@ import ir.romroid.secureboxrecorder.base.architecture.BaseViewModel
 import ir.romroid.secureboxrecorder.domain.model.FileModel
 import ir.romroid.secureboxrecorder.domain.model.FileType
 import ir.romroid.secureboxrecorder.domain.model.Result
-import ir.romroid.secureboxrecorder.domain.repository.AppRepository
+import ir.romroid.secureboxrecorder.domain.repository.BoxRepository
 import ir.romroid.secureboxrecorder.ext.viewModelIO
 import ir.romroid.secureboxrecorder.utils.liveData.SingleLiveData
 import java.io.File
@@ -16,7 +16,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class BoxViewModel @Inject constructor(
-    private val appRepository: AppRepository
+    private val boxRepo: BoxRepository
 ) : BaseViewModel() {
 
     companion object {
@@ -51,7 +51,7 @@ class BoxViewModel @Inject constructor(
 
     fun fetchFileList() = viewModelIO {
         _liveFileList.postValue(
-            appRepository.getSavedFiles().map {
+            boxRepo.getSavedFiles().map {
                 val fileSuffix = it.first.substringAfterLast(".")
 
                 FileModel(
@@ -65,20 +65,20 @@ class BoxViewModel @Inject constructor(
 
     fun deleteFile(id: Long) = viewModelIO {
         _liveFileList.value?.firstOrNull { it.id == id }?.let {
-            _liveDeleteFile.postValue(appRepository.deleteFile(it.uri))
+            _liveDeleteFile.postValue(boxRepo.deleteFile(it.uri))
         } ?: _liveDeleteFile.postValue(false)
     }
 
     fun shareFile(uri: Uri) = viewModelIO {
-        _liveShareFile.postValue(appRepository.copyToShare(uri))
+        _liveShareFile.postValue(boxRepo.copyToShare(uri))
     }
 
     fun addFile(uri: Uri) = viewModelIO {
-        _liveAddFile.postValue(appRepository.saveAndEncrypt(uri))
+        _liveAddFile.postValue(boxRepo.saveAndEncrypt(uri))
     }
 
     fun exportData() = viewModelIO {
-        appRepository.exportFiles {
+        boxRepo.exportFiles {
             when (it) {
                 is Result.Error -> _liveExport.postValue(
                     ExportResult.Error(
@@ -91,11 +91,11 @@ class BoxViewModel @Inject constructor(
         }
     }
 
-    fun clearTemp() = appRepository.clearTemp()
+    fun clearTemp() = boxRepo.clearTemp()
 
     fun tempFile(uri: Uri) = viewModelIO {
 
-        appRepository.copyToTemp(uri)?.let {
+        boxRepo.copyToTemp(uri)?.let {
             val model = FileModel(
                 name = it.name,
                 type = FileType.getType(it.extension) ?: FileType.Other,

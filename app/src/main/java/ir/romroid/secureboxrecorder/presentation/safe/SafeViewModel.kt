@@ -4,14 +4,14 @@ import android.net.Uri
 import dagger.hilt.android.lifecycle.HiltViewModel
 import ir.romroid.secureboxrecorder.base.architecture.BaseViewModel
 import ir.romroid.secureboxrecorder.domain.model.Result
-import ir.romroid.secureboxrecorder.domain.repository.AppRepository
+import ir.romroid.secureboxrecorder.domain.repository.BoxRepository
 import ir.romroid.secureboxrecorder.ext.viewModelIO
 import ir.romroid.secureboxrecorder.utils.liveData.SingleLiveData
 import javax.inject.Inject
 
 @HiltViewModel
 class SafeViewModel @Inject constructor(
-    private val appRepo: AppRepository
+    private val appRepo: BoxRepository
 ) : BaseViewModel() {
 
     private val _liveUnzip = SingleLiveData<UnzipResult>()

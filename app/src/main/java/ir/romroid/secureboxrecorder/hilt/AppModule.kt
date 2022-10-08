@@ -9,6 +9,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import ir.romroid.secureboxrecorder.domain.provider.local.AppCache
 import ir.romroid.secureboxrecorder.domain.provider.local.BoxProvider
+import ir.romroid.secureboxrecorder.domain.provider.local.RecorderProvider
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import javax.inject.Named
@@ -51,5 +52,12 @@ object AppModule {
         context: Context,
         ioDispatcher: CoroutineDispatcher
     ) = BoxProvider(context, ioDispatcher)
+
+    @Singleton
+    @Provides
+    fun provideRecorderProvider(
+        context: Context,
+        ioDispatcher: CoroutineDispatcher
+    ) = RecorderProvider(context, ioDispatcher)
 
 }

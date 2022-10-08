@@ -24,7 +24,7 @@ import javax.inject.Inject
 class BoxProvider @Inject constructor(
     context: Context,
     ioDispatcher: CoroutineDispatcher = Dispatchers.IO
-) : FileProvider(context, ioDispatcher) {
+) : BaseFileProvider(context, ioDispatcher) {
 
     suspend fun copyToTemp(contentUri: Uri) =
         copyTo(contentUri, folderTemp.path)
