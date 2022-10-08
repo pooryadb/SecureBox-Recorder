@@ -55,27 +55,43 @@ open class BaseFileProvider constructor(
         f
     }
 
-    suspend fun copyTo(contentUri: Uri, destinationFolderPath: String): File? =
+    protected val folderTempRecord by lazy {
+        val f = File(context.cacheDir.path, VOICE_TEMP_FOLDER_NAME)
+        f.mkdirs()
+
+        f
+    }
+
+    suspend fun copyTo(contentUri: Uri, destFolderPath: String): File? {
+        "saveTo: contentUri= ${contentUri}, dest= $destFolderPath".logE(TAG)
+
+        val fileName = getFileNameWithExtension(context, contentUri)
+        val destFilePath = File(destFolderPath, fileName).path
+        val destFile = createFile(destFilePath)
+
+        "fileFromContentUri: path= ${destFile.path}".logE(TAG)
+
+        return copyTo(contentUri.toFile(), destFolderPath)
+    }
+
+    suspend fun copyTo(file: File, destFolderPath: String): File? =
         withContext(ioDispatcher) {
-            "saveToPath: contentUri= ${contentUri}, dest= $destinationFolderPath".logE(TAG)
+            "saveTo: file= ${file.path}, dest= $destFolderPath".logE(TAG)
 
-            val parentFolder = File(destinationFolderPath)
-            val fileName = getFileNameWithExtension(context, contentUri)
-            val filePath = parentFolder.path + "/" + fileName
-            // Creating Temp file
-            val tempFile = createFile(filePath)
+            val destFilePath = File(destFolderPath, file.name).path
+            val destFile = createFile(destFilePath)
 
-            "fileFromContentUri: path= ${tempFile.path}".logE(TAG)
+            "fileFromContentUri: path= ${destFile.path}".logE(TAG)
 
             return@withContext try {
-                val oStream = FileOutputStream(tempFile)
-                val inputStream = context.contentResolver.openInputStream(contentUri)
+                val oStream = FileOutputStream(destFile)
+                val inputStream = file.inputStream()
 
-                val fileData = FileUtils.readFile(inputStream!!)
+                val fileData = FileUtils.readFile(inputStream)
 
                 FileUtils.saveFile(fileData, oStream)
 
-                tempFile
+                destFile
             } catch (e: Exception) {
                 e.printStackTrace()
 

@@ -19,9 +19,10 @@ import ir.romroid.secureboxrecorder.R
 import ir.romroid.secureboxrecorder.base.component.BaseBottomSheetDialogFragment
 import ir.romroid.secureboxrecorder.databinding.DialogRecorderBinding
 import ir.romroid.secureboxrecorder.ext.*
+import ir.romroid.secureboxrecorder.presentation.recorder.RecorderViewModel
 import ir.romroid.secureboxrecorder.presentation.safe.SafeViewModel
-import ir.romroid.secureboxrecorder.utils.*
-import java.io.File
+import ir.romroid.secureboxrecorder.utils.BACK_FROM_RECORDER
+import ir.romroid.secureboxrecorder.utils.PermissionUtils
 import java.io.IOException
 
 @AndroidEntryPoint
@@ -32,6 +33,7 @@ class RecorderDialog : BaseBottomSheetDialogFragment<DialogRecorderBinding>() {
 
     override var hasCancelable = false
 
+    private val recorderVM by activityViewModels<RecorderViewModel>()
     private val safeVM by activityViewModels<SafeViewModel>()
 
     private companion object {
@@ -39,7 +41,6 @@ class RecorderDialog : BaseBottomSheetDialogFragment<DialogRecorderBinding>() {
         const val AUDIO_PERMISSION = Manifest.permission.RECORD_AUDIO
     }
 
-    private var path = ""
     private var recorder: MediaRecorder? = null
     private var pendingPrepareRecord: (() -> Unit)? = null
     private var isRecording = false
@@ -47,8 +48,6 @@ class RecorderDialog : BaseBottomSheetDialogFragment<DialogRecorderBinding>() {
 
     override fun viewHandler(view: View, savedInstanceState: Bundle?) {
         binding?.apply {
-            setupPath()
-
             fab.setOnClickListener {
                 toggleRecord()
             }
@@ -62,7 +61,7 @@ class RecorderDialog : BaseBottomSheetDialogFragment<DialogRecorderBinding>() {
                     etName.error = getString(R.string.please_enter_name)
                 } else {
                     etName.error = null
-                    saveVoice(etName.text.toString())
+                    recorderVM.saveVoice(etName.text.toString())
                 }
             }
 
@@ -72,8 +71,7 @@ class RecorderDialog : BaseBottomSheetDialogFragment<DialogRecorderBinding>() {
             etName.afterTextChange {
                 if (it.length == keyLength) {
                     if (it == key) {
-                        val fTemp = File(path)
-                        fTemp.delete()
+                        recorderVM.deleteTemp()
                         dismiss(true)
                     }
                 }
@@ -81,39 +79,15 @@ class RecorderDialog : BaseBottomSheetDialogFragment<DialogRecorderBinding>() {
         }
     }
 
-    private fun setupPath() {// FIXME: use provider
-        path = requireContext().cacheDir.path + "/" + VOICE_TEMP_FOLDER_NAME
-        val f = File(path)
-        if (f.exists().not()) {
-            f.mkdirs()
+    override fun initObservers() {
+        super.initObservers()
+
+        recorderVM.liveSaveRecord.observe(this) {
+            if (it)
+                dismiss(false)
+            else
+                requireContext().toast(getString(R.string.error_save_file))
         }
-        path += "/tempRecord$VOICE_FORMAT"
-
-        path.logD("$TAG path")
-    }
-
-    private fun saveVoice(name: String) {// FIXME: use provider
-        val fTemp = File(path)
-
-        val newPath =
-            requireContext().getExternalFilesDir(null)?.path + "/" + VOICE_SAVED_FOLDER_NAME
-
-        fTemp.copyTo(setupSaveFile(newPath, name + VOICE_FORMAT))
-        fTemp.delete()
-        dismiss(false)
-    }
-
-    private fun setupSaveFile(path: String, fileName: String): File {// FIXME: use provider
-        val folderSave = File(path)
-        if (folderSave.exists().not())
-            folderSave.mkdirs()
-
-        var fileSave = File("$path/$fileName")
-        if (fileSave.exists()) {
-            fileSave = File(path + "/" + fileName.replace(VOICE_FORMAT, "I$VOICE_FORMAT"))
-        }
-
-        return fileSave
     }
 
     private fun toggleRecord() {
@@ -182,9 +156,9 @@ class RecorderDialog : BaseBottomSheetDialogFragment<DialogRecorderBinding>() {
             recorder = MediaRecorder().apply {
                 try {
                     setAudioSource(MediaRecorder.AudioSource.MIC)
-                    setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)//should equal to [Constants.VOICE_FORMAT]
+                    setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)// = [Constants.VOICE_FORMAT]
                     setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
-                    setOutputFile(path)
+                    setOutputFile(recorderVM.tempFile)
                     prepare()
 
                     isPrepared = true
