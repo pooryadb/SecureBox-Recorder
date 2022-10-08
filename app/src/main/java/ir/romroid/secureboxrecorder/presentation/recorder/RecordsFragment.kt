@@ -1,4 +1,4 @@
-package ir.romroid.secureboxrecorder.presentation.recorder.list
+package ir.romroid.secureboxrecorder.presentation.recorder
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,30 +10,32 @@ import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import ir.romroid.secureboxrecorder.R
 import ir.romroid.secureboxrecorder.base.component.BaseFragment
-import ir.romroid.secureboxrecorder.databinding.FragmentRecordListBinding
-import ir.romroid.secureboxrecorder.ext.*
-import ir.romroid.secureboxrecorder.presentation.recorder.RecorderListViewModel
+import ir.romroid.secureboxrecorder.databinding.FragmentRecordsBinding
+import ir.romroid.secureboxrecorder.ext.getBackStackLiveData
+import ir.romroid.secureboxrecorder.ext.toGone
+import ir.romroid.secureboxrecorder.ext.toShow
+import ir.romroid.secureboxrecorder.ext.toast
 import ir.romroid.secureboxrecorder.presentation.safe.SafeViewModel
 import ir.romroid.secureboxrecorder.utils.BACK_FROM_DELETE_RECORD
 import ir.romroid.secureboxrecorder.utils.BACK_FROM_RECORDER
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class RecordListFragment : BaseFragment<FragmentRecordListBinding>() {
+class RecordsFragment : BaseFragment<FragmentRecordsBinding>() {
 
-    override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentRecordListBinding
-        get() = FragmentRecordListBinding::inflate
+    override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentRecordsBinding
+        get() = FragmentRecordsBinding::inflate
 
     @Inject
     lateinit var audioAdapter: AudioAdapter
 
-    private val recorderVM by viewModels<RecorderListViewModel>()
+    private val recorderVM by viewModels<RecorderViewModel>()
     private val safeVM by activityViewModels<SafeViewModel>()
 
     override fun viewHandler(view: View, savedInstanceState: Bundle?) {
         if (safeVM.shouldSetUserKey()) {
             findNavController().navigate(
-                RecordListFragmentDirections.actionRecordListFragmentToGetKeysFragment()
+                RecordsFragmentDirections.actionRecordsFragmentToGetKeysFragment()
             )
             return
         }
@@ -42,7 +44,7 @@ class RecordListFragment : BaseFragment<FragmentRecordListBinding>() {
 
             btnAdd.setOnClickListener {
                 findNavController().navigate(
-                    RecordListFragmentDirections.actionRecordListFragmentToDialogRecordList()
+                    RecordsFragmentDirections.actionRecordsFragmentToDialogRecorder()
                 )
             }
 
@@ -50,15 +52,15 @@ class RecordListFragment : BaseFragment<FragmentRecordListBinding>() {
                 audioAdapter.apply {
                     onDeleteClick = {
                         findNavController().navigate(
-                            RecordListFragmentDirections
-                                .actionRecordListFragmentToDialogDeleteRecord(it.id)
+                            RecordsFragmentDirections
+                                .actionRecordsFragmentToDialogDeleteRecord(it.id)
                         )
                     }
 
                     onItemClick = {
                         findNavController().navigate(
-                            RecordListFragmentDirections
-                                .actionRecordListFragmentToDialogAudioPlayer(it)
+                            RecordsFragmentDirections
+                                .actionRecordsFragmentToDialogAudioPlayer(it)
                         )
                     }
 
@@ -69,20 +71,28 @@ class RecordListFragment : BaseFragment<FragmentRecordListBinding>() {
             }
 
             if (isRestoredFromBackStack.not())
-                recorderVM.fetchRecordedList(requireContext())
+                recorderVM.fetchRecords()
+            else {
+                recorderVM.liveRecords.value?.let {
+                    showEmptyLay(it.isEmpty())
+                }
+            }
         }
     }
 
     override fun initObservers() {
         super.initObservers()
 
-        recorderVM.liveRecordedList.observe(this) {
-            if (it.isEmpty())
-                binding?.layEmpty?.root?.toShow()
-            else {
-                binding?.layEmpty?.root?.toGone()
-                audioAdapter.submitList(it)
-            }
+        recorderVM.liveRecords.observe(this) {
+            showEmptyLay(it.isEmpty())
+            audioAdapter.submitList(it)
+        }
+
+        recorderVM.liveDeleteRecord.observe(this) {
+            if (it) {
+                recorderVM.fetchRecords()
+            } else
+                requireContext().toast(getString(R.string.cant_find_file))
         }
     }
 
@@ -92,29 +102,29 @@ class RecordListFragment : BaseFragment<FragmentRecordListBinding>() {
         findNavController().getBackStackLiveData<Boolean>(BACK_FROM_RECORDER)
             ?.observe(this) {
                 if (it) {
-                    runAfter(1000L, {
+                    view?.postDelayed({// FIXME: use better solution!
                         findNavController().navigate(
-                            RecordListFragmentDirections.actionRecordListFragmentToFileManagerFragment()
+                            RecordsFragmentDirections.actionRecordsFragmentToBoxFragment()
                         )
-                    })
+                    }, 100L)
                 } else {
-                    recorderVM.fetchRecordedList(requireContext())
+                    recorderVM.fetchRecords()
                 }
             }
 
         findNavController().getBackStackLiveData<Long?>(BACK_FROM_DELETE_RECORD)
             ?.observe(this) { recordId ->
-                if (recordId != null) {
-                    recorderVM.deleteRecord(recordId).let {
-                        if (it) {
-                            recorderVM.fetchRecordedList(requireContext())
-                        } else
-                            requireContext().toast(getString(R.string.cant_find_file))
-
-                    }
-                }
-
+                if (recordId != null)
+                    recorderVM.deleteRecord(recordId)
             }
+    }
+
+    private fun showEmptyLay(show: Boolean) = binding?.apply {
+        if (show)
+            layEmpty.root.toShow()
+        else {
+            layEmpty.root.toGone()
+        }
     }
 
 }

@@ -3,15 +3,15 @@ package ir.romroid.secureboxrecorder.presentation.safe
 import android.net.Uri
 import dagger.hilt.android.lifecycle.HiltViewModel
 import ir.romroid.secureboxrecorder.base.architecture.BaseViewModel
-import ir.romroid.secureboxrecorder.domain.provider.FileProviderListener
-import ir.romroid.secureboxrecorder.domain.repository.AppRepository
+import ir.romroid.secureboxrecorder.domain.model.Result
+import ir.romroid.secureboxrecorder.domain.repository.BoxRepository
 import ir.romroid.secureboxrecorder.ext.viewModelIO
 import ir.romroid.secureboxrecorder.utils.liveData.SingleLiveData
 import javax.inject.Inject
 
 @HiltViewModel
 class SafeViewModel @Inject constructor(
-    private val appRepo: AppRepository
+    private val appRepo: BoxRepository
 ) : BaseViewModel() {
 
     private val _liveUnzip = SingleLiveData<UnzipResult>()
@@ -29,34 +29,24 @@ class SafeViewModel @Inject constructor(
 
     fun getUserKey() = appRepo.appCache.userKey
 
-    fun getFileName(uri: Uri): String {
-        return appRepo.fileProvider.getFileNameFromCursor(uri) ?: ""
-    }
-
     fun unzipFile(file: Uri) = viewModelIO {
 
-        val fileTemp = appRepo.fileProvider.copyToTemp(file)
+        val fileTemp = appRepo.boxProvider.copyToTemp(file)
 
         if (fileTemp != null) {
-            appRepo.fileProvider.unzipToSaveFolder(
-                fileTemp,
-                object : FileProviderListener {
-                    override fun onProgress() {
-                        _liveUnzip.postValue(UnzipResult.Progress)
-                    }
-
-                    override fun onSuccess(filePath: String) {
-                        _liveUnzip.postValue(UnzipResult.Success(filePath))
+            appRepo.boxProvider.unzipToSaveFolder(fileTemp).collect {
+                when (it) {
+                    is Result.Error -> {
+                        _liveUnzip.postValue(UnzipResult.Error(it.exception.message ?: ""))
                         fileTemp.delete()
                     }
-
-                    override fun onError(e: Exception) {
-                        _liveUnzip.postValue(UnzipResult.Error(e.message ?: ""))
+                    Result.Loading -> _liveUnzip.postValue(UnzipResult.Progress)
+                    is Result.Success -> {
+                        _liveUnzip.postValue(UnzipResult.Success(it.data))
                         fileTemp.delete()
                     }
-
-                })
-
+                }
+            }
         } else {
             _liveUnzip.value = UnzipResult.Error("File not saved")
         }

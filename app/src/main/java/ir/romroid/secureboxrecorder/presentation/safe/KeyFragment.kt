@@ -12,6 +12,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import ir.romroid.secureboxrecorder.R
 import ir.romroid.secureboxrecorder.base.component.BaseFragment
 import ir.romroid.secureboxrecorder.databinding.FragmentKeyBinding
+import ir.romroid.secureboxrecorder.ext.getFileNameFromCursor
 import ir.romroid.secureboxrecorder.ext.logD
 import ir.romroid.secureboxrecorder.ext.toast
 import ir.romroid.secureboxrecorder.utils.MyValidator
@@ -24,21 +25,13 @@ class KeyFragment : BaseFragment<FragmentKeyBinding>() {
 
     private val safeVM by activityViewModels<SafeViewModel>()
 
-    private val TAG = "GetKeys"
-
     private var uriTemp: Uri? = null
 
     override fun viewHandler(view: View, savedInstanceState: Bundle?) {
         binding?.apply {
             btnNext.setOnClickListener {
-                if (trySaveKeys()) {
-                    if (uriTemp != null)
-                        safeVM.unzipFile(uriTemp!!)
-                    else
-                        findNavController().navigate(
-                            KeyFragmentDirections.actionGetKeysFragmentToRecordListFragment()
-                        )
-                }
+                if (trySaveKeys())
+                    goNextPage()
             }
 
             btnRestore.setOnClickListener {
@@ -83,6 +76,16 @@ class KeyFragment : BaseFragment<FragmentKeyBinding>() {
         return@run true
     } ?: false
 
+    private fun goNextPage() {
+        uriTemp?.let {
+            safeVM.unzipFile(it)
+        } ?: run {
+            findNavController().navigate(
+                KeyFragmentDirections.actionGetKeysFragmentToRecordsFragment()
+            )
+        }
+    }
+
     private val getContent = registerForActivityResult(
         ActivityResultContracts.GetContent()
     ) {
@@ -92,11 +95,15 @@ class KeyFragment : BaseFragment<FragmentKeyBinding>() {
             binding?.tvRestoreFileName?.text =
                 "%s:\n%s".format(
                     getString(R.string.file_name),
-                    safeVM.getFileName(it)
+                    requireContext().getFileNameFromCursor(it)
                 )
         }
         "showFileChooser uri: $it".logD(TAG)
 
+    }
+
+    private companion object {
+        const val TAG = "KeyFragment"
     }
 
 }

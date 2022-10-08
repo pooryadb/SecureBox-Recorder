@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import androidx.annotation.StyleRes
-import androidx.core.view.ViewCompat
 import androidx.viewbinding.ViewBinding
 
 abstract class BaseDialog<VB : ViewBinding>(context: Context, @StyleRes theme: Int? = null) :
@@ -30,7 +29,6 @@ abstract class BaseDialog<VB : ViewBinding>(context: Context, @StyleRes theme: I
         initDialog()
 
         binding = bindingInflater.invoke(LayoutInflater.from(context), null, false)
-        ViewCompat.setLayoutDirection(requireNotNull(binding).root, ViewCompat.LAYOUT_DIRECTION_RTL)
         setContentView(requireNotNull(binding).root)
 
         viewHandler(binding!!.root, savedInstanceState)

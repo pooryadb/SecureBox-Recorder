@@ -12,18 +12,15 @@ import ir.romroid.secureboxrecorder.utils.state.AppFragmentEnum
 
 abstract class BaseFragment<VB : ViewBinding> : Fragment() {
 
-    var binding: VB? = null
-    abstract val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> VB
+    protected lateinit var activityContext: BaseActivity<*>
 
-    open fun fragmentEnum(): AppFragment = AppFragmentEnum.DEFAULT
+    protected var binding: VB? = null
+        private set
+    protected abstract val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> VB
 
-    lateinit var activityContext: BaseActivity<*>
+    protected var isRestoredFromBackStack = false
 
-    var isRestoredFromBackStack = false
-
-    private val dialogLoading: LoadingDialog by lazy {
-        LoadingDialog(requireContext())
-    }
+    protected open val fragmentEnum: AppFragment = AppFragmentEnum.DEFAULT
 
     protected abstract fun viewHandler(view: View, savedInstanceState: Bundle?)
     protected open fun initObservers() {}
@@ -53,12 +50,7 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment() {
     override fun onResume() {
         super.onResume()
 
-        handleKeyboardSize()
-    }
-
-    private fun handleKeyboardSize() {
-        activityContext.windowInsetsHelper.isFullScreen = fragmentEnum().isFullScreen()
-        activityContext.windowInsetsHelper.isAutoResizeKeyboard = fragmentEnum().resizeInputMode()
+        handleFragEnum()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -67,7 +59,7 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment() {
         initObservers()
     }
 
-    fun loadingDialog(show: Boolean = true) {
+    protected fun loadingDialog(show: Boolean = true) {
         if (show) dialogLoading.show() else dialogLoading.dismiss()
     }
 
@@ -75,4 +67,13 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment() {
         super.onAttach(context)
         activityContext = context as BaseActivity<*>
     }
+
+    private val dialogLoading: LoadingDialog by lazy { LoadingDialog(requireContext()) }
+
+
+    private fun handleFragEnum() = activityContext.apply {
+        windowInsetsHelper.isFullScreen = fragmentEnum.isFullScreen()
+        windowInsetsHelper.isAutoResizeKeyboard = fragmentEnum.resizeInputMode()
+    }
+
 }

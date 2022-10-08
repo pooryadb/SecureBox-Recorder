@@ -1,4 +1,4 @@
-package ir.romroid.secureboxrecorder.presentation.fileManager
+package ir.romroid.secureboxrecorder.presentation.box
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -13,22 +13,21 @@ import androidx.recyclerview.widget.RecyclerView
 import dagger.hilt.android.AndroidEntryPoint
 import ir.romroid.secureboxrecorder.R
 import ir.romroid.secureboxrecorder.base.component.BaseFragment
-import ir.romroid.secureboxrecorder.databinding.FragmentFileManagerBinding
+import ir.romroid.secureboxrecorder.databinding.FragmentBoxBinding
 import ir.romroid.secureboxrecorder.ext.*
 import ir.romroid.secureboxrecorder.utils.BACK_FROM_DELETE_FILE
 import javax.inject.Inject
 
-
 @AndroidEntryPoint
-class FileManagerFragment : BaseFragment<FragmentFileManagerBinding>() {
+class BoxFragment : BaseFragment<FragmentBoxBinding>() {
 
-    override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentFileManagerBinding
-        get() = FragmentFileManagerBinding::inflate
+    override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentBoxBinding
+        get() = FragmentBoxBinding::inflate
 
     @Inject
-    lateinit var fileManagerAdapter: FileManagerAdapter
+    lateinit var boxAdapter: BoxAdapter
 
-    private val fileManagerVM by viewModels<FileManagerViewModel>()
+    private val fileManagerVM by viewModels<BoxViewModel>()
 
     override fun viewHandler(view: View, savedInstanceState: Bundle?) {
 
@@ -48,11 +47,10 @@ class FileManagerFragment : BaseFragment<FragmentFileManagerBinding>() {
             }
 
             rcFileManager.apply {
-                fileManagerAdapter.apply {
+                boxAdapter.apply {
                     onDeleteListener = {
                         findNavController().navigate(
-                            FileManagerFragmentDirections
-                                .actionFileManagerFragmentToDeleteFileDialog(it.id)
+                            BoxFragmentDirections.actionBoxFragmentToDeleteFileDialog(it.id)
                         )
                     }
 
@@ -63,9 +61,7 @@ class FileManagerFragment : BaseFragment<FragmentFileManagerBinding>() {
 
                     onClickListener = {
                         findNavController().navigate(
-                            FileManagerFragmentDirections.actionFileManagerFragmentToWebViewFragment(
-                                it
-                            )
+                            BoxFragmentDirections.actionBoxFragmentToWebViewFragment(it)
                         )
                     }
                 }
@@ -73,18 +69,15 @@ class FileManagerFragment : BaseFragment<FragmentFileManagerBinding>() {
                 val dividerItemDecoration = DividerItemDecoration(
                     requireContext(),
                     RecyclerView.VERTICAL
-                )
-
-                dividerItemDecoration.setDrawable(
-                    ContextCompat.getDrawable(
-                        requireContext(),
-                        R.drawable.shape_item_divider
-                    )!!
-                )
+                ).apply {
+                    setDrawable(
+                        ContextCompat.getDrawable(requireContext(), R.drawable.shape_item_divider)!!
+                    )
+                }
 
                 addItemDecoration(dividerItemDecoration)
 
-                adapter = fileManagerAdapter
+                adapter = boxAdapter
 
             }
 
@@ -105,7 +98,7 @@ class FileManagerFragment : BaseFragment<FragmentFileManagerBinding>() {
                 binding?.layEmpty?.root?.toShow()
             else {
                 binding?.layEmpty?.root?.toGone()
-                fileManagerAdapter.submitList(it)
+                boxAdapter.submitList(it)
             }
 
         }
@@ -136,17 +129,15 @@ class FileManagerFragment : BaseFragment<FragmentFileManagerBinding>() {
 
         fileManagerVM.liveExport.observe(this) {
             when (it) {
-                is FileManagerViewModel.ExportResult.Progress -> loadingDialog(true)
-                is FileManagerViewModel.ExportResult.Error -> {
+                is BoxViewModel.ExportResult.Progress -> loadingDialog(true)
+                is BoxViewModel.ExportResult.Error -> {
                     loadingDialog(false)
                     requireContext().toast(it.message)
                 }
-                is FileManagerViewModel.ExportResult.Success -> {
+                is BoxViewModel.ExportResult.Success -> {
                     loadingDialog(false)
                     findNavController().navigate(
-                        FileManagerFragmentDirections.actionFileManagerFragmentToShareFileDialog(
-                            it.filePath
-                        )
+                        BoxFragmentDirections.actionBoxFragmentToShareFileDialog(it.filePath)
                     )
 
                 }
@@ -182,10 +173,12 @@ class FileManagerFragment : BaseFragment<FragmentFileManagerBinding>() {
 
     override fun onDestroy() {
         "onDestroy".logD(TAG)
-        // FIXME: onDestroy not work properly
+        // FIXME: onDestroy isn't best approach
         fileManagerVM.clearTemp()
         super.onDestroy()
     }
 
-    private val TAG = "FileManagerFrag"
+    private companion object {
+        const val TAG = "FileManagerFrag"
+    }
 }

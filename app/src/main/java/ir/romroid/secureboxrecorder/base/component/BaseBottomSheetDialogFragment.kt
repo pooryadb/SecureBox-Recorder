@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.view.ContextThemeWrapper
-import androidx.core.view.ViewCompat
 import androidx.viewbinding.ViewBinding
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -15,18 +14,17 @@ import ir.romroid.secureboxrecorder.R
 
 abstract class BaseBottomSheetDialogFragment<VB : ViewBinding>() : BottomSheetDialogFragment() {
 
-    lateinit var activityContext: BaseActivity<*>
+    protected lateinit var activityContext: BaseActivity<*>
 
-    abstract val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> VB
-    var binding: VB? = null
+    protected abstract val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> VB
+    protected var binding: VB? = null
+        private set
 
-    private val onDismiss: (() -> Unit)? = null
-
-    protected var hasCancelable = true
+    protected open var hasCancelable = true
         set(value) {
             dialog?.apply {
-                setCancelable(hasCancelable)
-                setCanceledOnTouchOutside(hasCancelable)
+                setCancelable(value)
+                setCanceledOnTouchOutside(value)
             }
             field = value
         }
@@ -34,17 +32,16 @@ abstract class BaseBottomSheetDialogFragment<VB : ViewBinding>() : BottomSheetDi
     open fun showListener() {}
     open fun dismissListener() {}
 
-    abstract fun viewHandler(view: View, savedInstanceState: Bundle?)
-    protected open fun initObservers() {
-    }
+    protected abstract fun viewHandler(view: View, savedInstanceState: Bundle?)
+    protected open fun initObservers() {}
 
     override fun onDestroyView() {
         super.onDestroyView()
         binding = null
     }
 
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        return BottomSheetDialog(requireContext(), R.style.app_theme_sheet).apply {
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog =
+        BottomSheetDialog(requireContext(), R.style.app_theme_sheet).apply {
 
             setCancelable(hasCancelable)
             setCanceledOnTouchOutside(hasCancelable)
@@ -55,7 +52,6 @@ abstract class BaseBottomSheetDialogFragment<VB : ViewBinding>() : BottomSheetDi
                 showListener()
             }
         }
-    }
 
     override fun setCancelable(cancelable: Boolean) {
         super.setCancelable(cancelable)
@@ -72,7 +68,6 @@ abstract class BaseBottomSheetDialogFragment<VB : ViewBinding>() : BottomSheetDi
             inflater.cloneInContext(contextThemeWrapper), container, false
         )
 
-        ViewCompat.setLayoutDirection(requireNotNull(binding).root, ViewCompat.LAYOUT_DIRECTION_RTL)
         return requireNotNull(binding).root
     }
 
@@ -89,7 +84,7 @@ abstract class BaseBottomSheetDialogFragment<VB : ViewBinding>() : BottomSheetDi
 
     override fun onDestroy() {
         super.onDestroy()
-        onDismiss?.invoke()
+        dismissListener()
     }
 
 }

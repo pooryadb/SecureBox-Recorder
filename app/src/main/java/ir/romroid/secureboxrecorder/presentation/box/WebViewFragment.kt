@@ -1,4 +1,4 @@
-package ir.romroid.secureboxrecorder.presentation.fileManager
+package ir.romroid.secureboxrecorder.presentation.box
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -29,7 +29,7 @@ class WebViewFragment : BaseFragment<FragmentWebViewBinding>() {
     override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentWebViewBinding
         get() = FragmentWebViewBinding::inflate
 
-    private val fileManagerVM by viewModels<FileManagerViewModel>()
+    private val fileManagerVM by viewModels<BoxViewModel>()
 
     private val args by navArgs<WebViewFragmentArgs>()
 
@@ -114,11 +114,13 @@ class WebViewFragment : BaseFragment<FragmentWebViewBinding>() {
 
     override fun onDestroy() {
         "onDestroy".logD(TAG)
-        // FIXME: onDestroy not work properly
+        // FIXME: onDestroy isn't best approach
         fileManagerVM.clearTemp()
         binding?.webView?.destroy()
         super.onDestroy()
     }
 
-    private val TAG = "WebViewFragment"
+    private companion object {
+        const val TAG = "WebViewFragment"
+    }
 }

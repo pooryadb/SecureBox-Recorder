@@ -5,8 +5,10 @@ import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.content.res.TypedArray
+import android.database.Cursor
 import android.net.Uri
 import android.os.Build
+import android.provider.OpenableColumns
 import android.provider.Settings
 import android.util.TypedValue
 import android.view.Gravity
@@ -157,8 +159,8 @@ fun Context.hasPermissions(vararg permission: String): Boolean {
 }
 
 
-fun Context.toast(msg: String) {
-    Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
+fun Context.toast(msg: String, duration: Int = Toast.LENGTH_SHORT) {
+    Toast.makeText(this, msg, duration).show()
 }
 
 fun Context.getStatusBarHeightPixel(): Int = try {
@@ -227,4 +229,23 @@ fun Context.shareAnyFile(file: File, activityProviderName: String) {
         .setStream(uriProvider)
         .setType(URLConnection.guessContentTypeFromName(file.extension))
         .startChooser()
+}
+
+fun Context.getFileNameFromCursor(uri: Uri): String? {
+    val fileCursor: Cursor? = this.contentResolver.query(
+        uri,
+        arrayOf(OpenableColumns.DISPLAY_NAME),
+        null,
+        null,
+        null
+    )
+    var fileName: String? = null
+    if (fileCursor != null && fileCursor.moveToFirst()) {
+        val cIndex: Int = fileCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+        if (cIndex != -1) {
+            fileName = fileCursor.getString(cIndex)
+        }
+    }
+    fileCursor?.close()
+    return fileName
 }

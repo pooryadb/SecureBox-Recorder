@@ -24,28 +24,12 @@ class AudioPlayerDialog : BaseBottomSheetDialogFragment<DialogAudioPlayerBinding
 
     override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> DialogAudioPlayerBinding
         get() = DialogAudioPlayerBinding::inflate
-
     private val args by navArgs<AudioPlayerDialogArgs>()
-
-    companion object {
-        private const val TAG = "PlayerDialog"
-        private val _TIME_FORMAT = "%02d:%02d"
-    }
-
     private var player: MediaPlayer? = null
     private var repeatableJob: Job? = null
-    private var isPlaying = false
-        set(value) {
-            field = value
-
-            if (value) {
-                binding?.fabPlay?.setImageResource(R.drawable.ic_pause)
-                setupSeekBarJob()
-            } else {
-                binding?.fabPlay?.setImageResource(R.drawable.ic_play)
-                repeatableJob?.cancel()
-            }
-        }
+    private val isPlaying: Boolean
+        get() = if (isPrepared) player?.isPlaying == true else false
+    private var isPrepared = false
 
     override fun viewHandler(view: View, savedInstanceState: Bundle?) {
         setupUi()
@@ -60,7 +44,7 @@ class AudioPlayerDialog : BaseBottomSheetDialogFragment<DialogAudioPlayerBinding
                 if (player != null && fromUser) {
                     player!!.seekTo(progress * 1000)
 
-                    tvElapsed.text = _TIME_FORMAT.format(progress / 60, progress % 60)
+                    tvElapsed.text = TIME_FORMAT.format(progress / 60, progress % 60)
                 }
             }
 
@@ -75,38 +59,63 @@ class AudioPlayerDialog : BaseBottomSheetDialogFragment<DialogAudioPlayerBinding
         })
 
         fabPlay.setOnClickListener {
-            togglePlay()
+            togglePlayer()
         }
 
     }
 
-    private fun togglePlay() {
-        player?.let {
-            isPlaying = if (it.isPlaying) {
-                it.pause()
-                false
+    override fun onPause() {
+//        pausePlayer()
+
+        super.onPause()
+    }
+
+    override fun onDestroy() {
+        pausePlayer()
+        player?.release()
+        isPrepared = false
+
+        super.onDestroy()
+    }
+
+    private fun togglePlayer() {
+        if (isPrepared) {
+            if (isPlaying) {
+                pausePlayer()
             } else {
-                it.start()
-                true
+                resumePlayer()
             }
-        } ?: run {
+        } else {
             if (preparePlay()) {
-                player?.start()
-                this@AudioPlayerDialog.isPlaying = true
+                resumePlayer()
             }
         }
+    }
+
+    @Throws
+    private fun resumePlayer() = player?.let {
+        it.start()
+        binding?.fabPlay?.setImageResource(R.drawable.ic_pause)
+        setupSeekBarJob()
+    }
+
+    @Throws
+    private fun pausePlayer() = player?.let {
+        it.pause()
+        binding?.fabPlay?.setImageResource(R.drawable.ic_play)
+        repeatableJob?.cancel()
     }
 
     private fun preparePlay(): Boolean {
-
         player = MediaPlayer()
         return player?.run {
             binding?.prg?.toShow()
             try {
-                setDataSource(args.audioModel.uri.path!!)
+                setDataSource(getFilePath())
                 prepare()
             } catch (e: IOException) {
                 e.logE("$TAG preparePlay")
+                requireContext().toast(getString(R.string.error_open_file))
                 return false
             }
 
@@ -117,26 +126,26 @@ class AudioPlayerDialog : BaseBottomSheetDialogFragment<DialogAudioPlayerBinding
 
                     val durationSec = ((player?.duration ?: 0).toDouble() / 1000).nextDown().toInt()
                     seekbar.max = durationSec
-                    tvAll.text = _TIME_FORMAT.format(durationSec / 60, durationSec % 60)
+                    tvAll.text = TIME_FORMAT.format(durationSec / 60, durationSec % 60)
                 }
+
+                isPrepared = true
+                resumePlayer()
             }
 
             setOnCompletionListener {
                 seekTo(0)
                 binding?.seekbar?.progress = binding?.seekbar?.max ?: 0
-                this@AudioPlayerDialog.isPlaying = false
+                pausePlayer()
             }
 
             return true
         } ?: false
     }
 
-    override fun onPause() {
-        isPlaying = false
-        player?.release()
-
-        super.onPause()
-    }
+    @Throws
+    private fun getFilePath(): String =
+        args.audioModel.uri.path ?: throw Exception(getString(R.string.error_open_file))
 
     private fun setupSeekBarJob() {
         repeatableJob?.cancel()
@@ -150,7 +159,7 @@ class AudioPlayerDialog : BaseBottomSheetDialogFragment<DialogAudioPlayerBinding
                 launchMain {
                     binding?.apply {
                         seekbar.progress = currentPos
-                        tvElapsed.text = _TIME_FORMAT.format(currentPos / 60, currentPos % 60)
+                        tvElapsed.text = TIME_FORMAT.format(currentPos / 60, currentPos % 60)
                     }
                 }
             }
@@ -159,6 +168,11 @@ class AudioPlayerDialog : BaseBottomSheetDialogFragment<DialogAudioPlayerBinding
             "job start".logD(TAG)
         }
 
+    }
+
+    private companion object {
+        const val TAG = "PlayerDialog"
+        const val TIME_FORMAT = "%02d:%02d"
     }
 
 }

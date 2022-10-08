@@ -19,24 +19,11 @@ import ir.romroid.secureboxrecorder.utils.state.WindowInsetsHelper
 
 abstract class BaseActivity<VB : ViewBinding> : AppCompatActivity() {
 
-    private var _binding: ViewBinding? = null
-    abstract val bindingInflater: (LayoutInflater) -> VB
+    internal lateinit var windowInsetsHelper: WindowInsetsHelper
 
-    lateinit var windowInsetsHelper: WindowInsetsHelper
-
-    @Suppress("UNCHECKED_CAST")
-    val binding: VB?
-        get() = _binding as VB?
-
-    override fun onDestroy() {
-        super.onDestroy()
-        _binding = null
-    }
-
-    override fun finish() {
-        super.finish()
-        overridePendingTransition(R.anim.nav_default_enter_anim, R.anim.nav_default_exit_anim)
-    }
+    protected abstract val bindingInflater: (LayoutInflater) -> VB
+    protected var binding: ViewBinding? = null
+        private set
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,9 +31,9 @@ abstract class BaseActivity<VB : ViewBinding> : AppCompatActivity() {
         resetTitle()
         overridePendingTransition(R.anim.nav_default_enter_anim, R.anim.nav_default_exit_anim)
 
-        _binding = bindingInflater.invoke(layoutInflater)
+        binding = bindingInflater.invoke(layoutInflater)
 
-        setContentView(requireNotNull(_binding).root)
+        setContentView(requireNotNull(binding).root)
 
         windowInsetsHelper = WindowInsetsHelper(window, binding?.root)
         configNavigationAndStatusBar()
@@ -55,6 +42,28 @@ abstract class BaseActivity<VB : ViewBinding> : AppCompatActivity() {
 
         initObservers()
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        binding = null
+    }
+
+    override fun finish() {
+        super.finish()
+        overridePendingTransition(R.anim.nav_default_enter_anim, R.anim.nav_default_exit_anim)
+    }
+
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(LocaleUtils.setLocale(newBase))
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        LocaleUtils.setLocale(this)
+    }
+
+    protected abstract fun viewHandler(savedInstanceState: Bundle?)
+    protected open fun initObservers() {}
 
     /**
      * fixes android RTL
@@ -102,20 +111,6 @@ abstract class BaseActivity<VB : ViewBinding> : AppCompatActivity() {
         }
 
 
-    }
-
-    override fun attachBaseContext(newBase: Context) {
-        super.attachBaseContext(LocaleUtils.setLocale(newBase))
-    }
-
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-        LocaleUtils.setLocale(this)
-    }
-
-    abstract fun viewHandler(savedInstanceState: Bundle?)
-
-    protected open fun initObservers() {
     }
 
 }

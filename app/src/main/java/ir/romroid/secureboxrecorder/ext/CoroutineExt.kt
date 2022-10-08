@@ -16,8 +16,7 @@ val newSupervisorScopeMain get() = CoroutineScope(Dispatchers.Main.immediate + S
 fun CoroutineScope.superLaunch(
     context: CoroutineContext? = null,
     block: suspend CoroutineScope.() -> Unit,
-) = if (context != null)
-    launch(context) { supervisorScope(block) }
+) = if (context != null) launch(context) { supervisorScope(block) }
 else launch { supervisorScope(block) }
 
 suspend fun <T> withCompute(
@@ -57,18 +56,15 @@ fun <T> CoroutineScope.superlaunchMain(
 ) = superLaunch(Dispatchers.Main.immediate) { block() }
 
 fun <T> CoroutineScope.asyncCompute(
-    start: CoroutineStart = CoroutineStart.DEFAULT,
-    block: suspend CoroutineScope.() -> T
+    start: CoroutineStart = CoroutineStart.DEFAULT, block: suspend CoroutineScope.() -> T
 ) = async(Dispatchers.Default, start, block)
 
 fun <T> CoroutineScope.asyncIO(
-    start: CoroutineStart = CoroutineStart.DEFAULT,
-    block: suspend CoroutineScope.() -> T
+    start: CoroutineStart = CoroutineStart.DEFAULT, block: suspend CoroutineScope.() -> T
 ) = async(Dispatchers.IO, start, block)
 
 fun <T> CoroutineScope.asyncMain(
-    start: CoroutineStart = CoroutineStart.DEFAULT,
-    block: suspend CoroutineScope.() -> T
+    start: CoroutineStart = CoroutineStart.DEFAULT, block: suspend CoroutineScope.() -> T
 ) = async(Dispatchers.Main.immediate, start, block)
 
 fun ViewModel.viewModelCompute(
@@ -82,3 +78,15 @@ fun ViewModel.viewModelMain(
 fun ViewModel.viewModelIO(
     block: suspend CoroutineScope.() -> Unit,
 ) = viewModelScope.launchIO(block)
+
+fun <T> runBlockingCompute(block: suspend CoroutineScope.() -> T) {
+    runBlocking(Dispatchers.Default) { block() }
+}
+
+fun <T> runBlockingIO(block: suspend CoroutineScope.() -> T) {
+    runBlocking(Dispatchers.IO) { block() }
+}
+
+fun <T> runBlockingMain(block: suspend CoroutineScope.() -> T) {
+    runBlocking(Dispatchers.Main.immediate) { block() }
+}

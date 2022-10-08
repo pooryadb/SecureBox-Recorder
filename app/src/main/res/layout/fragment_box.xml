@@ -26,7 +26,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/file_manager" />
+                    android:text="@string/secure_box" />
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/btnExport"
@@ -67,7 +67,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:listitem="@layout/item_file_manager" />
+            tools:listitem="@layout/item_box" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/btnAdd"

@@ -1,4 +1,4 @@
-package ir.romroid.secureboxrecorder.domain.provider
+package ir.romroid.secureboxrecorder.domain.provider.local
 
 import com.aaaamirabbas.reactor.handler.Reactor
 import javax.inject.Inject

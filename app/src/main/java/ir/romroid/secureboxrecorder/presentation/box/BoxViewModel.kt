@@ -1,4 +1,4 @@
-package ir.romroid.secureboxrecorder.presentation.fileManager
+package ir.romroid.secureboxrecorder.presentation.box
 
 import android.net.Uri
 import androidx.core.net.toUri
@@ -7,16 +7,16 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import ir.romroid.secureboxrecorder.base.architecture.BaseViewModel
 import ir.romroid.secureboxrecorder.domain.model.FileModel
 import ir.romroid.secureboxrecorder.domain.model.FileType
-import ir.romroid.secureboxrecorder.domain.provider.FileProviderListener
-import ir.romroid.secureboxrecorder.domain.repository.AppRepository
+import ir.romroid.secureboxrecorder.domain.model.Result
+import ir.romroid.secureboxrecorder.domain.repository.BoxRepository
 import ir.romroid.secureboxrecorder.ext.viewModelIO
 import ir.romroid.secureboxrecorder.utils.liveData.SingleLiveData
 import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
-class FileManagerViewModel @Inject constructor(
-    private val appRepository: AppRepository
+class BoxViewModel @Inject constructor(
+    private val boxRepo: BoxRepository
 ) : BaseViewModel() {
 
     companion object {
@@ -51,7 +51,7 @@ class FileManagerViewModel @Inject constructor(
 
     fun fetchFileList() = viewModelIO {
         _liveFileList.postValue(
-            appRepository.getSavedFiles().map {
+            boxRepo.getSavedFiles().map {
                 val fileSuffix = it.first.substringAfterLast(".")
 
                 FileModel(
@@ -65,40 +65,35 @@ class FileManagerViewModel @Inject constructor(
 
     fun deleteFile(id: Long) = viewModelIO {
         _liveFileList.value?.firstOrNull { it.id == id }?.let {
-            _liveDeleteFile.postValue(appRepository.deleteFile(it.uri))
+            _liveDeleteFile.postValue(boxRepo.deleteFile(it.uri))
         } ?: _liveDeleteFile.postValue(false)
     }
 
     fun shareFile(uri: Uri) = viewModelIO {
-        _liveShareFile.postValue(appRepository.copyToShare(uri))
+        _liveShareFile.postValue(boxRepo.copyToShare(uri))
     }
 
     fun addFile(uri: Uri) = viewModelIO {
-        _liveAddFile.postValue(appRepository.saveAndEncrypt(uri))
+        _liveAddFile.postValue(boxRepo.saveAndEncrypt(uri))
     }
 
     fun exportData() = viewModelIO {
-        appRepository.exportFiles(object : FileProviderListener {
-            override fun onProgress() {
-                _liveExport.postValue(ExportResult.Progress)
+        boxRepo.exportFilesFlow().collect {
+            when (it) {
+                is Result.Error -> _liveExport.postValue(
+                    ExportResult.Error(it.exception.message ?: "")
+                )
+                Result.Loading -> _liveExport.postValue(ExportResult.Progress)
+                is Result.Success -> _liveExport.postValue(ExportResult.Success(it.data))
             }
-
-            override fun onSuccess(filePath: String) {
-                _liveExport.postValue(ExportResult.Success(filePath))
-            }
-
-            override fun onError(e: Exception) {
-                _liveExport.postValue(ExportResult.Error(e.message ?: ""))
-            }
-
-        })
+        }
     }
 
-    fun clearTemp() = appRepository.clearTemp()
+    fun clearTemp() = boxRepo.clearTemp()
 
     fun tempFile(uri: Uri) = viewModelIO {
 
-        appRepository.copyToTemp(uri)?.let {
+        boxRepo.copyToTemp(uri)?.let {
             val model = FileModel(
                 name = it.name,
                 type = FileType.getType(it.extension) ?: FileType.Other,
