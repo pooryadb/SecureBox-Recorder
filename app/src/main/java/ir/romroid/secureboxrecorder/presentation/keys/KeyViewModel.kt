@@ -1,4 +1,4 @@
-package ir.romroid.secureboxrecorder.presentation.safe
+package ir.romroid.secureboxrecorder.presentation.keys
 
 import android.net.Uri
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -10,7 +10,7 @@ import ir.romroid.secureboxrecorder.utils.liveData.SingleLiveData
 import javax.inject.Inject
 
 @HiltViewModel
-class SafeViewModel @Inject constructor(
+class KeyViewModel @Inject constructor(
     private val appRepo: BoxRepository
 ) : BaseViewModel() {
 
