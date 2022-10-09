@@ -31,8 +31,8 @@
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
             app:popExitAnim="@anim/nav_default_pop_exit_anim" />
         <action
-            android:id="@+id/action_recordsFragment_to_getKeysFragment"
-            app:destination="@id/getKeysFragment"
+            android:id="@+id/action_recordsFragment_to_keyFragment"
+            app:destination="@id/keyFragment"
             app:enterAnim="@anim/nav_default_enter_anim"
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
@@ -73,12 +73,12 @@
     </dialog>
 
     <fragment
-        android:id="@+id/getKeysFragment"
-        android:name="ir.romroid.secureboxrecorder.presentation.safe.KeyFragment"
-        android:label="GetKeysFragment"
+        android:id="@+id/keyFragment"
+        android:name="ir.romroid.secureboxrecorder.presentation.keys.KeyFragment"
+        android:label="keyFragment"
         tools:layout="@layout/fragment_key">
         <action
-            android:id="@+id/action_getKeysFragment_to_recordsFragment"
+            android:id="@+id/action_keyFragment_to_recordsFragment"
             app:destination="@id/recordsFragment"
             app:enterAnim="@anim/nav_default_enter_anim"
             app:exitAnim="@anim/nav_default_exit_anim"

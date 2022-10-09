@@ -1,4 +1,4 @@
-package ir.romroid.secureboxrecorder.presentation.safe
+package ir.romroid.secureboxrecorder.presentation.keys
 
 import android.net.Uri
 import android.os.Bundle
@@ -23,7 +23,7 @@ class KeyFragment : BaseFragment<FragmentKeyBinding>() {
     override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentKeyBinding
         get() = FragmentKeyBinding::inflate
 
-    private val safeVM by activityViewModels<SafeViewModel>()
+    private val safeVM by activityViewModels<KeyViewModel>()
 
     private var uriTemp: Uri? = null
 
@@ -45,16 +45,16 @@ class KeyFragment : BaseFragment<FragmentKeyBinding>() {
 
         safeVM.liveUnzip.observe(this) {
             when (it) {
-                is SafeViewModel.UnzipResult.Progress -> {
+                is KeyViewModel.UnzipResult.Progress -> {
                     loadingDialog(true)
                 }
-                is SafeViewModel.UnzipResult.Success -> {
+                is KeyViewModel.UnzipResult.Success -> {
                     loadingDialog(false)
                     requireContext().toast(getString(R.string.restore_backup_success))
                     uriTemp = null
                     binding?.btnNext?.performClick()
                 }
-                is SafeViewModel.UnzipResult.Error -> {
+                is KeyViewModel.UnzipResult.Error -> {
                     loadingDialog(false)
                     requireContext().toast(getString(R.string.restore_backup_error))
                 }
@@ -81,7 +81,7 @@ class KeyFragment : BaseFragment<FragmentKeyBinding>() {
             safeVM.unzipFile(it)
         } ?: run {
             findNavController().navigate(
-                KeyFragmentDirections.actionGetKeysFragmentToRecordsFragment()
+                KeyFragmentDirections.actionKeyFragmentToRecordsFragment()
             )
         }
     }

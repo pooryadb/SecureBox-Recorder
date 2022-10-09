@@ -15,7 +15,7 @@ import ir.romroid.secureboxrecorder.ext.getBackStackLiveData
 import ir.romroid.secureboxrecorder.ext.toGone
 import ir.romroid.secureboxrecorder.ext.toShow
 import ir.romroid.secureboxrecorder.ext.toast
-import ir.romroid.secureboxrecorder.presentation.safe.SafeViewModel
+import ir.romroid.secureboxrecorder.presentation.keys.KeyViewModel
 import ir.romroid.secureboxrecorder.utils.BACK_FROM_DELETE_RECORD
 import ir.romroid.secureboxrecorder.utils.BACK_FROM_RECORDER
 import javax.inject.Inject
@@ -30,12 +30,12 @@ class RecordsFragment : BaseFragment<FragmentRecordsBinding>() {
     lateinit var audioAdapter: AudioAdapter
 
     private val recorderVM by viewModels<RecorderViewModel>()
-    private val safeVM by activityViewModels<SafeViewModel>()
+    private val safeVM by activityViewModels<KeyViewModel>()
 
     override fun viewHandler(view: View, savedInstanceState: Bundle?) {
         if (safeVM.shouldSetUserKey()) {
             findNavController().navigate(
-                RecordsFragmentDirections.actionRecordsFragmentToGetKeysFragment()
+                RecordsFragmentDirections.actionRecordsFragmentToKeyFragment()
             )
             return
         }

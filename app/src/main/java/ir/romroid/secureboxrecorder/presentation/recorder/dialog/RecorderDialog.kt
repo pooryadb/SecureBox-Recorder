@@ -19,8 +19,8 @@ import ir.romroid.secureboxrecorder.R
 import ir.romroid.secureboxrecorder.base.component.BaseBottomSheetDialogFragment
 import ir.romroid.secureboxrecorder.databinding.DialogRecorderBinding
 import ir.romroid.secureboxrecorder.ext.*
+import ir.romroid.secureboxrecorder.presentation.keys.KeyViewModel
 import ir.romroid.secureboxrecorder.presentation.recorder.RecorderViewModel
-import ir.romroid.secureboxrecorder.presentation.safe.SafeViewModel
 import ir.romroid.secureboxrecorder.utils.BACK_FROM_RECORDER
 import ir.romroid.secureboxrecorder.utils.PermissionUtils
 import java.io.IOException
@@ -34,7 +34,7 @@ class RecorderDialog : BaseBottomSheetDialogFragment<DialogRecorderBinding>() {
     override var hasCancelable = false
 
     private val recorderVM by activityViewModels<RecorderViewModel>()
-    private val safeVM by activityViewModels<SafeViewModel>()
+    private val safeVM by activityViewModels<KeyViewModel>()
 
     private companion object {
         const val TAG = "RecorderDialog"
