@@ -7,6 +7,7 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class FileModel(
+    override var id: Long,
     val name: String,
     val type: FileType,
     val uri: Uri,

@@ -57,7 +57,7 @@ enum class FileType(
 
 
     companion object {
-        fun getType(extension: String): FileType? {
+        fun getType(extension: String): FileType {
             values().forEach {
                 it.suffixes.forEach { suffix ->
                     if (suffix == extension)
@@ -65,7 +65,7 @@ enum class FileType(
                 }
             }
 
-            return null
+            return Other
         }
     }
 

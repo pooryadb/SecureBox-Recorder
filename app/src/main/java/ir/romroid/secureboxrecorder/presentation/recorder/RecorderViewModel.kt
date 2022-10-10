@@ -2,12 +2,14 @@ package ir.romroid.secureboxrecorder.presentation.recorder
 
 import androidx.core.net.toUri
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import dagger.hilt.android.lifecycle.HiltViewModel
+import ir.romroid.secureboxrecorder.R
 import ir.romroid.secureboxrecorder.base.architecture.BaseViewModel
 import ir.romroid.secureboxrecorder.domain.model.AudioModel
+import ir.romroid.secureboxrecorder.domain.model.MessageResult
 import ir.romroid.secureboxrecorder.domain.repository.RecorderRepository
 import ir.romroid.secureboxrecorder.ext.viewModelIO
-import ir.romroid.secureboxrecorder.utils.liveData.SingleLiveData
 import java.io.File
 import javax.inject.Inject
 
@@ -20,33 +22,41 @@ class RecorderViewModel @Inject constructor(
         recorderRepo.prepareTempFile()
     }
 
-    private val _liveRecords = SingleLiveData<List<AudioModel>>()
+    private val _liveRecords = MutableLiveData<List<AudioModel>>()
     val liveRecords: LiveData<List<AudioModel>>
         get() = _liveRecords
 
-    private val _liveDeleteRecord = SingleLiveData<Boolean>()
-    val liveDeleteRecord: LiveData<Boolean>
-        get() = _liveDeleteRecord
-
-    private val _liveSaveRecord = SingleLiveData<Boolean>()
-    val liveSaveRecord: LiveData<Boolean>
-        get() = _liveSaveRecord
+    private val _liveMessage = MutableLiveData<MessageResult>()
+    val liveMessage: LiveData<MessageResult>
+        get() = _liveMessage
 
     fun fetchRecords() = viewModelIO {
-        _liveRecords.postValue(recorderRepo.getRecords())
+        val data = recorderRepo.getRecords()
+        _liveMessage.postValue(MessageResult.Loading(false))
+        _liveRecords.postValue(data.toList())
     }
 
     fun deleteRecord(id: Long) = viewModelIO {
+        _liveMessage.postValue(MessageResult.Loading(true))
         _liveRecords.value?.find { it.id == id }?.let {
-            _liveDeleteRecord.postValue(recorderRepo.deleteFile(it.uri))
+            val deleteResult = recorderRepo.deleteFile(it.uri)
+            if (deleteResult) {
+                fetchRecords()
+            } else {
+                _liveMessage.postValue(MessageResult.Error(R.string.cant_find_file))
+            }
         } ?: run {
-            _liveDeleteRecord.postValue(false)
+            _liveMessage.postValue(MessageResult.Error(R.string.cant_find_file))
         }
     }
 
     fun saveVoice(name: String) = viewModelIO {
+        _liveMessage.postValue(MessageResult.Loading(true))
         val resultSave = recorderRepo.saveRecord(tempFile, name)
-        _liveSaveRecord.postValue(resultSave != null)
+        if (resultSave != null)
+            fetchRecords()
+        else
+            _liveMessage.postValue(MessageResult.Error(R.string.error_save_file))
     }
 
     fun deleteTemp() {

@@ -22,11 +22,13 @@ import java.util.zip.ZipInputStream
 import java.util.zip.ZipOutputStream
 import kotlin.random.Random
 
-internal const val TAG = "BaseFileProvider"
-
 open class BaseFileProvider constructor(
     protected val context: Context, protected val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) {
+
+    protected companion object {
+        const val TAG = "BaseFileProvider"
+    }
 
     protected val folderBox by lazy {
         val f = File(context.getExternalFilesDir(null), FILES_BOX_FOLDER_NAME)

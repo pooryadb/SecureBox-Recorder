@@ -1,8 +1,11 @@
 package ir.romroid.secureboxrecorder.presentation.keys
 
 import android.net.Uri
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import ir.romroid.secureboxrecorder.base.architecture.BaseViewModel
+import ir.romroid.secureboxrecorder.domain.model.MessageResult
 import ir.romroid.secureboxrecorder.domain.model.Result
 import ir.romroid.secureboxrecorder.domain.repository.BoxRepository
 import ir.romroid.secureboxrecorder.ext.viewModelIO
@@ -18,6 +21,9 @@ class KeyViewModel @Inject constructor(
     val liveUnzip: SingleLiveData<UnzipResult>
         get() = _liveUnzip
 
+    private val _liveMessage = MutableLiveData<MessageResult>()
+    val liveMessage: LiveData<MessageResult>
+        get() = _liveMessage
 
     fun shouldSetUserKey(): Boolean {
         return appRepo.userKey().isEmpty()
@@ -53,6 +59,7 @@ class KeyViewModel @Inject constructor(
 
     }
 
+    // TODO: remove it!
     sealed class UnzipResult {
         object Progress : UnzipResult()
         class Success(val filePath: String) : UnzipResult()

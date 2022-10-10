@@ -39,19 +39,21 @@
             app:popExitAnim="@anim/nav_default_pop_exit_anim"
             app:popUpTo="@id/recordsFragment"
             app:popUpToInclusive="true" />
-        <action
-            android:id="@+id/action_recordsFragment_to_boxFragment"
-            app:destination="@id/boxFragment"
-            app:enterAnim="@anim/nav_default_enter_anim"
-            app:exitAnim="@anim/nav_default_exit_anim"
-            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+
     </fragment>
 
     <dialog
         android:id="@+id/dialogRecorder"
         android:name="ir.romroid.secureboxrecorder.presentation.recorder.dialog.RecorderDialog"
-        tools:layout="@layout/dialog_recorder" />
+        tools:layout="@layout/dialog_recorder">
+        <action
+            android:id="@+id/action_dialogRecorder_to_boxFragment"
+            app:destination="@id/boxFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+    </dialog>
 
     <dialog
         android:id="@+id/dialogDeleteRecord"

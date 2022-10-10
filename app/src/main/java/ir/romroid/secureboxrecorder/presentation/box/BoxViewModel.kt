@@ -50,13 +50,15 @@ class BoxViewModel @Inject constructor(
 
 
     fun fetchFileList() = viewModelIO {
+        val data = boxRepo.getSavedFiles()
         _liveFileList.postValue(
-            boxRepo.getSavedFiles().map {
+            data.map {
                 val fileSuffix = it.first.substringAfterLast(".")
 
                 FileModel(
+                    it.first.hashCode().toLong(),
                     name = it.first,
-                    type = FileType.getType(fileSuffix) ?: FileType.Other,
+                    type = FileType.getType(fileSuffix),
                     uri = it.second.toUri()
                 )
             }
@@ -95,8 +97,9 @@ class BoxViewModel @Inject constructor(
 
         boxRepo.copyToTemp(uri)?.let {
             val model = FileModel(
+                it.name.hashCode().toLong(),
                 name = it.name,
-                type = FileType.getType(it.extension) ?: FileType.Other,
+                type = FileType.getType(it.extension),
                 uri = it.toUri()
             )
 

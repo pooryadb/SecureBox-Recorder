@@ -13,6 +13,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.animation.doOnCancel
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import ir.romroid.secureboxrecorder.R
@@ -21,7 +22,6 @@ import ir.romroid.secureboxrecorder.databinding.DialogRecorderBinding
 import ir.romroid.secureboxrecorder.ext.*
 import ir.romroid.secureboxrecorder.presentation.keys.KeyViewModel
 import ir.romroid.secureboxrecorder.presentation.recorder.RecorderViewModel
-import ir.romroid.secureboxrecorder.utils.BACK_FROM_RECORDER
 import ir.romroid.secureboxrecorder.utils.PermissionUtils
 import java.io.IOException
 
@@ -34,7 +34,7 @@ class RecorderDialog : BaseBottomSheetDialogFragment<DialogRecorderBinding>() {
     override var hasCancelable = false
 
     private val recorderVM by activityViewModels<RecorderViewModel>()
-    private val safeVM by activityViewModels<KeyViewModel>()
+    private val safeVM by viewModels<KeyViewModel>()
 
     private companion object {
         const val TAG = "RecorderDialog"
@@ -62,6 +62,7 @@ class RecorderDialog : BaseBottomSheetDialogFragment<DialogRecorderBinding>() {
                 } else {
                     etName.error = null
                     recorderVM.saveVoice(etName.text.toString())
+                    dismiss()
                 }
             }
 
@@ -72,21 +73,12 @@ class RecorderDialog : BaseBottomSheetDialogFragment<DialogRecorderBinding>() {
                 if (it.length == keyLength) {
                     if (it == key) {
                         recorderVM.deleteTemp()
-                        dismiss(true)
+                        findNavController().navigate(
+                            RecorderDialogDirections.actionDialogRecorderToBoxFragment()
+                        )
                     }
                 }
             }
-        }
-    }
-
-    override fun initObservers() {
-        super.initObservers()
-
-        recorderVM.liveSaveRecord.observe(this) {
-            if (it)
-                dismiss(false)
-            else
-                requireContext().toast(getString(R.string.error_save_file))
         }
     }
 
@@ -223,10 +215,6 @@ class RecorderDialog : BaseBottomSheetDialogFragment<DialogRecorderBinding>() {
                     }
                 }
             })
-    }
-
-    private fun dismiss(gotoFileManager: Boolean) {
-        findNavController().setBackStackLiveData(BACK_FROM_RECORDER, gotoFileManager)
     }
 
     private val animateWave: ValueAnimator by lazy {

@@ -6,7 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import ir.romroid.secureboxrecorder.R
@@ -23,7 +23,7 @@ class KeyFragment : BaseFragment<FragmentKeyBinding>() {
     override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentKeyBinding
         get() = FragmentKeyBinding::inflate
 
-    private val safeVM by activityViewModels<KeyViewModel>()
+    private val safeVM by viewModels<KeyViewModel>()
 
     private var uriTemp: Uri? = null
 
