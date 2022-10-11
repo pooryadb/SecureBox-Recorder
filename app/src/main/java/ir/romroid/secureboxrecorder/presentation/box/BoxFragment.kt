@@ -14,6 +14,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import ir.romroid.secureboxrecorder.R
 import ir.romroid.secureboxrecorder.base.component.BaseFragment
 import ir.romroid.secureboxrecorder.databinding.FragmentBoxBinding
+import ir.romroid.secureboxrecorder.domain.model.MessageResult
 import ir.romroid.secureboxrecorder.ext.*
 import ir.romroid.secureboxrecorder.utils.BACK_FROM_DELETE_FILE
 import javax.inject.Inject
@@ -27,19 +28,23 @@ class BoxFragment : BaseFragment<FragmentBoxBinding>() {
     @Inject
     lateinit var boxAdapter: BoxAdapter
 
-    private val fileManagerVM by viewModels<BoxViewModel>()
+    private val boxVM by viewModels<BoxViewModel>()
+
+    private companion object {
+        const val TAG = "BoxFrag"
+    }
 
     override fun viewHandler(view: View, savedInstanceState: Bundle?) {
 
         binding?.apply {
 
             btnExport.setOnClickListener {
-                fileManagerVM.exportData()
+                boxVM.exportData()
             }
 
             btnExit.setOnClickListener {
                 requireActivity().finish()
-                fileManagerVM.clearTemp()
+                boxVM.clearTemp()
             }
 
             btnAdd.setOnClickListener {
@@ -55,8 +60,7 @@ class BoxFragment : BaseFragment<FragmentBoxBinding>() {
                     }
 
                     onShareListener = {
-                        loadingDialog(true)
-                        fileManagerVM.shareFile(it.uri)
+                        boxVM.shareFile(it.uri)
                     }
 
                     onClickListener = {
@@ -82,8 +86,7 @@ class BoxFragment : BaseFragment<FragmentBoxBinding>() {
             }
 
             if (isRestoredFromBackStack.not()) {
-                loadingDialog(true)
-                fileManagerVM.fetchFileList()
+                boxVM.fetchFileList()
             }
         }
     }
@@ -91,56 +94,28 @@ class BoxFragment : BaseFragment<FragmentBoxBinding>() {
     override fun initObservers() {
         super.initObservers()
 
-        fileManagerVM.liveFileList.observe(this) {
-            loadingDialog(false)
-
-            if (it.isEmpty())
-                binding?.layEmpty?.root?.toShow()
-            else {
-                binding?.layEmpty?.root?.toGone()
-                boxAdapter.submitList(it)
-            }
-
+        boxVM.liveFileList.observe(this) {
+            showEmptyLay(it.isEmpty())
+            boxAdapter.submitList(it)
         }
 
-        fileManagerVM.liveAddFile.observe(this) {
-            loadingDialog(false)
-            if (it)
-                fileManagerVM.fetchFileList()
-            else
-                requireContext().toast(getString(R.string.error_add_file))
+        boxVM.liveShareFile.observe(this) {
+            requireContext().shareAnyFile(it, requireActivity().localClassName)
         }
 
-        fileManagerVM.liveDeleteFile.observe(this) {
-            loadingDialog(false)
-            if (it)
-                fileManagerVM.fetchFileList()
-            else
-                requireContext().toast(getString(R.string.error_delete_file))
+        boxVM.liveExportPath.observe(this) {
+            findNavController().navigate(
+                BoxFragmentDirections.actionBoxFragmentToShareFileDialog(it)
+            )
         }
 
-        fileManagerVM.liveShareFile.observe(this) {
-            loadingDialog(false)
-            if (it != null) {
-                requireContext().shareAnyFile(it, requireActivity().localClassName)
-            } else
-                requireContext().toast(getString(R.string.error_share_file))
-        }
-
-        fileManagerVM.liveExport.observe(this) {
+        boxVM.liveMessage.observe(this) {
             when (it) {
-                is BoxViewModel.ExportResult.Progress -> loadingDialog(true)
-                is BoxViewModel.ExportResult.Error -> {
+                is MessageResult.Error -> {
                     loadingDialog(false)
-                    requireContext().toast(it.message)
+                    requireContext().toast(it.getMessage(requireContext()))
                 }
-                is BoxViewModel.ExportResult.Success -> {
-                    loadingDialog(false)
-                    findNavController().navigate(
-                        BoxFragmentDirections.actionBoxFragmentToShareFileDialog(it.filePath)
-                    )
-
-                }
+                is MessageResult.Loading -> loadingDialog(it.show)
             }
         }
 
@@ -152,8 +127,7 @@ class BoxFragment : BaseFragment<FragmentBoxBinding>() {
         findNavController().getBackStackLiveData<Long?>(BACK_FROM_DELETE_FILE)
             ?.observe(this) { fileId ->
                 if (fileId != null) {
-                    loadingDialog(true)
-                    fileManagerVM.deleteFile(fileId)
+                    boxVM.deleteFile(fileId)
                 }
             }
     }
@@ -162,9 +136,7 @@ class BoxFragment : BaseFragment<FragmentBoxBinding>() {
         ActivityResultContracts.GetContent()
     ) {
         it?.let {
-
-            loadingDialog(true)
-            fileManagerVM.addFile(it)
+            boxVM.addFile(it)
 
         }
         "showFileChooser uri: $it".logD(TAG)
@@ -174,11 +146,16 @@ class BoxFragment : BaseFragment<FragmentBoxBinding>() {
     override fun onDestroy() {
         "onDestroy".logD(TAG)
         // FIXME: onDestroy isn't best approach
-        fileManagerVM.clearTemp()
+        boxVM.clearTemp()
         super.onDestroy()
     }
 
-    private companion object {
-        const val TAG = "FileManagerFrag"
+    private fun showEmptyLay(show: Boolean) = binding?.apply {
+        if (show)
+            layEmpty.root.toShow()
+        else {
+            layEmpty.root.toGone()
+        }
     }
+
 }

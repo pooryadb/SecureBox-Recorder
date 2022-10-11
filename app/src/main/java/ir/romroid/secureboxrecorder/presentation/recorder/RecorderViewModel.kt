@@ -26,10 +26,6 @@ class RecorderViewModel @Inject constructor(
     val liveRecords: LiveData<List<AudioModel>>
         get() = _liveRecords
 
-    private val _liveMessage = MutableLiveData<MessageResult>()
-    val liveMessage: LiveData<MessageResult>
-        get() = _liveMessage
-
     fun fetchRecords() = viewModelIO {
         val data = recorderRepo.getRecords()
         _liveMessage.postValue(MessageResult.Loading(false))

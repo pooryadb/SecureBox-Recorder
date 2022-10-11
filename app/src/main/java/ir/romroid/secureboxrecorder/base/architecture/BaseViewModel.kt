@@ -1,18 +1,14 @@
 package ir.romroid.secureboxrecorder.base.architecture
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import ir.romroid.secureboxrecorder.ext.viewModelIO
-import kotlinx.coroutines.flow.Flow
+import ir.romroid.secureboxrecorder.domain.model.MessageResult
 
 open class BaseViewModel : ViewModel() {
 
-    fun <T> observeFlow(
-        flow: Flow<T>,
-        observeFunction: (T) -> Unit,
-    ) = viewModelIO {
-        flow.collect {
-            observeFunction(it)
-        }
-    }
+    protected val _liveMessage = MutableLiveData<MessageResult>()
+    val liveMessage: LiveData<MessageResult>
+        get() = _liveMessage
 
 }

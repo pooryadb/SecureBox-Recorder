@@ -12,7 +12,6 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import dagger.hilt.android.AndroidEntryPoint
-import ir.romroid.secureboxrecorder.R
 import ir.romroid.secureboxrecorder.base.component.BaseFragment
 import ir.romroid.secureboxrecorder.databinding.FragmentWebViewBinding
 import ir.romroid.secureboxrecorder.domain.model.FileModel
@@ -20,7 +19,6 @@ import ir.romroid.secureboxrecorder.domain.model.FileType
 import ir.romroid.secureboxrecorder.ext.getBackStackLiveData
 import ir.romroid.secureboxrecorder.ext.logD
 import ir.romroid.secureboxrecorder.ext.logE
-import ir.romroid.secureboxrecorder.ext.toast
 import ir.romroid.secureboxrecorder.utils.BACK_FROM_OPEN_FILE
 
 @AndroidEntryPoint
@@ -53,7 +51,7 @@ class WebViewFragment : BaseFragment<FragmentWebViewBinding>() {
             }
 
             if (isRestoredFromBackStack.not())
-                fileManagerVM.tempFile(args.fileModel.uri)
+                fileManagerVM.getFile(args.fileModel.uri)
         }
     }
 
@@ -79,10 +77,7 @@ class WebViewFragment : BaseFragment<FragmentWebViewBinding>() {
         super.initObservers()
 
         fileManagerVM.liveTempFile.observe(this) {
-            if (it != null) {
-                openFile(it)
-            } else
-                requireContext().toast(getString(R.string.error_open_file))
+            openFile(it)
         }
     }
 

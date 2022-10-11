@@ -30,7 +30,7 @@ class BoxProvider @Inject constructor(
 
     suspend fun unzipToSaveFolder(file: File) = unzip(file, folderBox.path)
 
-    suspend fun zipFilesToExportFolder() = zip(
+    suspend fun zipToExportFolder() = zip(
         file = folderBox,
         destinationPath = File(
             folderExport,
@@ -43,10 +43,10 @@ class BoxProvider @Inject constructor(
         ).path,
     )
 
-    private fun encryptFileName(sKey: SecretKey, name: String): String =
+    private fun encryptName(sKey: SecretKey, name: String): String =
         CryptoUtils.encrypt(sKey, name).encodeBase64Replaced()
 
-    private fun decryptFileName(sKey: SecretKey, encryptedName: String): String =
+    private fun decryptName(sKey: SecretKey, encryptedName: String): String =
         CryptoUtils.decryptToString(sKey, encryptedName.fromBase64Replaced())
 
     fun getEncryptedFiles(): List<File> = folderBox.listFiles()?.toList() ?: emptyList()
@@ -59,7 +59,7 @@ class BoxProvider @Inject constructor(
     suspend fun getFiles(key: String): List<Pair<String, File>> = withContext(ioDispatcher) {
         return@withContext getEncryptedFiles().map {
             Pair(
-                decryptFileName(CryptoUtils.convertToKey(key), it.name),
+                decryptName(CryptoUtils.convertToKey(key), it.name),
                 it
             )
         }
@@ -72,10 +72,10 @@ class BoxProvider @Inject constructor(
             val fileName = getFileNameWithExtension(context, contentUri)
 
             val sKey = CryptoUtils.convertToKey(key)
-            var nameEncrypted = encryptFileName(sKey, fileName)
+            var nameEncrypted = encryptName(sKey, fileName)
 
             getEncryptedFiles().firstOrNull { it.name == nameEncrypted }?.let {
-                nameEncrypted = encryptFileName(sKey, addRandomToName(fileName))
+                nameEncrypted = encryptName(sKey, addRandomToName(fileName))
             }
 
             val filePath = folderBox.path + "/" + nameEncrypted
@@ -104,14 +104,14 @@ class BoxProvider @Inject constructor(
             }
         }
 
-    suspend fun restoreFromBox(key: String, uri: Uri): File? =
+    suspend fun decryptToTemp(key: String, uri: Uri): File? =
         withContext(ioDispatcher) {
             try {
-                "restoreFromBox: uri= $uri".logD(TAG)
+                "decryptToTemp: uri= $uri".logD(TAG)
 
                 val sk = CryptoUtils.convertToKey(key)
                 val decryptedFileData = CryptoUtils.decrypt(sk, FileUtils.readFile(uri))
-                val fName = decryptFileName(sk, uri.toFile().name)
+                val fName = decryptName(sk, uri.toFile().name)
                 val resultFile = File(folderTemp, fName)
                 createFile(resultFile.path)
 

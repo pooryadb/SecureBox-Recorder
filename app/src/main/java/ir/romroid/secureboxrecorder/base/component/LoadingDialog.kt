@@ -21,7 +21,13 @@ class LoadingDialog(
     override fun viewHandler(view: View, savedInstanceState: Bundle?) {
     }
 
+    private var mDimBehind = false
+    private var mCancelable = false
+
     fun show(dimBehind: Boolean, cancelable: Boolean = false) {
+        if (isShowing && dimBehind == mDimBehind && cancelable == mCancelable)
+            return
+
         window?.apply {
             setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             if (dimBehind.not()) {
@@ -42,6 +48,8 @@ class LoadingDialog(
         setCanceledOnTouchOutside(cancelable)
 
         dismissTimer = System.currentTimeMillis()
+        mDimBehind = dimBehind
+        mCancelable = cancelable
 
         super.show()
     }

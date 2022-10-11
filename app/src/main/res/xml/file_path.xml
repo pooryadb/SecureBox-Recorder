@@ -4,4 +4,8 @@
         name="files"
         path="export" />
 
+    <cache-path
+        name="cache"
+        path="temp" />
+
 </paths>
