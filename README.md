@@ -1,4 +1,4 @@
-# SecureBoxRecorder android app <img src="app/src/main/ic_launcher-playstore.png" width="100" alt="SecureBoxRecorder icon"/>
+# SecureBoxRecorder android app <img src="app/src/main/ic_launcher-playstore.png" width="30" alt="SecureBoxRecorder icon"/>
 
 Encrypt your files in the Box, behind Voice Recorder app!
 
