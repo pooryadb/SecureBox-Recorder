@@ -48,4 +48,10 @@ object FileUtils {
         bos.close()
     }
 
+    @Throws(Exception::class)
+    fun copy(inputStream: InputStream, outputStream: FileOutputStream) {
+        val fileData = readFile(inputStream)
+        saveFile(fileData, outputStream)
+    }
+
 }

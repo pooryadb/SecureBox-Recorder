@@ -19,11 +19,10 @@ class RecorderRepository @Inject constructor(
         .sortedBy { it.lastModified() }
         .map {
             AudioModel(
+                it.name.hashCode().toLong(),
                 name = it.name,
                 uri = it.toUri()
-            ).apply {
-                id = it.name.hashCode().toLong()
-            }
+            )
         }
 
     fun deleteFile(uri: Uri) = recorderProvider.delete(uri)

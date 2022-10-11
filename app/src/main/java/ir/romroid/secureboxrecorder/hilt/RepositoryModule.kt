@@ -10,6 +10,7 @@ import ir.romroid.secureboxrecorder.domain.provider.local.BoxProvider
 import ir.romroid.secureboxrecorder.domain.provider.local.RecorderProvider
 import ir.romroid.secureboxrecorder.domain.repository.BoxRepository
 import ir.romroid.secureboxrecorder.domain.repository.RecorderRepository
+import kotlinx.coroutines.CoroutineDispatcher
 
 @Module
 @InstallIn(ViewModelComponent::class)
@@ -19,8 +20,9 @@ object RepositoryModule {
     @Provides
     fun provideBoxRepository(
         appCache: AppCache,
-        boxProvider: BoxProvider
-    ) = BoxRepository(appCache, boxProvider)
+        boxProvider: BoxProvider,
+        ioDispatcher: CoroutineDispatcher
+    ) = BoxRepository(appCache, boxProvider, ioDispatcher)
 
     @ViewModelScoped
     @Provides

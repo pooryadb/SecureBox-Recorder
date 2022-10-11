@@ -10,13 +10,9 @@ const val FILES_BOX_FOLDER_NAME = "box"
 const val FILES_TEMP_SHARE_FOLDER_NAME = "tempShare"
 const val FILES_EXPORT_FOLDER_NAME = "export"
 const val FILE_EXPORT_NAME_date = "SecureBox_Export_%s.zip"
-const val FILES_TEMP_ReCrypt_FOLDER_NAME = "tempReCrypt"
-
-const val WEB_VIEW_EXTRA_FILE_PATH_NAME = "filePath"
 
 
 //BackStackLiveData keys
-const val BACK_FROM_RECORDER = "BACK_FROM_RECORDER"
 const val BACK_FROM_DELETE_RECORD = "BACK_FROM_DELETE_RECORD"
 const val BACK_FROM_DELETE_FILE = "BACK_FROM_DELETE_FILE"
 const val BACK_FROM_OPEN_FILE = "BACK_FROM_OPEN_FILE"

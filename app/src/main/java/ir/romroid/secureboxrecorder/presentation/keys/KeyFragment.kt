@@ -6,12 +6,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import ir.romroid.secureboxrecorder.R
 import ir.romroid.secureboxrecorder.base.component.BaseFragment
 import ir.romroid.secureboxrecorder.databinding.FragmentKeyBinding
+import ir.romroid.secureboxrecorder.domain.model.MessageResult
 import ir.romroid.secureboxrecorder.ext.getFileNameFromCursor
 import ir.romroid.secureboxrecorder.ext.logD
 import ir.romroid.secureboxrecorder.ext.toast
@@ -23,7 +24,7 @@ class KeyFragment : BaseFragment<FragmentKeyBinding>() {
     override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentKeyBinding
         get() = FragmentKeyBinding::inflate
 
-    private val safeVM by activityViewModels<KeyViewModel>()
+    private val safeVM by viewModels<KeyViewModel>()
 
     private var uriTemp: Uri? = null
 
@@ -44,20 +45,21 @@ class KeyFragment : BaseFragment<FragmentKeyBinding>() {
         super.initObservers()
 
         safeVM.liveUnzip.observe(this) {
+            if (it) {
+                loadingDialog(false)
+                requireContext().toast(getString(R.string.restore_backup_success))
+                uriTemp = null
+                binding?.btnNext?.performClick()
+            }
+        }
+
+        safeVM.liveMessage.observe(this) {
             when (it) {
-                is KeyViewModel.UnzipResult.Progress -> {
-                    loadingDialog(true)
-                }
-                is KeyViewModel.UnzipResult.Success -> {
+                is MessageResult.Error -> {
                     loadingDialog(false)
-                    requireContext().toast(getString(R.string.restore_backup_success))
-                    uriTemp = null
-                    binding?.btnNext?.performClick()
+                    requireContext().toast(it.getMessage(requireContext()))
                 }
-                is KeyViewModel.UnzipResult.Error -> {
-                    loadingDialog(false)
-                    requireContext().toast(getString(R.string.restore_backup_error))
-                }
+                is MessageResult.Loading -> loadingDialog(it.show)
             }
         }
     }

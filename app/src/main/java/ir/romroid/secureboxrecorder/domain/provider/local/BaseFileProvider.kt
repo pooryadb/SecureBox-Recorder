@@ -13,8 +13,6 @@ import ir.romroid.secureboxrecorder.ext.logI
 import ir.romroid.secureboxrecorder.utils.*
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
 import java.io.*
 import java.util.zip.ZipEntry
@@ -22,11 +20,13 @@ import java.util.zip.ZipInputStream
 import java.util.zip.ZipOutputStream
 import kotlin.random.Random
 
-internal const val TAG = "BaseFileProvider"
-
 open class BaseFileProvider constructor(
     protected val context: Context, protected val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) {
+
+    protected companion object {
+        const val TAG = "BaseFileProvider"
+    }
 
     protected val folderBox by lazy {
         val f = File(context.getExternalFilesDir(null), FILES_BOX_FOLDER_NAME)
@@ -63,7 +63,7 @@ open class BaseFileProvider constructor(
         f
     }
 
-    suspend fun copyTo(contentUri: Uri, destFolderPath: String): File? {
+    suspend fun copyTo(contentUri: Uri, destFolderPath: String): File? = withContext(ioDispatcher) {
         "saveTo: contentUri= ${contentUri}, dest= $destFolderPath".logE(TAG)
 
         val fileName = getFileNameWithExtension(context, contentUri)
@@ -72,7 +72,18 @@ open class BaseFileProvider constructor(
 
         "fileFromContentUri: path= ${destFile.path}".logE(TAG)
 
-        return copyTo(contentUri.toFile(), destFolderPath)
+        return@withContext try {
+            FileUtils.copy(
+                context.contentResolver.openInputStream(contentUri)!!,
+                FileOutputStream(destFile)
+            )
+
+            destFile
+        } catch (e: Exception) {
+            e.printStackTrace()
+
+            null
+        }
     }
 
     suspend fun copyTo(file: File, destFolderPath: String): File? = withContext(ioDispatcher) {
@@ -84,12 +95,7 @@ open class BaseFileProvider constructor(
         "fileFromContentUri: path= ${destFile.path}".logE(TAG)
 
         return@withContext try {
-            val oStream = FileOutputStream(destFile)
-            val inputStream = file.inputStream()
-
-            val fileData = FileUtils.readFile(inputStream)
-
-            FileUtils.saveFile(fileData, oStream)
+            FileUtils.copy(file.inputStream(), FileOutputStream(destFile))
 
             destFile
         } catch (e: Exception) {
@@ -104,9 +110,8 @@ open class BaseFileProvider constructor(
      */
     suspend fun unzip(
         file: File, destinationPath: String? = null
-    ) = flow<Result<String>> {
-        try {
-            emit(Result.Loading)
+    ): Result<String> = withContext(ioDispatcher) {
+        return@withContext try {
             val inputStream = FileInputStream(file.path)
             val zipStream = ZipInputStream(inputStream)
             var zEntry: ZipEntry? = null
@@ -140,12 +145,13 @@ open class BaseFileProvider constructor(
             zipStream.close()
             "Unzipping complete. path :  $destination".logD(TAG)
 
-            emit(Result.Success(destination))
+            Result.Success(destination)
         } catch (e: Exception) {
             "Unzipping failed : $e".logD(TAG)
-            emit(Result.Error(e))
+            Result.Error(e)
         }
-    }.flowOn(ioDispatcher)
+
+    }
 
     /**
      * @param file must be a directory with at least 1 file
@@ -153,25 +159,21 @@ open class BaseFileProvider constructor(
      */
     suspend fun zip(
         file: File, destinationPath: String
-    ) = flow<Result<String>> {
+    ): Result<String> = withContext(ioDispatcher) {
         if (file.isDirectory.not() || file.listFiles().isNullOrEmpty()) {
-            emit(Result.Error(Exception("path is empty!")))
-            return@flow
+            return@withContext Result.Error(Exception("path is empty!"))
         }
 
         val destFile = File(destinationPath)
         if (destFile.extension != "zip") {
-            emit(Result.Error(Exception("should be *.zip file!")))
-            return@flow
+            return@withContext Result.Error(Exception("should be *.zip file!"))
         }
         if (destFile.exists()) destFile.delete()
         createFile(destinationPath)
 
-        emit(Result.Loading)
-
         val BUFFER = 1024
 
-        try {
+        return@withContext try {
             var origin: BufferedInputStream? = null
             val dest = FileOutputStream(destinationPath)
             val out = ZipOutputStream(BufferedOutputStream(dest))
@@ -190,15 +192,16 @@ open class BaseFileProvider constructor(
                 origin!!.close()
             }
 
-            emit(Result.Success(destinationPath))
-
             out.close()
+
+            Result.Success(destinationPath)
         } catch (e: Exception) {
             delete(destinationPath.toUri())
             "zip error: ${e.message}".logI(TAG)
-            emit(Result.Error(e))
+
+            Result.Error(e)
         }
-    }.flowOn(ioDispatcher)
+    }
 
     protected fun addRandomToName(name: String): String {
         var result = name.substringBeforeLast('.', name)

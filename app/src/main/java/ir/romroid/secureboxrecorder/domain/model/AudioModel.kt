@@ -7,6 +7,7 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class AudioModel(
+    override var id: Long,
     val name: String,
     val uri: Uri
 ) : BaseResponseData(), Parcelable

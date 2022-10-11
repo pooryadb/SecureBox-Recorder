@@ -1,12 +1,13 @@
 package ir.romroid.secureboxrecorder.presentation.box
 
 import android.net.Uri
-import androidx.core.net.toUri
+import androidx.core.net.toFile
 import androidx.lifecycle.LiveData
 import dagger.hilt.android.lifecycle.HiltViewModel
+import ir.romroid.secureboxrecorder.R
 import ir.romroid.secureboxrecorder.base.architecture.BaseViewModel
 import ir.romroid.secureboxrecorder.domain.model.FileModel
-import ir.romroid.secureboxrecorder.domain.model.FileType
+import ir.romroid.secureboxrecorder.domain.model.MessageResult
 import ir.romroid.secureboxrecorder.domain.model.Result
 import ir.romroid.secureboxrecorder.domain.repository.BoxRepository
 import ir.romroid.secureboxrecorder.ext.viewModelIO
@@ -19,95 +20,91 @@ class BoxViewModel @Inject constructor(
     private val boxRepo: BoxRepository
 ) : BaseViewModel() {
 
-    companion object {
-        private const val TAG = "FileManagerVM"
-    }
-
     private val _liveFileList = SingleLiveData<List<FileModel>>()
     val liveFileList: LiveData<List<FileModel>>
         get() = _liveFileList
 
-    private val _liveAddFile = SingleLiveData<Boolean>()
-    val liveAddFile: LiveData<Boolean>
-        get() = _liveAddFile
-
-    private val _liveDeleteFile = SingleLiveData<Boolean>()
-    val liveDeleteFile: LiveData<Boolean>
-        get() = _liveDeleteFile
-
-    private val _liveShareFile = SingleLiveData<File?>()
-    val liveShareFile: LiveData<File?>
+    private val _liveShareFile = SingleLiveData<File>()
+    val liveShareFile: LiveData<File>
         get() = _liveShareFile
 
+    private val _liveExportPath = SingleLiveData<String>()
+    val liveExportPath: SingleLiveData<String>
+        get() = _liveExportPath
 
-    private val _liveExport = SingleLiveData<ExportResult>()
-    val liveExport: SingleLiveData<ExportResult>
-        get() = _liveExport
-
-    private val _liveTempFile = SingleLiveData<FileModel?>()
-    val liveTempFile: LiveData<FileModel?>
+    private val _liveTempFile = SingleLiveData<FileModel>()
+    val liveTempFile: LiveData<FileModel>
         get() = _liveTempFile
 
 
     fun fetchFileList() = viewModelIO {
-        _liveFileList.postValue(
-            boxRepo.getSavedFiles().map {
-                val fileSuffix = it.first.substringAfterLast(".")
-
-                FileModel(
-                    name = it.first,
-                    type = FileType.getType(fileSuffix) ?: FileType.Other,
-                    uri = it.second.toUri()
-                )
-            }
-        )
+        _liveFileList.postValue(boxRepo.getSavedFiles())
     }
 
     fun deleteFile(id: Long) = viewModelIO {
-        _liveFileList.value?.firstOrNull { it.id == id }?.let {
-            _liveDeleteFile.postValue(boxRepo.deleteFile(it.uri))
-        } ?: _liveDeleteFile.postValue(false)
+        _liveMessage.postValue(MessageResult.Loading(true))
+
+        val file = _liveFileList.value?.firstOrNull { it.id == id }
+
+        if (file != null && boxRepo.deleteFile(file.uri)) {
+            _liveMessage.postValue(MessageResult.Loading(false))
+            fetchFileList()
+        } else
+            _liveMessage.postValue(MessageResult.Error(R.string.error_delete_file))
     }
 
     fun shareFile(uri: Uri) = viewModelIO {
-        _liveShareFile.postValue(boxRepo.copyToShare(uri))
+        _liveMessage.postValue(MessageResult.Loading(true))
+
+        when (val file = boxRepo.getFile(uri)) {
+            is Result.Error -> _liveMessage.postValue(MessageResult.Error(R.string.error_share_file))
+            is Result.Success -> {
+                _liveMessage.postValue(MessageResult.Loading(false))
+                _liveShareFile.postValue(file.data.uri.toFile())
+            }
+        }
+
     }
 
     fun addFile(uri: Uri) = viewModelIO {
-        _liveAddFile.postValue(boxRepo.saveAndEncrypt(uri))
+        _liveMessage.postValue(MessageResult.Loading(true))
+
+        if (boxRepo.saveAndEncrypt(uri)) {
+            _liveMessage.postValue(MessageResult.Loading(false))
+            fetchFileList()
+        } else
+            _liveMessage.postValue(MessageResult.Error(R.string.error_add_file))
     }
 
     fun exportData() = viewModelIO {
-        boxRepo.exportFilesFlow().collect {
-            when (it) {
-                is Result.Error -> _liveExport.postValue(
-                    ExportResult.Error(it.exception.message ?: "")
-                )
-                Result.Loading -> _liveExport.postValue(ExportResult.Progress)
-                is Result.Success -> _liveExport.postValue(ExportResult.Success(it.data))
+        _liveMessage.postValue(MessageResult.Loading(true))
+
+        boxRepo.exportFiles()
+            .let {
+                when (it) {
+                    is Result.Error -> _liveMessage.postValue(
+                        MessageResult.Error(msg = it.exception.message ?: "")
+                    )
+                    is Result.Success -> {
+                        _liveMessage.postValue(MessageResult.Loading(false))
+                        _liveExportPath.postValue(it.data)
+                    }
+                }
             }
-        }
     }
 
     fun clearTemp() = boxRepo.clearTemp()
 
-    fun tempFile(uri: Uri) = viewModelIO {
+    fun getFile(uri: Uri) = viewModelIO {
+        _liveMessage.postValue(MessageResult.Loading(true))
+        when (val file = boxRepo.getFile(uri)) {
+            is Result.Error -> _liveMessage.postValue(MessageResult.Error(R.string.error_open_file))
+            is Result.Success -> {
+                _liveMessage.postValue(MessageResult.Loading(false))
+                _liveTempFile.postValue(file.data)
+            }
+        }
 
-        boxRepo.copyToTemp(uri)?.let {
-            val model = FileModel(
-                name = it.name,
-                type = FileType.getType(it.extension) ?: FileType.Other,
-                uri = it.toUri()
-            )
-
-            _liveTempFile.postValue(model)
-        } ?: _liveTempFile.postValue(null)
-    }
-
-    sealed class ExportResult {
-        object Progress : ExportResult()
-        class Success(val filePath: String) : ExportResult()
-        class Error(val message: String) : ExportResult()
     }
 
 }
