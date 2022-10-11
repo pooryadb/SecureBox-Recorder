@@ -1,4 +1,4 @@
-# SecureBoxRecorder android app
+# SecureBoxRecorder android app <img src="app/src/main/res/ic_launcher-playstore.png width="100" alt="SecureBoxRecorder icon"/>
 
 Encrypt your files in the Box, behind Voice Recorder app!
 
@@ -17,6 +17,7 @@ Kotlin, MVVM-CleanArchitecture, NavigationComponent, Dagger/Hilt, Kotlin-Corouti
 
 ## Screenshots
 
+<img src="screenshots/screenshot_0.jpg" width="200" alt="key"/>
 <img src="screenshots/screenshot_1.jpg" width="200" alt="list"/>
 <img src="screenshots/screenshot_2.jpg" width="200" alt="Recorder"/>
 <img src="screenshots/screenshot_3.jpg" width="200" alt="Box"/>
