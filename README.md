@@ -13,7 +13,7 @@ Encrypt your files in the Box, behind Voice Recorder app!
 
 ## Tech
 
-Kotlin, MVVM-CleanArchitecture, NavigationComponent, Dagger/Hilt, Kotlin-Coroutine, Rx-Android
+Kotlin, MVVM, NavigationComponent, Dagger/Hilt, Kotlin-Coroutine, Rx-Android, Files, Material Design
 
 ## Screenshots
 
